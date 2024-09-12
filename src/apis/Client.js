@@ -1,0 +1,1 @@
+export const USER_API = "https://rtms-backend.onrender.com/api/v1/users";

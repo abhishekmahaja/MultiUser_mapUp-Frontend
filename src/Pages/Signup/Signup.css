@@ -1,0 +1,10 @@
+.bgImg{
+    background-image: url("../../../public/assets/13.png");
+       background-size: cover;
+    background-position: left;
+    background-repeat: no-repeat;
+}
+
+/* .item1 {
+    grid-column: 1 / 2;
+} */
