@@ -175,7 +175,7 @@ function Login() {
                       Don't have an account?
                       <Link
                         to="/signup"
-                        style={{ textDecoration: "none", margin: "4px" }}
+                        style={{ textDecoration: "none", margin: "4px", cursor: "pointer" }}
                       >
                         Sign Up
                       </Link>

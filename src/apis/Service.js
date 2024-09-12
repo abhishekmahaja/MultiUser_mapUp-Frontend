@@ -22,4 +22,38 @@ export const login = async (formData) => {
   }
 };
 
-//register otp api
+//register OTP API
+export const sendOtpRegister = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/send-otp-register`,
+      {
+        headers: {
+          contentType: "multipart/formdata",
+        },
+      },
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//register api
+export const register = async (formdata) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/register`,
+      {
+        headers: {
+          contentType: "multipart/formdata",
+        },
+      },
+      formdata
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
