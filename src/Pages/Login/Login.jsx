@@ -8,16 +8,15 @@ import {
   IconButton,
   InputAdornment,
   Card,
-  Link,
   CardContent,
 } from "@mui/material";
 import PageContainer from "../../components/HOC/PageContainer";
-import { useDispatch } from "react-redux"; 
-import { useNavigate } from "react-router-dom";
-import { setLoginDetails } from "../../apis/authSlice"; 
-import { sendOtpLogin } from "../../apis/Service"; 
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { setLoginDetails } from "../../apis/authSlice";
+import { sendOtpLogin } from "../../apis/Service";
 import HttpsIcon from "@mui/icons-material/Https";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Login() {
@@ -40,7 +39,6 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     //Integaration
     try {
@@ -156,7 +154,10 @@ function Login() {
                   py={2}
                 >
                   <Grid item textAlign={"end"}>
-                    <Link to="/forgot" style={{ textDecoration: "none" }}>
+                    <Link
+                      to="/forgot"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
                       Forgot Password
                     </Link>
                   </Grid>
@@ -175,7 +176,11 @@ function Login() {
                       Don't have an account?
                       <Link
                         to="/signup"
-                        style={{ textDecoration: "none", margin: "4px", cursor: "pointer" }}
+                        style={{
+                          textDecoration: "none",
+                          margin: "4px",
+                          cursor: "pointer",
+                        }}
                       >
                         Sign Up
                       </Link>
@@ -192,7 +197,6 @@ function Login() {
 }
 
 export default Login;
-
 
 // //local storage storing data integration
 // import React, { useState } from "react";
