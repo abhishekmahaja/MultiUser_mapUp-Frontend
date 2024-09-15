@@ -22,15 +22,15 @@ export const login = async (formData) => {
   }
 };
 
-// Register OTP API
+//register OTP API
 export const sendOtpRegister = async (formData) => {
   try {
     const response = await axios.post(
       `${USER_API}/send-otp-register`,
-      formData,
+      formData, // This is the request body
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data", // Correct the Content-Type header
         },
       }
     );
@@ -40,15 +40,15 @@ export const sendOtpRegister = async (formData) => {
   }
 };
 
-// Register API
+//register API
 export const register = async (formData) => {
   try {
     const response = await axios.post(
       `${USER_API}/register`,
-      formData,
+      formData, // This is the request body (FormData)
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data", // Correct the Content-Type header
         },
       }
     );
@@ -57,3 +57,4 @@ export const register = async (formData) => {
     return catchError(error);
   }
 };
+

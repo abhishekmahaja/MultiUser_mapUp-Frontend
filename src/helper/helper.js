@@ -1,5 +1,5 @@
 export const catchError=(error)=>{
- const {response}=data;
+ const {response}=error;
 
  if(response?.data){
   return response?.data;

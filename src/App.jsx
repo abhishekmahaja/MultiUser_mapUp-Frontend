@@ -2,7 +2,6 @@ import React, { Suspense, lazy } from "react";
 import { useRoutes } from "react-router-dom";
 import AppSk from "./components/Skeletons/AppSk.jsx";
 import { Toaster } from "react-hot-toast";
-
 import OtpSignUp from './Pages/Signup/OtpSignup.jsx'
 const Home = lazy(() => import('./Pages/Dashboard/Home/Home.jsx'))
 const Login = lazy(() => import("./Pages/Login/Login.jsx"));
