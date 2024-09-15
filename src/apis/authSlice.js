@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// initial state for Login
 const initialState = {
   username: "",
   password: "",
@@ -7,6 +8,7 @@ const initialState = {
   isAuthenticated: false,
 };
 
+// initial state for Signup
 const registerInitialState = {
   username: "",
   email: "",
@@ -21,9 +23,23 @@ const registerInitialState = {
   isAuthenticated: false,
 };
 
-//for login 
+// initial state for check status
+const initialState2 = {
+  username: "",
+  email: "",
+  contactNumber: "",
+  employeeID: "",
+  assetName: "",
+  department: "",
+  roleInRTMS: "",
+  idCardPhoto: null, // Use null to indicate no file is selected
+  passportPhoto: null, // Use null to indicate no file is selected
+  isAuthenticated: false,
+};
+
+//for login
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setLoginDetails: (state, action) => {
@@ -37,9 +53,9 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload;
     },
     clearAuth: (state) => {
-      state.username = '';
-      state.password = '';
-      state.otp = '';
+      state.username = "";
+      state.password = "";
+      state.otp = "";
       state.isAuthenticated = false;
     },
   },
@@ -83,6 +99,42 @@ const registerAuthSlice = createSlice({
   },
 });
 
+//for check status
+const checkAuthSlice = createSlice({
+  name: "checkAuth",
+  initialState: initialState2,
+  reducers: {
+    setCheckDetails: (state, action) => {
+      state.username = action.payload.username;
+      state.email = action.payload.email;
+      state.contactNumber = action.payload.contactNumber;
+      state.employeeID = action.payload.employeeID;
+      state.assetName = action.payload.assetName;
+      state.department = action.payload.department;
+      state.roleInRTMS = action.payload.roleInRTMS;
+      state.idCardPhoto = action.payload.idCardPhoto;
+      state.passportPhoto = action.payload.passportPhoto;
+    },
+
+    setCheckAuthenticated: (state, action) => {
+      state.isAuthenticated = action.payload;
+    },
+    clearCheckAuth: (state) => {
+      state.username = "";
+      state.email = "";
+      state.contactNumber = "";
+      state.employeeID = "";
+      state.assetName = "";
+      state.department = "";
+      state.roleInRTMS = "";
+      state.idCardPhoto = null; // Reset file upload
+      state.passportPhoto = null; // Reset file upload
+      state.emailOtp = "";
+      state.isAuthenticated = false;
+    },
+  },
+});
+
 // Export actions
 export const { setLoginDetails, setOtp, setAuthenticated, clearAuth } =
   authSlice.actions;
@@ -92,7 +144,10 @@ export const {
   setRegisterAuthenticated,
   clearRegisterAuth,
 } = registerAuthSlice.actions;
+export const { setCheckDetails, setCheckAuthenticated, clearCheckAuth } =
+  checkAuthSlice.actions;
 
 // Export reducers with unique names
 export const authReducer = authSlice.reducer;
 export const registerAuthReducer = registerAuthSlice.reducer; // Renamed to avoid conflict
+export const checkAuthReducer = checkAuthSlice.reducer;

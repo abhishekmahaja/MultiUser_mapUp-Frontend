@@ -58,3 +58,15 @@ export const register = async (formData) => {
   }
 };
 
+// check status api
+export const checkStatus = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/registration-status`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
