@@ -47,7 +47,7 @@ function PopUp() {
             if (response.success) {
                 dispatch(setCheckDetails(employeeId)); // Store OTP in Redux
                 dispatch(setCheckAuthenticated(true)); // Set authenticated state to true
-                toast.success("You are now on the check status!");
+                toast.success("Your Registration Fetch Successfull!");
 
                 navigate("/CheckStatus");
 
