@@ -21,9 +21,9 @@ const registerInitialState = {
   isAuthenticated: false,
 };
 
-// For login
+//for login 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setLoginDetails: (state, action) => {
@@ -37,9 +37,9 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload;
     },
     clearAuth: (state) => {
-      state.username = "";
-      state.password = "";
-      state.otp = "";
+      state.username = '';
+      state.password = '';
+      state.otp = '';
       state.isAuthenticated = false;
     },
   },
@@ -59,7 +59,7 @@ const registerAuthSlice = createSlice({
       state.department = action.payload.department;
       state.roleInRTMS = action.payload.roleInRTMS;
       state.idCardPhoto = action.payload.idCardPhoto; // this is Image Upload by the user
-      state.passportPhoto = action.payload.passportPhoto; // this is Image Upload by the user
+      state.passportPhoto = action.payload.passportPhoto; // this is Image Upload by the users
     },
     setEmailOtp: (state, action) => {
       state.emailOtp = action.payload;
