@@ -57,11 +57,11 @@ function Signup() {
     // Integration: File Upload and OTP Sending
     try {
       // Assuming you have an API that handles file uploads and returns URLs
-      const imageUploadResponse = await sendOtpRegister(formData);
-      if (imageUploadResponse?.success) {
+      const response = await sendOtpRegister(formData);
+      if (response?.success) {
         // Extract URLs for the images
-        const passportPhotoURL = imageUploadResponse?.passportPhoto;
-        const idCardPhotoURL = imageUploadResponse?.idCardPhoto;
+        const passportPhotoURL = response?.passportPhoto;
+        const idCardPhotoURL = response?.idCardPhoto;
 
         // Dispatch the data to Redux store with the image URLs
         dispatch(
