@@ -14,8 +14,6 @@ import { toast } from "react-toastify";
 import { sendOtpRegister } from "../../apis/Service";
 
 function Signup() {
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [IdCard, setIdCard] = useState(null);
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
@@ -24,10 +22,9 @@ function Signup() {
     assetName: "",
     department: "",
     roleInRTMS: "",
-    idCardPhoto: "", //this is Image Uploaded by User
-    passportPhoto: "", //this is Image Uploaded by User
+    idCardPhoto: null, // Store file
+    passportPhoto: null, // Store file
   });
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -52,24 +49,24 @@ function Signup() {
 
     const formData = new FormData();
     Object.entries(formValues).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (value) {
+        formData.append(key, value);
+      }
     });
 
-    if (selectedPhoto) {
-      formData.append("passportPhoto", selectedPhoto); // append the actual file
-    }
-    if (IdCard) {
-      formData.append("idCardPhoto", IdCard); // append the actual file
-    }
-
-    // Integration
+    // Integration: File Upload and OTP Sending
     try {
-      const response = await sendOtpRegister(formData); // Ensure that `sendOtpRegister` can handle `FormData`
-      // console.log("OTP Response:", response);
-      if (response?.success) {
-        // Store data in Redux Store
+      // Assuming you have an API that handles file uploads and returns URLs
+      const imageUploadResponse = await sendOtpRegister(formData);
+      if (imageUploadResponse?.success) {
+        // Extract URLs for the images
+        const passportPhotoURL = imageUploadResponse?.passportPhoto;
+        const idCardPhotoURL = imageUploadResponse?.idCardPhoto;
+
+        // Dispatch the data to Redux store with the image URLs
         dispatch(
           setRegisterDetails({
+            // ...formValues, // Spread existing form data
             username: formValues.username,
             email: formValues.email,
             contactNumber: formValues.contactNumber,
@@ -77,19 +74,29 @@ function Signup() {
             assetName: formValues.assetName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
-            passportPhoto: selectedPhoto,
-            idCardPhoto: IdCard,
+            passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
+            idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
 
-        toast.success("OTP Sent Successfully!");
-        // console.log("OTP sent, about to navigate...",response?.message);
-        navigate("/otpsignup");
+        // Proceed with sending OTP
+        const otpResponse = await sendOtpRegister({
+          ...formValues,
+          passportPhoto: passportPhotoURL,
+          idCardPhoto: idCardPhotoURL,
+        });
+
+        if (otpResponse?.success) {
+          toast.success("OTP Sent Successfully!");
+          navigate("/otpsignup");
+        } else {
+          toast.error("Invalid Provided Details");
+        }
       } else {
-        toast.error("Invalid Provided Details");
+        toast.error("Image Upload Failed");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error during signup:", error);
       toast.error("Signup Failed");
     }
   };
@@ -235,13 +242,19 @@ function Signup() {
                 <Grid item textAlign="center" mt={0.5}>
                   <Typography fontSize={"medium"}>
                     Already have an account?{" "}
-                    <Link to="/" style={{ textDecoration: "none", cursor: "pointer" }}>
+                    <Link
+                      to="/"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
                       Login
                     </Link>
                   </Typography>
                   <Typography fontSize={"medium"}>
                     Have Registration?{" "}
-                    <Link to="/Popup" style={{ textDecoration: "none", cursor: "pointer" }}>
+                    <Link
+                      to="/Popup"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
                       Check Status
                     </Link>
                   </Typography>

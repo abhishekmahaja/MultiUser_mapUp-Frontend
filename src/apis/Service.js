@@ -27,7 +27,7 @@ export const sendOtpRegister = async (formData) => {
   try {
     const response = await axios.post(
       `${USER_API}/send-otp-register`,
-      formData, // This is the request body
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data", // Correct the Content-Type header
@@ -43,15 +43,11 @@ export const sendOtpRegister = async (formData) => {
 //register API
 export const register = async (formData) => {
   try {
-    const response = await axios.post(
-      `${USER_API}/register`,
-      formData, // This is the request body (FormData)
-      {
-        headers: {
-          "Content-Type": "multipart/form-data", // Correct the Content-Type header
-        },
-      }
-    );
+    const response = await axios.post(`${USER_API}/register`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Correct the Content-Type header
+      },
+    });
     return response.data;
   } catch (error) {
     return catchError(error);

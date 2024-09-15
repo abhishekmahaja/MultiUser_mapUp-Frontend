@@ -149,5 +149,5 @@ export const { setCheckDetails, setCheckAuthenticated, clearCheckAuth } =
 
 // Export reducers with unique names
 export const authReducer = authSlice.reducer;
-export const registerAuthReducer = registerAuthSlice.reducer; // Renamed to avoid conflict
+export const registerAuthReducer = registerAuthSlice.reducer; 
 export const checkAuthReducer = checkAuthSlice.reducer;
