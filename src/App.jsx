@@ -25,7 +25,6 @@ const Logout = lazy(() => import("./Pages/Dashboard/Logout/Logout.jsx"));
 const PopUp = lazy(() => import("./CheckStatus/PopUp.jsx"));
 const CheckStatus = lazy(() => import("./CheckStatus/CheckStatus.jsx"));
 const Otp = lazy(() => import("./Pages/Login/Otp.jsx"));
-const OtpForget = lazy(() => import("./Pages/Forgot/OtpForget.jsx"));
 const WellMaster = lazy(() => import("./Pages/WellMaster/WellMaster.jsx"));
 const SingleWell = lazy(() =>
   import("./Pages/Dashboard/SingleWell/SingleWell.jsx")
@@ -77,7 +76,6 @@ function App() {
     { path: "/otp", element: <Otp /> },
     { path: "/forgot", element: <Forgot /> },
     { path: "/otpsignup", element: <OtpSignUp /> },
-    { path: "/otpforget", element: <OtpForget /> },
   ]);
 
   return (

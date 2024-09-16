@@ -27,14 +27,12 @@ function PopUp() {
       const response = await checkStatus({ employeeID: employeeId });
       if (response?.success) {
         // Store the data in Redux
-        dispatch(setCheckDetails(response.data)); 
-        dispatch(setCheckAuthenticated(true)); 
+        dispatch(setCheckDetails(response.data));
+        dispatch(setCheckAuthenticated(true));
         toast.success("Your Registration Details Fetch Successfull!");
 
         // Navigate to the CheckStatus page
         navigate("/CheckStatus");
-
-        // dispatch(clearCheckAuth()); // Clear auth data after login success
       } else {
         toast.error("EmployeeId does not match.");
       }

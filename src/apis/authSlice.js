@@ -39,6 +39,8 @@ const checkInitialState = {
   isAuthenticated: false,
 };
 
+//forgot initial api
+
 //for login
 const authSlice = createSlice({
   name: "auth",
