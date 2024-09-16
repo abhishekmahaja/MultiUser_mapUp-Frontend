@@ -6,7 +6,7 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     registerAuth: registerAuthReducer, // Register it with a unique key
-    checkAuth: checkAuthReducer,// check status it with a unique key
+    checkStatusAuth: checkAuthReducer,// check status it with a unique key
   },
 });
 

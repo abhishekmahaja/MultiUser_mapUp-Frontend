@@ -24,16 +24,18 @@ const registerInitialState = {
 };
 
 // initial state for check status
-const initialState2 = {
-  username: "",
-  email: "",
-  contactNumber: "",
-  employeeID: "",
-  assetName: "",
-  department: "",
-  roleInRTMS: "",
-  idCardPhoto: null, // Use null to indicate no file is selected
-  passportPhoto: null, // Use null to indicate no file is selected
+const checkInitialState = {
+  checkAuth: {
+    username: "",
+    email: "",
+    contactNumber: "",
+    employeeID: "",
+    assetName: "",
+    department: "",
+    roleInRTMS: "",
+    idCardPhoto: "", //here ftech image URL
+    passportPhoto: "", //here ftech image URL
+  },
   isAuthenticated: false,
 };
 
@@ -101,36 +103,17 @@ const registerAuthSlice = createSlice({
 
 //for check status
 const checkAuthSlice = createSlice({
-  name: "checkAuth",
-  initialState: initialState2,
+  name: "checkStatusAuth",
+  initialState: checkInitialState,
   reducers: {
     setCheckDetails: (state, action) => {
-      state.username = action.payload.username;
-      state.email = action.payload.email;
-      state.contactNumber = action.payload.contactNumber;
-      state.employeeID = action.payload.employeeID;
-      state.assetName = action.payload.assetName;
-      state.department = action.payload.department;
-      state.roleInRTMS = action.payload.roleInRTMS;
-      state.idCardPhoto = action.payload.idCardPhoto;
-      state.passportPhoto = action.payload.passportPhoto;
+      state.checkAuth = action.payload; // Storing all fetched data in `checkAuth`
     },
-
     setCheckAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload;
     },
     clearCheckAuth: (state) => {
-      state.username = "";
-      state.email = "";
-      state.contactNumber = "";
-      state.employeeID = "";
-      state.assetName = "";
-      state.department = "";
-      state.roleInRTMS = "";
-      state.idCardPhoto = null; // Reset file upload
-      state.passportPhoto = null; // Reset file upload
-      state.emailOtp = "";
-      state.isAuthenticated = false;
+      state.checkAuth = {}; // Clearing auth details on logout/clear
     },
   },
 });
@@ -149,5 +132,5 @@ export const { setCheckDetails, setCheckAuthenticated, clearCheckAuth } =
 
 // Export reducers with unique names
 export const authReducer = authSlice.reducer;
-export const registerAuthReducer = registerAuthSlice.reducer; 
+export const registerAuthReducer = registerAuthSlice.reducer;
 export const checkAuthReducer = checkAuthSlice.reducer;
