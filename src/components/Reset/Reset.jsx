@@ -1,10 +1,13 @@
 import { Button, Grid, Paper, TextField, Typography, Box } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import account1 from "/assets/account1.png";
 import { Link } from "react-router-dom";
 import PageContainer from "../HOC/PageContainer";
 
 function Reset() {
+  const [forgotOtp, setForgotOtp] = useState("");
+
+  
   return (
     <PageContainer
       showheader

@@ -66,3 +66,13 @@ export const checkStatus = async (formData) => {
     return catchError(error);
   }
 };
+
+//forgot api
+export const forgotPassword = async (formData) => {
+  try {
+    const response = await axios.post(`${USER_API}/forgot-password`, formData);
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
