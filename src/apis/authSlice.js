@@ -6,6 +6,8 @@ const initialState = {
   password: "",
   otp: "",
   isAuthenticated: false,
+  authToken: null,  // Store authToken in Redux
+  role: "employee",  // Store role in Redux (default to employee)
 };
 
 // initial state for Signup
@@ -40,7 +42,7 @@ const checkInitialState = {
 };
 
 //initial state for forgot password
-const forgotInitialState  = {
+const forgotInitialState = {
   email: "",
   newPassword: "",
   confirmPassword: "",
@@ -63,11 +65,19 @@ const authSlice = createSlice({
     setAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload;
     },
+    setAuthToken: (state, action) => {
+      state.token = action.payload; // Store the token in Redux
+    },
+    setRole: (state, action) => {
+      state.role = action.payload; // Store the role in Redux
+    },
     clearAuth: (state) => {
       state.username = "";
       state.password = "";
       state.otp = "";
       state.isAuthenticated = false;
+      state.authToken = null; // Clear the token
+      state.role = "employee"; // Clear the role
     },
   },
 });
@@ -152,8 +162,14 @@ const forgotAuthSlice = createSlice({
 });
 
 // Export actions
-export const { setLoginDetails, setOtp, setAuthenticated, clearAuth } =
-  authSlice.actions;
+export const {
+  setLoginDetails,
+  setOtp,
+  setAuthenticated,
+  setAuthToken,
+  setRole,
+  clearAuth,
+} = authSlice.actions;
 export const {
   setRegisterDetails,
   setEmailOtp,
@@ -163,16 +179,15 @@ export const {
 export const { setCheckDetails, setCheckAuthenticated, clearCheckAuth } =
   checkAuthSlice.actions;
 
-  export const {
-    setForgotDetails,
-    setForgotEmailOtp,
-    setForgotAuthenticated,
-    clearForgotAuth,
-  } = forgotAuthSlice.actions;
+export const {
+  setForgotDetails,
+  setForgotEmailOtp,
+  setForgotAuthenticated,
+  clearForgotAuth,
+} = forgotAuthSlice.actions;
 
 // Export reducers with unique names
 export const authReducer = authSlice.reducer;
 export const registerAuthReducer = registerAuthSlice.reducer;
 export const checkAuthReducer = checkAuthSlice.reducer;
 export const forgotAuthReducer = forgotAuthSlice.reducer;
-

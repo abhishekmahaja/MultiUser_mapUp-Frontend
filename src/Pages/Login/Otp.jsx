@@ -6,7 +6,13 @@ import PageContainer from "../../components/HOC/PageContainer";
 import { useNavigate } from "react-router-dom";
 import OTPInput from "react-otp-input";
 import { login, sendOtpLogin } from "../../apis/Service"; // Import login and sendOtpLogin APIs
-import { setOtp, setAuthenticated, clearAuth } from "../../apis/authSlice";
+import {
+  setOtp,
+  setAuthenticated,
+  clearAuth,
+  setAuthToken,
+  setRole,
+} from "../../apis/authSlice";
 import { toast } from "react-toastify";
 
 export default function OtpLogin() {
@@ -26,8 +32,11 @@ export default function OtpLogin() {
       if (response.success) {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true
+        dispatch(setAuthToken(response.token)); // Store auth token
+        dispatch(setRole(response.roleInRTMS)); // Store user role
+
         toast.success("Login successful!");
-        localStorage.setItem("authToken", data.accessToken);
+
         navigate("/dashboard");
 
         dispatch(clearAuth()); // Clear auth data after login success
@@ -225,4 +234,3 @@ export default function OtpLogin() {
 //     </PageContainer>
 //   );
 // }
-
