@@ -368,7 +368,7 @@ export default function BasicCard() {
         <Fade in={open}>
           <Box sx={style}>
             <Grid container bgcolor="white" spacing={4}>
-              <Grid item xs={12} sm={7} md={7} lg={8}>
+              <Grid item xs={12} sm={7} md={7} lg={10}>
                 <Grid item>
                   <Typography fontSize="large">REGISTRATION ID</Typography>
                   <Typography fontSize="large">User Name</Typography>
@@ -404,6 +404,15 @@ export default function BasicCard() {
                       </Paper>
                     </Grid>
                   </Grid>
+                </Grid>
+                <Grid container mt={2} flexDirection={"column"}>
+                  <Box>
+                    <Typography fontSize="18px">Status</Typography>{" "}
+                  </Box>
+                  <Box display="flex" justifyContent={"space-evenly"} mt={2}>
+                    <Button variant="contained">Approve</Button>
+                    <Button variant="contained">Reject</Button>
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>
