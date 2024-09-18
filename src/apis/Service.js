@@ -86,3 +86,52 @@ export const resetPassword = async (formData) => {
     return catchError(error);
   }
 };
+
+//GET all Users Not approved By Manager
+export const getNotApprovedManagerUser = async (formData) => {
+  try {
+    const response = await axios.get(
+      `${USER_API}/get-not-approved-manager-user`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//GET All Users Not Approved By Manager and Ownetr
+export const getNotApprovalOwnerUser = async (formData) => {
+  try {
+    const response = await axios.get(
+      `${USER_API}/get-not-approval-owner-user`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//User Approved by Manger
+export const ApproveByManager = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/approve-by-manager`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//User Approved By Owner
+export const approveByOwner = async (formData) => {
+  try {
+    const response = await axios.post(`${USER_API}/approve-by-owner`, formData);
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
