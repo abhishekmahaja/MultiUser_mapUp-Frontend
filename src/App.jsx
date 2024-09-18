@@ -43,6 +43,7 @@ const Network = lazy(() => import("./Pages/Dashboard/Network/Network.jsx"));
 const AddDevices = lazy(() =>
   import("./Pages/Dashboard/Network/AddNetwork/AddNetwork.jsx")
 );
+const Approval = lazy(() => import("./Pages/Dashboard/MessageBox/Approval.jsx") )
 
 function App() {
   const route = useRoutes([
@@ -68,6 +69,7 @@ function App() {
         { path: "AddDevice", element: <AddDevice /> },
         { path: "Network", element: <Network /> },
         { path: "AddDevices", element: <AddDevices /> },
+        { path: "message", element: <Approval /> },
       ],
     },
     { path: "/CheckStatus", element: <CheckStatus /> },
