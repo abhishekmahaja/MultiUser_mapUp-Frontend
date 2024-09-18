@@ -22,7 +22,7 @@ export default function OtpLogin() {
     const formData = { username, password, otp: otpValue };
 
     try {
-      const response = await login(formData); // Verify OTP
+      const response = await login(formData);
       if (response.success) {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true

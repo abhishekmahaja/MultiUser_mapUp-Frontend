@@ -67,10 +67,20 @@ export const checkStatus = async (formData) => {
   }
 };
 
-//forgot api
+//forgot password api
 export const forgotPassword = async (formData) => {
   try {
     const response = await axios.post(`${USER_API}/forgot-password`, formData);
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//reset password Api
+export const resetPassword = async (formData) => {
+  try {
+    const response = await axios.post(`${USER_API}/reset-password`, formData);
     return response.data;
   } catch (error) {
     return catchError(error);

@@ -40,7 +40,7 @@ const checkInitialState = {
 };
 
 //initial state for forgot password
-const forrgotInitialState = {
+const forgotInitialState  = {
   email: "",
   newPassword: "",
   confirmPassword: "",
@@ -130,22 +130,22 @@ const checkAuthSlice = createSlice({
 //for forgot api
 const forgotAuthSlice = createSlice({
   name: "forgotAuth",
-  initialState: forrgotInitialState,
+  initialState: forgotInitialState,
   reducers: {
     setForgotDetails: (state, action) => {
       state.email = action.payload.email;
     },
-    setForgotEmailOtp: (state,action) => {
-      state.forgotEmailOtp = action.payload;
+    setForgotEmailOtp: (state, action) => {
+      state.otp = action.payload;
     },
     setForgotAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload;
     },
     clearForgotAuth: (state) => {
-      state.email = "",
-      state.newPassword = "",
-      state.confirmPassword = "",
-      state.otp = "",
+      state.email = "";
+      state.newPassword = "";
+      state.confirmPassword = "";
+      state.otp = "";
       state.isAuthenticated = false;
     },
   },
@@ -163,10 +163,17 @@ export const {
 export const { setCheckDetails, setCheckAuthenticated, clearCheckAuth } =
   checkAuthSlice.actions;
 
-export const { setForgotDetails, setForgotAuthenticated, clearForgotAuth } = forgotAuthSlice.actions;
+  export const {
+    setForgotDetails,
+    setForgotEmailOtp,
+    setForgotAuthenticated,
+    clearForgotAuth,
+  } = forgotAuthSlice.actions;
 
 // Export reducers with unique names
 export const authReducer = authSlice.reducer;
 export const registerAuthReducer = registerAuthSlice.reducer;
 export const checkAuthReducer = checkAuthSlice.reducer;
 export const forgotAuthReducer = forgotAuthSlice.reducer;
+// export default forgotAuthSlice.reducer;
+

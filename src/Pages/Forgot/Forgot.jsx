@@ -1,4 +1,4 @@
-import { Paper, Typography, TextField, Button, Box, Grid } from "@mui/material";
+import { Paper, Typography, TextField, Button, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PageContainer from "../../components/HOC/PageContainer";
@@ -23,20 +23,20 @@ export default function Forgot() {
     try {
       const response = await forgotPassword(formValues);
       if (response.success) {
-        //stire data in redux store
+        //store data in redux store
         dispatch(
           setForgotDetails({
             email: formValues.email,
           })
-        ); 
+        );
         toast.success("OTP Sent Successfully!");
         navigate("/Reset");
       } else {
-        toast.error("Invalid Email");
+        toast.error(response.message || "Invalid Email");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Forgot Password Falied.");
+      toast.error("Forgot Password Failed.");
     }
   };
 
@@ -49,7 +49,6 @@ export default function Forgot() {
       className="bgImg"
       justifyContent="center"
     >
-      {/* <Grid container > */}
       <Paper sx={{ borderRadius: "20px", mx: "5%", width: "45rem" }}>
         <Grid item p={3}>
           <form onSubmit={handleSubmit}>
@@ -60,13 +59,12 @@ export default function Forgot() {
             </Grid>
             <Grid item mt={2}>
               <Typography fontSize="large" textAlign="center">
-                Enter Your Registered Email.{" "}
+                Enter Your Registered Email.
               </Typography>
             </Grid>
             <Grid item mt={3}>
               <TextField
                 name="email"
-                justifyContent="center"
                 label="Enter Email Address"
                 variant="outlined"
                 size="small"
@@ -76,16 +74,14 @@ export default function Forgot() {
               />
             </Grid>
             <Grid item mt={3}>
-              <Link to="/Reset">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  type="submit"
-                >
-                  Send Verification Code
-                </Button>
-              </Link>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                type="submit"
+              >
+                Send Verification Code
+              </Button>
             </Grid>
             <Grid item mt={2} textAlign="center">
               <Link to="/" style={{ textDecoration: "none" }}>
@@ -95,7 +91,6 @@ export default function Forgot() {
           </form>
         </Grid>
       </Paper>
-      {/* </Grid> */}
     </PageContainer>
   );
-}
+};
