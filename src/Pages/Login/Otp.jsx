@@ -27,7 +27,7 @@ export default function OtpLogin() {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true
         toast.success("Login successful!");
-
+        localStorage.setItem("authToken", data.accessToken);
         navigate("/dashboard");
 
         dispatch(clearAuth()); // Clear auth data after login success

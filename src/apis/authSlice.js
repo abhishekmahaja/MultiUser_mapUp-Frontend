@@ -175,5 +175,4 @@ export const authReducer = authSlice.reducer;
 export const registerAuthReducer = registerAuthSlice.reducer;
 export const checkAuthReducer = checkAuthSlice.reducer;
 export const forgotAuthReducer = forgotAuthSlice.reducer;
-// export default forgotAuthSlice.reducer;
 
