@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Grid, Typography, TextField, Box, Button } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  TextField,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import EmailIcon from "@mui/icons-material/Email";
@@ -14,6 +24,8 @@ import { toast } from "react-toastify";
 import { sendOtpRegister } from "../../apis/Service";
 
 function Signup() {
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null); // To store the passport photo name
+  const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
@@ -22,9 +34,10 @@ function Signup() {
     assetName: "",
     department: "",
     roleInRTMS: "",
-    idCardPhoto: null, // Store file
-    passportPhoto: null, // Store file
+    idCardPhoto: "", //this is Image Uploaded by User
+    passportPhoto: "", //this is Image Uploaded by User
   });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,8 +47,15 @@ function Signup() {
     if (type === "file") {
       setFormValues((prev) => ({
         ...prev,
-        [name]: files[0], // Store the actual file object, not just the name
+        [name]: files[0], // Store the actual file object
       }));
+
+      // Update file name for preview
+      if (name === "passportPhoto") {
+        setSelectedPhotoName(files[0].name);
+      } else if (name === "idCardPhoto") {
+        setIdCardName(files[0].name);
+      }
     } else {
       setFormValues((prev) => ({
         ...prev,
@@ -49,24 +69,19 @@ function Signup() {
 
     const formData = new FormData();
     Object.entries(formValues).forEach(([key, value]) => {
-      if (value) {
-        formData.append(key, value);
-      }
+      formData.append(key, value);
     });
 
-    // Integration: File Upload and OTP Sending
+    // Integration
     try {
-      // Assuming you have an API that handles file uploads and returns URLs
-      const response = await sendOtpRegister(formData);
+      const response = await sendOtpRegister(formData); // Ensure that sendOtpRegister can handle FormData
+      // console.log("OTP Response:", response);
       if (response?.success) {
-        // Extract URLs for the images
+        // Store data in Redux Store
         const passportPhotoURL = response?.passportPhoto;
         const idCardPhotoURL = response?.idCardPhoto;
-
-        // Dispatch the data to Redux store with the image URLs
         dispatch(
           setRegisterDetails({
-            // ...formValues, // Spread existing form data
             username: formValues.username,
             email: formValues.email,
             contactNumber: formValues.contactNumber,
@@ -75,28 +90,18 @@ function Signup() {
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
             passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
-            idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
+            idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
 
-        // Proceed with sending OTP
-        const otpResponse = await sendOtpRegister({
-          ...formValues,
-          passportPhoto: passportPhotoURL,
-          idCardPhoto: idCardPhotoURL,
-        });
-
-        if (otpResponse?.success) {
-          toast.success("OTP Sent Successfully!");
-          navigate("/otpsignup");
-        } else {
-          toast.error("Invalid Provided Details");
-        }
+        toast.success("OTP Sent Successfully!");
+        // console.log("OTP sent, about to navigate...",response?.message);
+        navigate("/otpsignup");
       } else {
-        toast.error("Image Upload Failed");
+        toast.error("Invalid Provided Details");
       }
     } catch (error) {
-      console.error("Error during signup:", error);
+      console.error(error);
       toast.error("Signup Failed");
     }
   };
@@ -152,7 +157,22 @@ function Signup() {
                         name="contactNumber"
                         variant="standard"
                         value={formValues.contactNumber}
-                        onChange={handleUsernameChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Ensure the value starts with '+91'
+                          if (value.startsWith("+91")) {
+                            setFormValues((prev) => ({
+                              ...prev,
+                              contactNumber: value,
+                            }));
+                          } else {
+                            setFormValues((prev) => ({
+                              ...prev,
+                              contactNumber: `+91${value}`,
+                            }));
+                          }
+                        }}
+                        placeholder="+91 (Mobile Number)"
                       />
                     </Box>
 
@@ -194,21 +214,28 @@ function Signup() {
 
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
-                      <TextField
-                        fullWidth
-                        label="Role in RTMS"
-                        name="roleInRTMS"
-                        variant="standard"
-                        value={formValues.roleInRTMS}
-                        onChange={handleUsernameChange}
-                      />
+                      <FormControl fullWidth variant="standard">
+                        <InputLabel>Role in RTMS</InputLabel>
+                        <Select
+                          name="roleInRTMS"
+                          value={formValues.roleInRTMS}
+                          onChange={handleUsernameChange}
+                          label="Role in RTMS"
+                        >
+                          <MenuItem value="manager">Manager</MenuItem>
+                          <MenuItem value="employee">Employee</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Box>
 
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", mb: 2 }}
+                    >
+                      <Box
+                        sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}
+                      >
                         <CameraAltIcon sx={{ mr: 1 }} fontSize="large" />
                         <Button variant="outlined" component="label" fullWidth>
-                          Upload Photo
                           <input
                             type="file"
                             accept="image/*"
@@ -216,13 +243,21 @@ function Signup() {
                             onChange={handleUsernameChange}
                             hidden
                           />
+                          {!selectedPhotoName ? (
+                            <Typography>Upload photo</Typography>
+                          ) : (
+                            <Typography variant="body2" color="textSecondary">
+                              {selectedPhotoName}
+                            </Typography>
+                          )}
                         </Button>
                       </Box>
 
-                      <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}
+                      >
                         <CameraAltIcon sx={{ mr: 1 }} fontSize="large" />
                         <Button variant="outlined" component="label" fullWidth>
-                          Upload ID Card
                           <input
                             type="file"
                             accept="image/*"
@@ -230,6 +265,13 @@ function Signup() {
                             onChange={handleUsernameChange}
                             hidden
                           />
+                          {!idCardName ? (
+                            <Typography>Upload ID Card</Typography>
+                          ) : (
+                            <Typography variant="body2" color="textSecondary">
+                              {idCardName}
+                            </Typography>
+                          )}
                         </Button>
                       </Box>
                     </Box>
@@ -269,3 +311,4 @@ function Signup() {
 }
 
 export default Signup;
+

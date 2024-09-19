@@ -30,7 +30,7 @@ export default function OtpLogin() {
     try {
       const response = await login(formData);
 
-      console.log(response)
+      console.log(response);
       if (response.success) {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true
@@ -134,7 +134,7 @@ export default function OtpLogin() {
       </Grid>
     </PageContainer>
   );
-};
+}
 
 // // //local storage storing data integration
 // import React, { useState } from "react";

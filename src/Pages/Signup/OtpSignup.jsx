@@ -28,18 +28,18 @@ export default function Otpsign() {
     passportPhoto,
   } = useSelector((state) => state.registerAuth);
 
-  // console.log(
-  //   "form value",
-  //   username,
-  //   email,
-  //   contactNumber,
-  //   employeeID,
-  //   assetName,
-  //   department,
-  //   roleInRTMS,
-  //   idCardPhoto,
-  //   passportPhoto
-  // );
+  console.log(
+    "form value",
+    username,
+    email,
+    contactNumber,
+    employeeID,
+    assetName,
+    department,
+    roleInRTMS,
+    idCardPhoto,
+    passportPhoto
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
