@@ -29,17 +29,19 @@ export default function OtpLogin() {
 
     try {
       const response = await login(formData);
+
+      console.log(response)
       if (response.success) {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true
         dispatch(setAuthToken(response.token)); // Store auth token
-        dispatch(setRole(response.roleInRTMS)); // Store user role
+        dispatch(setRole(response.role)); // Store user role
 
         toast.success("Login successful!");
 
         navigate("/dashboard");
 
-        dispatch(clearAuth()); // Clear auth data after login success
+        // dispatch(clearAuth()); // Clear auth data after login success
       } else {
         toast.error("OTP does not match.");
       }
@@ -132,7 +134,7 @@ export default function OtpLogin() {
       </Grid>
     </PageContainer>
   );
-}
+};
 
 // // //local storage storing data integration
 // import React, { useState } from "react";

@@ -1,25 +1,21 @@
-import React, { useState } from "react";
-import { Grid, IconButton, Typography } from "@mui/material";
-import { Card } from "@mui/joy";
+import React, { useState } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Typography } from '@mui/material'
+import { Card } from '@mui/joy'
 // -------------import for table--------------------------------//
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
-import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
-import { Box } from "@mui/system";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-
-import Backdrop from "@mui/material/Backdrop";
-import Modal from "@mui/material/Modal";
-import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import { Box } from '@mui/system';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Link } from 'react-router-dom';
 
 // ---------FUNCTIONS OF TABLE--------------------------------
 
@@ -27,10 +23,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: "10px", // Increase padding
-    height: "20px", // Set a specific height
-    fontSize: "16px", // Optionally adjust font size for header
-    lineHeight: "1.5", // Adjust line height if needed
+    padding: '10px', // Increase padding
+    height: '20px',  // Set a specific height
+    fontSize: '16px', // Optionally adjust font size for header
+    lineHeight: '1.5', // Adjust line height if needed
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -47,14 +43,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 const CardWrapper = styled(Card)(() => ({
-  boxShadow:
-    "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
-  ".card-Content-text": {
-    padding: "0 !important",
-  },
-}));
+  boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+  '.card-Content-text': {
+    padding: '0 !important',
+  }
+}))
+
 
 // -----------------------------Table for Moblie-------------------------------------
+
 
 const StyledGridItem = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -65,39 +62,39 @@ const StyledGridItem = styled(Grid)(({ theme }) => ({
 const StyledContent = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
-  backgroundColor: "white",
+  backgroundColor: 'white',
 }));
 
 let data = {
   "Well No": "1",
-  Location: "New York",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
+  "Location": "New York",
+  "Installation": "01/01/2021",
+  "Latitude": "40.7128 N",
+  "Longitude": "74.0060 W"
 };
 
 let Tata = {
   "Well No": "2",
-  Location: "Delhi",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
+  "Location": "Delhi",
+  "Installation": "01/01/2021",
+  "Latitude": "40.7128 N",
+  "Longitude": "74.0060 W"
 };
 
 let Mata = {
   "Well No": "3",
-  Location: "UP",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
+  "Location": "UP",
+  "Installation": "01/01/2021",
+  "Latitude": "40.7128 N",
+  "Longitude": "74.0060 W"
 };
 
 let Sata = {
   "Well No": "4",
-  Location: "MP",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
+  "Location": "MP",
+  "Installation": "01/01/2021",
+  "Latitude": "40.7128 N",
+  "Longitude": "74.0060 W"
 };
 
 function createData(name, calories, fat, carbs, protein) {
@@ -105,51 +102,45 @@ function createData(name, calories, fat, carbs, protein) {
 }
 
 const rows = [
-  createData("1"),
-  createData("2"),
-  createData("3"),
-  createData("4"),
-  createData("5"),
-  createData("6"),
-  createData("7"),
-  createData("8"),
+  createData('1'),
+  createData('2'),
+  createData('3'),
+  createData('4'),
+  createData('5'),
+  createData('6'),
+  createData('7'),
+  createData('8'),
 ];
 
+
 export default function BasicCard() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
+  const [open, setOpen] = useState(false); // State to control modal visibility
+
+  
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
   return (
-    <Grid container>
+    <Grid container >
       <IconButton>
         <ForwardToInboxIcon sx={{ fontSize: 30, color: "green " }} />
       </IconButton>
-      <Typography variant="h4" mt={1}>
-        Message Box
-      </Typography>
+      <Typography variant="h4" mt={1} >Message Box</Typography>
       {/* -------------------------Table for Moblie----------------------------- */}
-      <Grid
-        container
-        sx={{ display: { sm: "block", xs: "block", md: "none", lg: "none" } }}
-      >
+      <Grid container sx={{ display: { sm: "block", xs: "block", md: "none", lg: "none" } }}>
+
         <Tabs>
-          <TabList>
-            <Tab style={{ whiteSpace: "break-spaces" }}>
-              <Typography fontSize={"large"}>User Approval</Typography>
+          <TabList >
+            <Tab style={{ whiteSpace: 'break-spaces' }}>
+              <Typography fontSize={'large'}>User Approval</Typography>
             </Tab>
             <Tab>
-              <Typography fontSize={"large"}>Add Well Approval</Typography>
+              <Typography fontSize={'large'}>Add Well Approval</Typography>
             </Tab>
           </TabList>
           <TabPanel>
@@ -159,7 +150,7 @@ export default function BasicCard() {
                   <Grid container key={index}>
                     {/* Header Section */}
                     <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                         {header}
                       </Typography>
                     </StyledGridItem>
@@ -176,7 +167,7 @@ export default function BasicCard() {
                   <Grid container key={index}>
                     {/* Header Section */}
                     <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                         {header}
                       </Typography>
                     </StyledGridItem>
@@ -192,12 +183,13 @@ export default function BasicCard() {
           {/* ----------------------Dreak---------------------------------- */}
           <TabPanel>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 600 }}>
+
               <Grid container mt={2} direction="column">
                 {Object.keys(Mata).map((header, index) => (
                   <Grid container key={index}>
                     {/* Header Section */}
                     <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                         {header}
                       </Typography>
                     </StyledGridItem>
@@ -214,7 +206,7 @@ export default function BasicCard() {
                   <Grid container key={index}>
                     {/* Header Section */}
                     <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                         {header}
                       </Typography>
                     </StyledGridItem>
@@ -228,41 +220,38 @@ export default function BasicCard() {
             </Paper>
           </TabPanel>
         </Tabs>
+
       </Grid>
 
       {/* -------------------------Table for Desktop--------------------------- */}
 
+
       <Grid container>
-        <Grid
-          item
-          md={12}
+        <Grid item md={12}
           lg={12}
           sm={5}
           xs={4}
-          sx={{ display: { sm: "none", xs: "none", md: "block", lg: "block" } }}
-        >
+          sx={{ display: { sm: "none", xs: "none", md: "block", lg: "block" } }}>
           <Tabs>
-            <TabList>
-              <Tab style={{ whiteSpace: "break-spaces" }}>
-                <Typography fontSize={"large"}>User Approval</Typography>
+            <TabList >
+              <Tab style={{ whiteSpace: 'break-spaces' }}>
+                <Typography fontSize={'large'}>User Approval</Typography>
               </Tab>
               <Tab>
-                <Typography fontSize={"large"}>Add Well Approval</Typography>
+                <Typography fontSize={'large'}>Add Well Approval</Typography>
               </Tab>
             </TabList>
-            <TabPanel>
-              <TableContainer sx={{ border: "1px solid black" }}>
+            <TabPanel >
+              <TableContainer sx={{ border: "1px solid black" }} >
                 <Table aria-label="customized table">
-                  <TableHead>
-                    <TableRow>
+                  <TableHead >
+                    <TableRow  >
                       <StyledTableCell>Number</StyledTableCell>
                       <StyledTableCell align="left">Username</StyledTableCell>
                       <StyledTableCell align="left">Name</StyledTableCell>
                       <StyledTableCell align="left">Email</StyledTableCell>
                       <StyledTableCell align="left">Phone No.</StyledTableCell>
-                      <StyledTableCell align="left">
-                        Approval Status
-                      </StyledTableCell>
+                      <StyledTableCell align="left">Approval Status</StyledTableCell>
                       <StyledTableCell align="center">Action</StyledTableCell>
                     </TableRow>
                   </TableHead>
@@ -272,78 +261,45 @@ export default function BasicCard() {
                         <StyledTableCell component="th" scope="row">
                           {row.name}
                         </StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell sx={{ width: "25%" }}>
-                          <Box display={"flex"} justifyContent={"space-evenly"}>
-                            <Button onClick={handleOpen}>
-                              <IconButton
-                                sx={{
-                                  color: "black",
-                                  "&:hover": { color: "darkred" },
-                                  marginRight: "5px",
-                                }}
-                              >
-                                <RemoveRedEyeIcon fontSize="large" />
-                              </IconButton>
-                            </Button>
-                            {/* <IconButton sx={{ color: 'darkblue', '&:hover': { color: 'black' } }}>
-                                                <EditIcon fontSize='large' />
-                                            </IconButton> */}
-                          </Box>{" "}
-                        </StyledTableCell>
+                        <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                        <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                        <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                        <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                        <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                        <StyledTableCell sx={{ width: '25%' }}>
+                          <Box display={'flex'} justifyContent={'space-evenly'}>
+                            <IconButton onClick={handleClickOpen} sx={{ color: 'black', '&:hover': { color: 'darkred' }, marginRight: '5px' }}>
+                              <RemoveRedEyeIcon fontSize='large' />
+                            </IconButton>
+                          </Box> </StyledTableCell>
+
                       </StyledTableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
             </TabPanel>
-
             <TabPanel>
               <TableContainer sx={{ border: "1px solid black" }}>
                 <Table aria-label="customized table">
-                  <TableHead>
+                  <TableHead >
                     <TableRow>
                       <StyledTableCell>Complaint No.</StyledTableCell>
                       <StyledTableCell align="left">Data/Time</StyledTableCell>
-                      <StyledTableCell align="left">
-                        Raiser Name
-                      </StyledTableCell>
+                      <StyledTableCell align="left">Raiser Name</StyledTableCell>
                       <StyledTableCell align="left">Taker Name</StyledTableCell>
                       <StyledTableCell align="left">Status</StyledTableCell>
-                      <StyledTableCell align="center">
-                        Description
-                      </StyledTableCell>
+                      <StyledTableCell align="center">Description</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     <StyledTableRow>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        sx={{ width: "10%" }}
-                      >
-                        {" "}
-                        Notification No.
-                      </StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "25%" }}></StyledTableCell>
+                      <StyledTableCell component="th" scope="row" sx={{ width: '10%' }}> Notification No.</StyledTableCell>
+                      <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                      <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                      <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                      <StyledTableCell sx={{ width: '10%' }}></StyledTableCell>
+                      <StyledTableCell sx={{ width: '25%' }}></StyledTableCell>
                     </StyledTableRow>
                   </TableBody>
                 </Table>
@@ -352,73 +308,78 @@ export default function BasicCard() {
           </Tabs>
         </Grid>
       </Grid>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      >
-        <Fade in={open}>
-          <Box sx={style}>
-            <Grid container bgcolor="white" spacing={4}>
-              <Grid item xs={12} sm={7} md={7} lg={10}>
-                <Grid item>
-                  <Typography fontSize="large">REGISTRATION ID</Typography>
-                  <Typography fontSize="large">User Name</Typography>
-                  <Typography fontSize="large">Email Address</Typography>
-                  <Typography fontSize="large">Contact Number</Typography>
-                  <Typography fontSize="large">Employee ID</Typography>
-                  <Typography fontSize="large">Asset Name</Typography>
-                  <Typography fontSize="large">Department</Typography>
-                  <Typography fontSize="large">Role in RTMS</Typography>
-                </Grid>
-                <Grid item>
-                  <Grid container spacing={2}>
-                    <Grid item>
-                      <Paper elevation={3}>
-                        <img
-                          src="https://t4.ftcdn.net/jpg/01/42/20/17/240_F_142201762_qMCuIAolgpz4NbF5T5m66KQJzYzrEbUv.jpg"
-                          alt="User_ID Card"
-                          style={{ objectFit: "contain", width: "100%" }}
-                        />
-                      </Paper>
-                    </Grid>
-                    <Grid item>
-                      <Paper elevation={3}>
-                        <img
-                          src="https://t3.ftcdn.net/jpg/02/53/98/06/240_F_253980681_a8hAmy7gbe28SjtRPoUo0EShW87oXVTy.jpg"
-                          alt="User_ID Card"
-                          style={{
-                            objectFit: "contain",
-                            width: "100%",
-                            height: "auto",
-                          }}
-                        />
-                      </Paper>
-                    </Grid>
+      {/* Modal Dialog */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle variant='h4' textAlign={"center"}>Approval User</DialogTitle>
+        <DialogContent>
+          <Grid container gap={3}>
+            <Grid container spacing={4}>
+              <Grid item xs={12} sm={4} md={4} lg={6} gap={3}>
+                <Typography fontSize="large">REGISTRATION ID</Typography>
+                <Typography fontSize="large">employeeID</Typography>
+                <Typography fontSize="large">username</Typography>
+                <Typography fontSize="large">email</Typography>
+                <Typography fontSize="large">contactNumber</Typography>
+                <Typography fontSize="large">employeeID</Typography>
+                <Typography fontSize="large">assetName</Typography>
+                <Typography fontSize="large">department</Typography>
+                <Typography fontSize="large">roleInRTMS</Typography>
+              </Grid>
+              <Grid item xs={12} sm={8} md={8} lg={6}>
+                <Grid container spacing={2} direction="column">
+                  <Grid item xs={12}>
+                    <Paper elevation={3}>
+                      <img
+                        src="https://t4.ftcdn.net/jpg/01/42/20/17/240_F_142201762_qMCuIAolgpz4NbF5T5m66KQJzYzrEbUv.jpg"
+                        alt="User_ID Card"
+                        style={{ objectFit: "contain", width: "100%" }}
+                      />
+                    </Paper>
                   </Grid>
-                </Grid>
-                <Grid container mt={2} flexDirection={"column"}>
-                  <Box>
-                    <Typography fontSize="18px">Status</Typography>{" "}
-                  </Box>
-                  <Box display="flex" justifyContent={"space-evenly"} mt={2}>
-                    <Button variant="contained">Approve</Button>
-                    <Button variant="contained">Reject</Button>
-                  </Box>
+                  <Grid item xs={12}>
+                    <Paper elevation={3}>
+                      <img
+                        src="https://t3.ftcdn.net/jpg/02/53/98/06/240_F_253980681_a8hAmy7gbe28SjtRPoUo0EShW87oXVTy.jpg"
+                        alt="User_ID Card"
+                        style={{
+                          objectFit: "contain",
+                          width: "100%",
+                          height: "auto",
+                        }}
+                      />
+                    </Paper>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Box>
-        </Fade>
-      </Modal>
+            <Grid container gap={2}>
+              <Grid item xs={12} sm={6} md={6} lg={6}>
+                <Typography variant="h5" textAlign="left">
+                  Status:
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={12} textAlign={"end"}>
+                <Box sx={{display:"flex", justifyContent:"space-evenly"}}>
+                {/* <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+                  <Button variant="contained" color="primary" size="large">
+                    Close
+                  </Button>
+                </Link> */}
+                <Button variant='contained' color='primary' size='large'>
+                    Approve
+                </Button>
+                <Button variant='contained' color='primary' size='large'>
+                    Reject
+                </Button>
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }

@@ -66,7 +66,7 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload;
     },
     setAuthToken: (state, action) => {
-      state.token = action.payload; // Store the token in Redux
+      state.authToken  = action.payload; // Store the token in Redux
     },
     setRole: (state, action) => {
       state.role = action.payload; // Store the role in Redux
