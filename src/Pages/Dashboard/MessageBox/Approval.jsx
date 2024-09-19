@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -8,6 +8,7 @@ import {
   Grid,
   IconButton,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { Card } from "@mui/joy";
 // -------------import for table--------------------------------//
@@ -24,10 +25,12 @@ import "react-tabs/style/react-tabs.css";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import { Box } from "@mui/system";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import {
+  getNotApprovalOwnerUser,
+  getNotApprovedManagerUser,
+} from "../../../apis/Service";
 // ---------FUNCTIONS OF TABLE--------------------------------
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -41,7 +44,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
   },
 }));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
@@ -58,87 +60,108 @@ const CardWrapper = styled(Card)(() => ({
     padding: "0 !important",
   },
 }));
-
-// -----------------------------Table for Moblie-------------------------------------
-
+// -----------------------------Table for Mobile-------------------------------------
 const StyledGridItem = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
   backgroundColor: theme.palette.grey[100],
 }));
-
 const StyledContent = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
   backgroundColor: "white",
 }));
-
-let data = {
-  "Well No": "1",
-  Location: "New York",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
-};
-
-let Tata = {
-  "Well No": "2",
-  Location: "Delhi",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
-};
-
-let Mata = {
-  "Well No": "3",
-  Location: "UP",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
-};
-
-let Sata = {
-  "Well No": "4",
-  Location: "MP",
-  Installation: "01/01/2021",
-  Latitude: "40.7128 N",
-  Longitude: "74.0060 W",
-};
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("1"),
-  createData("2"),
-  createData("3"),
-  createData("4"),
-  createData("5"),
-  createData("6"),
-  createData("7"),
-  createData("8"),
-];
-
 export default function BasicCard() {
   const [open, setOpen] = useState(false); // State to control modal visibility
+  const [users, setUsers] = useState([]); // State to store fetched users
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const [selectedUser, setSelectedUser] = useState(null); // Selected user for modal
+  const role = useSelector((state) => state.auth.role); // Get user role from Redux
+  const authToken = useSelector((state) => state.auth.authToken); // Get auth token from Redux
 
-  const handleClickOpen = () => {
+  //Api Integration
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError(null);
+
+    let fetchFunction;
+
+    if (role === "manager") {
+      fetchFunction = getNotApprovedManagerUser;
+    } else if (role === "owner") {
+      fetchFunction = getNotApprovalOwnerUser;
+    } else {
+      setError("Invalid role");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetchFunction();
+      // console.log("API Response:", response);
+
+      if (response.success) {
+        // Adjust this line according to the response structure
+        setUsers(
+          response.approvedOwnerUsers || response.approvedManagerUsers || []
+        );
+      } else {
+        setError(response.message || "Failed to fetch users");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setError("An error occurred while fetching users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Call fetchUsers if role is "manager" or "owner"
+  useEffect(() => {
+    // console.log("Role:", role);
+    // console.log("Auth Token:", authToken);
+    if (role === "manager" || role === "owner") {
+      fetchUsers();
+    }
+  }, [role, authToken]);
+
+  const handleClickOpen = (user) => {
+    setSelectedUser(user);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setSelectedUser(null);
   };
+
   return (
-    <Grid container>
-      <IconButton>
-        <ForwardToInboxIcon sx={{ fontSize: 30, color: "green " }} />
-      </IconButton>
-      <Typography variant="h4" mt={1}>
-        Message Box
-      </Typography>
-      {/* -------------------------Table for Moblie----------------------------- */}
+    <Grid container spacing={2} p={2}>
+      <Grid item xs={12} container alignItems="center">
+        <IconButton>
+          <ForwardToInboxIcon sx={{ fontSize: 30, color: "green " }} />
+        </IconButton>
+        <Typography variant="h4" mt={1}>
+          Message Box
+        </Typography>
+      </Grid>
+
+      {/* Loading and Error States */}
+      <Grid item xs={12}>
+        {loading && (
+          <Box display="flex" justifyContent="center" my={2}>
+            <CircularProgress />
+          </Box>
+        )}
+        {error && (
+          <Typography color="error" align="center">
+            {error}
+          </Typography>
+        )}
+      </Grid>
+
+      {/* -------------------------Table for Mobile----------------------------- */}
       <Grid
         container
         sx={{ display: { sm: "block", xs: "block", md: "none", lg: "none" } }}
@@ -155,77 +178,41 @@ export default function BasicCard() {
           <TabPanel>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 600 }}>
               <Grid container mt={2} direction="column">
-                {Object.keys(data).map((header, index) => (
-                  <Grid container key={index}>
+                {users?.map((user, index) => (
+                  <Grid container key={user._id || index} mb={2}>
                     {/* Header Section */}
                     <StyledGridItem item xs={4}>
                       <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                        {header}
+                        {`User ${index + 1}`}
                       </Typography>
                     </StyledGridItem>
                     {/* Content Section */}
                     <StyledContent item xs={8}>
-                      <Typography variant="body1">{data[header]}</Typography>
-                    </StyledContent>
-                  </Grid>
-                ))}
-              </Grid>
-              {/* ----------------------Dreak---------------------------------- */}
-              <Grid container mt={2} direction="column">
-                {Object.keys(Tata).map((header, index) => (
-                  <Grid container key={index}>
-                    {/* Header Section */}
-                    <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                        {header}
+                      <Typography variant="body1">{user.username}</Typography>
+                      <Typography variant="body1">{user.email}</Typography>
+                      <Typography variant="body1">
+                        {user.contactNumber}
                       </Typography>
-                    </StyledGridItem>
-                    {/* Content Section */}
-                    <StyledContent item xs={8}>
-                      <Typography variant="body1">{Tata[header]}</Typography>
+                      {/* Add more fields as necessary */}
+                      <IconButton
+                        onClick={() => handleClickOpen(user)}
+                        sx={{
+                          color: "black",
+                          "&:hover": { color: "darkred" },
+                          marginTop: 1,
+                        }}
+                      >
+                        <RemoveRedEyeIcon fontSize="large" />
+                      </IconButton>
                     </StyledContent>
                   </Grid>
                 ))}
               </Grid>
             </Paper>
           </TabPanel>
-          {/* ----------------------Dreak---------------------------------- */}
           <TabPanel>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 600 }}>
-              <Grid container mt={2} direction="column">
-                {Object.keys(Mata).map((header, index) => (
-                  <Grid container key={index}>
-                    {/* Header Section */}
-                    <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                        {header}
-                      </Typography>
-                    </StyledGridItem>
-                    {/* Content Section */}
-                    <StyledContent item xs={8}>
-                      <Typography variant="body1">{Mata[header]}</Typography>
-                    </StyledContent>
-                  </Grid>
-                ))}
-              </Grid>
-              {/* ----------------------Dreak---------------------------------- */}
-              <Grid container mt={2} direction="column">
-                {Object.keys(Sata).map((header, index) => (
-                  <Grid container key={index}>
-                    {/* Header Section */}
-                    <StyledGridItem item xs={4}>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                        {header}
-                      </Typography>
-                    </StyledGridItem>
-                    {/* Content Section */}
-                    <StyledContent item xs={8}>
-                      <Typography variant="body1">{Sata[header]}</Typography>
-                    </StyledContent>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
+            {/* Add Well Approval Content Here */}
+            <Typography variant="body1">Add Well Approval Content</Typography>
           </TabPanel>
         </Tabs>
       </Grid>
@@ -237,8 +224,8 @@ export default function BasicCard() {
           item
           md={12}
           lg={12}
-          sm={5}
-          xs={4}
+          sm={12}
+          xs={12}
           sx={{ display: { sm: "none", xs: "none", md: "block", lg: "block" } }}
         >
           <Tabs>
@@ -251,46 +238,53 @@ export default function BasicCard() {
               </Tab>
             </TabList>
             <TabPanel>
-              <TableContainer sx={{ border: "1px solid black" }}>
-                <Table aria-label="customized table">
+              <TableContainer
+                component={Paper}
+                sx={{ border: "1px solid black", maxHeight: 500 }}
+              >
+                <Table aria-label="customized table" stickyHeader>
                   <TableHead>
                     <TableRow>
                       <StyledTableCell>Number</StyledTableCell>
                       <StyledTableCell align="left">Username</StyledTableCell>
-                      <StyledTableCell align="left">Name</StyledTableCell>
-                      <StyledTableCell align="left">Email</StyledTableCell>
-                      <StyledTableCell align="left">Phone No.</StyledTableCell>
-                      <StyledTableCell align="left">
+                      <StyledTableCell align="center">Email</StyledTableCell>
+                      <StyledTableCell align="center">
+                        Phone No.
+                      </StyledTableCell>
+                      <StyledTableCell align="left">Department</StyledTableCell>
+                      <StyledTableCell align="center">
                         Approval Status
                       </StyledTableCell>
                       <StyledTableCell align="center">Action</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {rows.map((row) => (
-                      <StyledTableRow key={row.name}>
+                    {users?.map((user, index) => (
+                      <StyledTableRow key={user._id || index}>
                         <StyledTableCell component="th" scope="row">
-                          {row.name}
+                          {index + 1}
                         </StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell
-                          sx={{ width: "10%" }}
-                        ></StyledTableCell>
-                        <StyledTableCell sx={{ width: "25%" }}>
+                        <StyledTableCell align="left">
+                          {user.username}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {user.email}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {user.contactNumber}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {user.department || "N/A"}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {user.isApprovedByManager
+                            ? "Approved By Manager! Waiting Owner Approval"
+                            : "Pending Approval"}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
                           <Box display={"flex"} justifyContent={"space-evenly"}>
                             <IconButton
-                              onClick={handleClickOpen}
+                              onClick={() => handleClickOpen(user)}
                               sx={{
                                 color: "black",
                                 "&:hover": { color: "darkred" },
@@ -299,7 +293,8 @@ export default function BasicCard() {
                             >
                               <RemoveRedEyeIcon fontSize="large" />
                             </IconButton>
-                          </Box>{" "}
+                            {/* Add more action buttons if needed */}
+                          </Box>
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}
@@ -308,114 +303,116 @@ export default function BasicCard() {
               </TableContainer>
             </TabPanel>
             <TabPanel>
-              <TableContainer sx={{ border: "1px solid black" }}>
-                <Table aria-label="customized table">
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell>Complaint No.</StyledTableCell>
-                      <StyledTableCell align="left">Data/Time</StyledTableCell>
-                      <StyledTableCell align="left">
-                        Raiser Name
-                      </StyledTableCell>
-                      <StyledTableCell align="left">Taker Name</StyledTableCell>
-                      <StyledTableCell align="left">Status</StyledTableCell>
-                      <StyledTableCell align="center">
-                        Description
-                      </StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <StyledTableRow>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        sx={{ width: "10%" }}
-                      >
-                        {" "}
-                        Notification No.
-                      </StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "10%" }}></StyledTableCell>
-                      <StyledTableCell sx={{ width: "25%" }}></StyledTableCell>
-                    </StyledTableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              {/* Add Well Approval Content Here */}
+              <Typography variant="body1">Add Well Approval Content</Typography>
             </TabPanel>
           </Tabs>
         </Grid>
       </Grid>
+
       {/* Modal Dialog */}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle variant="h4" textAlign={"center"}>
           Approval User
         </DialogTitle>
         <DialogContent>
-          <Grid container gap={3}>
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={4} md={4} lg={6} gap={3}>
-                <Typography fontSize="large">REGISTRATION ID</Typography>
-                <Typography fontSize="large">employeeID</Typography>
-                <Typography fontSize="large">username</Typography>
-                <Typography fontSize="large">email</Typography>
-                <Typography fontSize="large">contactNumber</Typography>
-                <Typography fontSize="large">employeeID</Typography>
-                <Typography fontSize="large">assetName</Typography>
-                <Typography fontSize="large">department</Typography>
-                <Typography fontSize="large">roleInRTMS</Typography>
-              </Grid>
-              <Grid item xs={12} sm={8} md={8} lg={6}>
-                <Grid container spacing={2} direction="column">
+          {selectedUser ? (
+            <Grid container spacing={3}>
+              <Grid container spacing={4}>
+                <Grid item ml={3} xs={12} sm={4} md={5} lg={5}>
+                  <DialogTitle variant="h6" mt={2}>
+                  REGISTRATION DETAILS :-
+                  </DialogTitle>
+                  <Typography fontSize="large">
+                    <strong>Employee ID:</strong> {selectedUser.employeeID}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Username:</strong> {selectedUser.username}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Email:</strong> {selectedUser.email}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Contact Number:</strong>{" "}
+                    {selectedUser.contactNumber}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Asset Name:</strong> {selectedUser.assetName}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Department:</strong> {selectedUser.department}
+                  </Typography>
+                  <Typography fontSize="large">
+                    <strong>Role in RTMS:</strong> {selectedUser.roleInRTMS}
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={8}
+                  md={8}
+                  lg={6}
+                  gap={2}
+                  sx={{ display: "flex", alignItems: "end" }}
+                >
                   <Grid item xs={12}>
-                    <Paper elevation={3}>
-                      <img
-                        src="https://t4.ftcdn.net/jpg/01/42/20/17/240_F_142201762_qMCuIAolgpz4NbF5T5m66KQJzYzrEbUv.jpg"
-                        alt="User_ID Card"
-                        style={{ objectFit: "contain", width: "100%" }}
-                      />
+                    <Paper elevation={1}>
+                      <Box paddingTop={2} paddingBottom={2}>
+                        <img
+                          src={selectedUser.idCardPhoto}
+                          alt="User ID Card"
+                          style={{
+                            objectFit: "contain",
+                            width: "100%",
+                            height: "25vh",
+                          }}
+                        />
+                      </Box>
                     </Paper>
                   </Grid>
                   <Grid item xs={12}>
-                    <Paper elevation={3}>
-                      <img
-                        src="https://t3.ftcdn.net/jpg/02/53/98/06/240_F_253980681_a8hAmy7gbe28SjtRPoUo0EShW87oXVTy.jpg"
-                        alt="User_ID Card"
-                        style={{
-                          objectFit: "contain",
-                          width: "100%",
-                          height: "auto",
-                        }}
-                      />
+                    <Paper elevation={1}>
+                      <Box paddingTop={2} paddingBottom={2}>
+                        <img
+                          src={selectedUser.passportPhoto}
+                          alt="User Passport Photo"
+                          style={{
+                            objectFit: "contain",
+                            width: "100%",
+                            height: "25vh",
+                          }}
+                        />
+                      </Box>
                     </Paper>
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid container gap={2}>
-              <Grid item xs={12} sm={6} md={6} lg={6}>
-                <Typography variant="h5" textAlign="left">
-                  Status:
-                </Typography>
+              <Grid container spacing={2} alignItems="center" mt={2} ml={1}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h5" textAlign="left">
+                    Status:{" "}
+                    {selectedUser.isApprovedByManager
+                      ? "Approved By Manager! Waiting Owner Approval"
+                      : "Pending Approval"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} textAlign={"end"}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}
+                  >
+                    <Button variant="contained" color="primary" size="large">
+                      Approve
+                    </Button>
+                    <Button variant="contained" color="secondary" size="large">
+                      Reject
+                    </Button>
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={6} md={6} lg={12} textAlign={"end"}>
-                <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-                  {/* <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-                  <Button variant="contained" color="primary" size="large">
-                    Close
-                  </Button>
-                </Link> */}
-                  <Button variant="contained" color="primary" size="large">
-                    Approve
-                  </Button>
-                  <Button variant="contained" color="primary" size="large">
-                    Reject
-                  </Button>
-                </Box>
-              </Grid>
             </Grid>
-          </Grid>
+          ) : (
+            <Typography>No user selected.</Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
