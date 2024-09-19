@@ -321,7 +321,7 @@ export default function BasicCard() {
               <Grid container spacing={4}>
                 <Grid item ml={3} xs={12} sm={4} md={5} lg={5}>
                   <DialogTitle variant="h6" mt={2}>
-                  REGISTRATION DETAILS :-
+                    REGISTRATION DETAILS :-
                   </DialogTitle>
                   <Typography fontSize="large">
                     <strong>Employee ID:</strong> {selectedUser.employeeID}
