@@ -27,8 +27,12 @@ import { Box } from "@mui/system";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useSelector } from "react-redux";
 import {
+  ApproveByManager,
+  approveByOwner,
   getNotApprovalOwnerUser,
   getNotApprovedManagerUser,
+  rejectByManager,
+  rejectByOwner,
 } from "../../../apis/Service";
 // ---------FUNCTIONS OF TABLE--------------------------------
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -80,7 +84,7 @@ export default function BasicCard() {
   const role = useSelector((state) => state.auth.role); // Get user role from Redux
   const authToken = useSelector((state) => state.auth.authToken); // Get auth token from Redux
 
-  //Api Integration
+  // Function to fetch users based on role
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
@@ -116,7 +120,58 @@ export default function BasicCard() {
     }
   };
 
-  // Call fetchUsers if role is "manager" or "owner"
+  // Function to approve users
+  const handleApprove = async (user) => {
+    let response;
+    const formData = { employeeID: user.employeeID }; // Prepare the request body
+
+    try {
+      if (role === "manager") {
+        // Call ApproveByManager API with Bearer token in the header
+        response = await ApproveByManager(formData, authToken);
+      } else if (role === "owner") {
+        // Call approveByOwner API with Bearer token in the header
+        response = await approveByOwner(formData, authToken);
+      }
+
+      if (response && response.success) {
+        // Update the user list after approval
+        alert("User approved successfully");
+        fetchUsers(); // Refetch users to update the list
+      } else {
+        alert(response.message || "Approval failed");
+      }
+    } catch (error) {
+      console.error("Approval error:", error);
+      alert("An error occurred while approving the user");
+    }
+  };
+
+  //reject user api
+  const handleReject = async (user) => {
+    let response;
+    const formData = { employeeID: user.employeeID };
+
+    try {
+      if (role === "manager") {
+        response = await rejectByManager(formData, authToken);
+      } else if (role === "owner") {
+        response = await rejectByOwner(formData, authToken);
+      }
+
+      if (response && response.success) {
+        alert("User rejected successfully");
+        fetchUsers();
+      } else {
+        alert(response.message || "Rejection failed");
+      }
+    } catch (error) {
+      console.error("Rejection error:", error);
+      alert("An error occurred while rejecting the user");
+    }
+  };
+
+  // Fetch users when component mounts
   useEffect(() => {
     // console.log("Role:", role);
     // console.log("Auth Token:", authToken);
@@ -336,10 +391,12 @@ export default function BasicCard() {
                     {selectedUser.contactNumber}
                   </Typography>
                   <Typography fontSize="large">
-                    <strong>Asset Name:</strong> {selectedUser.assetName}
+                    <strong>Asset Name:</strong>{" "}
+                    {selectedUser.assetName || "N/A"}
                   </Typography>
                   <Typography fontSize="large">
-                    <strong>Department:</strong> {selectedUser.department}
+                    <strong>Department:</strong>{" "}
+                    {selectedUser.department || "N/A"}
                   </Typography>
                   <Typography fontSize="large">
                     <strong>Role in RTMS:</strong> {selectedUser.roleInRTMS}
@@ -399,10 +456,20 @@ export default function BasicCard() {
                   <Box
                     sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}
                   >
-                    <Button variant="contained" color="primary" size="large">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => handleApprove(selectedUser)}
+                    >
                       Approve
                     </Button>
-                    <Button variant="contained" color="secondary" size="large">
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="large"
+                      onClick={() => handleReject(selectedUser)}
+                    >
                       Reject
                     </Button>
                   </Box>
@@ -422,3 +489,4 @@ export default function BasicCard() {
     </Grid>
   );
 }
+

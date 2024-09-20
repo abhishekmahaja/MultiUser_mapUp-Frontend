@@ -110,11 +110,16 @@ export const getNotApprovalOwnerUser = async () => {
 };
 
 //User Approved by Manger
-export const ApproveByManager = async (formData) => {
+export const ApproveByManager = async (formData, authToken) => {
   try {
     const response = await axios.post(
       `${USER_API}/approve-by-manager`,
-      formData
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include Bearer token
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -122,10 +127,54 @@ export const ApproveByManager = async (formData) => {
   }
 };
 
-//User Approved By Owner
-export const approveByOwner = async (formData) => {
+// User Approved by Owner
+export const approveByOwner = async (formData, authToken) => {
   try {
-    const response = await axios.post(`${USER_API}/approve-by-owner`, formData);
+    const response = await axios.post(
+      `${USER_API}/approve-by-owner`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include Bearer token
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//User Reject by Manger
+export const rejectByManager = async (formData, authToken) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/reject-user-by-manager`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include Bearer token
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+// User Reject by Owner
+export const rejectByOwner = async (formData, authToken) => {
+  try {
+    const response = await axios.post(
+      `${USER_API}/reject-user-by-owner`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Include Bearer token
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     return catchError(error);
