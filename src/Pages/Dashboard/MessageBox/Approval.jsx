@@ -100,7 +100,6 @@ export default function BasicCard() {
     try {
       const response = await fetchFunction();
       // console.log("API Response:", response);
-
       if (response.success) {
         // Adjust this line according to the response structure
         setUsers(
