@@ -50,6 +50,12 @@ const AddDevices = lazy(() =>
 const Approval = lazy(() =>
   import("./Pages/Dashboard/MessageBox/Approval.jsx")
 );
+const SuperAdmin = lazy(() =>
+  import("./Pages/Dashboard/SuperAdmin/SuperAdmin.jsx")
+);
+const TechnicalSupport = lazy(() =>
+  import("./Pages/Dashboard/TechnicalSupport/TechnicalSupport.jsx")
+);
 
 function App() {
   // Fetch the role from Redux
@@ -72,6 +78,8 @@ function App() {
     { path: "AddDevice", element: <AddDevice /> },
     { path: "Network", element: <Network /> },
     { path: "AddDevices", element: <AddDevices /> },
+    { path: "Admin", element: <SuperAdmin /> },
+    { path: "technicalSupport", element: <TechnicalSupport /> },
   ];
 
   // Add role-specific routes
@@ -83,9 +91,7 @@ function App() {
     );
   } else if (role === "manager") {
     // Manager sees all routes except "ManageAsset"
-    commonRoutes.push(
-      { path: "message", element: <Approval /> }
-    );
+    commonRoutes.push({ path: "message", element: <Approval /> });
   } else if (role === "employee") {
     // Employee does not see "ManageAsset" and "message"
     // All other routes are already visible

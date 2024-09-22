@@ -18,11 +18,13 @@ import ComplaintIcon from "@mui/icons-material/AccessAlarm";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import NotificationsIcon from "@mui/icons-material/NotificationsActive";
 import Networkicon from "@mui/icons-material/CellTower";
-import { useMediaQuery } from "@mui/material";
+import { patch, useMediaQuery } from "@mui/material";
 import WellmasterIcon from "@mui/icons-material/Settings";
 import WellmonitorIcon from "@mui/icons-material/Search";
 import GeoIcon from "@mui/icons-material/Place";
 import ongc_logo from "/assets/ongc2.png";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import { useSelector } from "react-redux";
 
@@ -84,6 +86,12 @@ export default function Sidebar({
 
   // Define your menu items here
   const menuItems = [
+    {
+      name: "Admin",
+      icon: <AdminPanelSettingsIcon sx={{ color: "black" }} />,
+      path: "/dashboard/Admin",
+      roles: ["owner", "manager", "employee"],
+    },
     {
       name: "Dashboard",
       icon: <HomeIcon sx={{ color: "black" }} />,
@@ -149,6 +157,12 @@ export default function Sidebar({
       icon: <ForwardToInboxIcon sx={{ color: "black" }} />,
       path: "/dashboard/message",
       roles: ["owner", "manager"],
+    },
+    {
+      name: "Technical Support",
+      icon: <SupportAgentIcon sx={{ color: "black" }} />,
+      path: "/dashboard/technicalSupport",
+      roles: ["owner", "manager", "employee"],
     },
   ];
 
