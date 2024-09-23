@@ -92,6 +92,10 @@ function App() {
   } else if (role === "manager") {
     // Manager sees all routes except "ManageAsset"
     commonRoutes.push({ path: "message", element: <Approval /> });
+  } else if (role === "admin") {
+    // Admin sees only the admin route
+    commonRoutes.length = 0; // Clear the commonRoutes
+    commonRoutes.push({ path: "", element: <SuperAdmin /> }); // Only admin route
   } else if (role === "employee") {
     // Employee does not see "ManageAsset" and "message"
     // All other routes are already visible
