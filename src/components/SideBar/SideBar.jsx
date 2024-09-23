@@ -89,7 +89,7 @@ export default function Sidebar({
     {
       name: "Admin",
       icon: <AdminPanelSettingsIcon sx={{ color: "black" }} />,
-      path: "/dashboard/Admin",
+      path: "/dashboard",
       roles: ["admin"],
     },
     {
