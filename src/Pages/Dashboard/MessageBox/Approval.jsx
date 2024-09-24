@@ -392,7 +392,7 @@ export default function BasicCard() {
                   </Typography>
                   <Typography fontSize="large">
                     <strong>Asset Name:</strong>{" "}
-                    {selectedUser.assetName || "N/A"}
+                    {selectedUser.organizationName || "N/A"}
                   </Typography>
                   <Typography fontSize="large">
                     <strong>Department:</strong>{" "}

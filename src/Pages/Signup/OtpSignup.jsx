@@ -21,7 +21,7 @@ export default function Otpsign() {
     email,
     contactNumber,
     employeeID,
-    assetName,
+    organizationName,
     department,
     roleInRTMS,
     idCardPhoto,
@@ -34,7 +34,7 @@ export default function Otpsign() {
     email,
     contactNumber,
     employeeID,
-    assetName,
+    organizationName,
     department,
     roleInRTMS,
     idCardPhoto,
@@ -49,7 +49,7 @@ export default function Otpsign() {
     formData.append("email", email);
     formData.append("contactNumber", contactNumber);
     formData.append("employeeID", employeeID);
-    formData.append("assetName", assetName);
+    formData.append("organizationName", organizationName);
     formData.append("department", department);
     formData.append("roleInRTMS", roleInRTMS);
     formData.append("emailOtp", emailOtpValue);

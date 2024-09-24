@@ -24,7 +24,7 @@ function CheckStatus() {
     email,
     contactNumber,
     employeeID,
-    assetName,
+    organizationName,
     department,
     roleInRTMS,
     idCardPhoto,
@@ -80,7 +80,7 @@ function CheckStatus() {
               <Typography fontSize="large">
                 Employee ID: {employeeID}
               </Typography>
-              <Typography fontSize="large">Asset Name: {assetName}</Typography>
+              <Typography fontSize="large">Asset Name: {organizationName}</Typography>
               <Typography fontSize="large">Department: {department}</Typography>
               <Typography fontSize="large">
                 Role in RTMS: {roleInRTMS}

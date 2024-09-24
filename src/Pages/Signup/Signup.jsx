@@ -31,7 +31,7 @@ function Signup() {
     email: "",
     contactNumber: "",
     employeeID: "",
-    assetName: "",
+    organizationName: "",
     department: "",
     roleInRTMS: "",
     idCardPhoto: "", //this is Image Uploaded by User
@@ -86,7 +86,7 @@ function Signup() {
             email: formValues.email,
             contactNumber: formValues.contactNumber,
             employeeID: formValues.employeeID,
-            assetName: formValues.assetName,
+            organizationName: formValues.organizationName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
             passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
@@ -193,9 +193,9 @@ function Signup() {
                       <TextField
                         fullWidth
                         label="Organization"
-                        name="assetName"
+                        name="organizationName"
                         variant="standard"
-                        value={formValues.assetName}
+                        value={formValues.organizationName}
                         onChange={handleUsernameChange}
                       />
                     </Box>

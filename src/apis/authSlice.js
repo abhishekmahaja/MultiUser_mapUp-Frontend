@@ -16,7 +16,7 @@ const registerInitialState = {
   email: "",
   contactNumber: "",
   employeeID: "",
-  assetName: "",
+  organizationName: "",
   department: "",
   roleInRTMS: "",
   idCardPhoto: "", // this is Image Upload by the user
@@ -32,7 +32,7 @@ const checkInitialState = {
     email: "",
     contactNumber: "",
     employeeID: "",
-    assetName: "",
+    organizationName: "",
     department: "",
     roleInRTMS: "",
     idCardPhoto: "", //here ftech image URL
@@ -92,7 +92,7 @@ const registerAuthSlice = createSlice({
       state.email = action.payload.email;
       state.contactNumber = action.payload.contactNumber;
       state.employeeID = action.payload.employeeID;
-      state.assetName = action.payload.assetName;
+      state.organizationName = action.payload.organizationName;
       state.department = action.payload.department;
       state.roleInRTMS = action.payload.roleInRTMS;
       state.idCardPhoto = action.payload.idCardPhoto; // this is Image Upload by the user
@@ -109,7 +109,7 @@ const registerAuthSlice = createSlice({
       state.email = "";
       state.contactNumber = "";
       state.employeeID = "";
-      state.assetName = "";
+      state.organizationName = "";
       state.department = "";
       state.roleInRTMS = "";
       state.idCardPhoto = ""; // this is Image Upload by the user
