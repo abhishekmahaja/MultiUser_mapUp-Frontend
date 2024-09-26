@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+// import { toast } from "react-hot-toast";
 import PageContainer from "../../components/HOC/PageContainer";
 import { Button, Grid, Paper, Typography } from "@mui/material";
 import OTPInput from "react-otp-input";
 import { useDispatch, useSelector } from "react-redux";
 import { register, sendOtpRegister } from "../../apis/Service";
+import { toast } from "react-toastify";
 import {
-  setEmailOtp,
   clearRegisterAuth,
   setRegisterAuthenticated,
 } from "../../apis/authSlice";
@@ -16,13 +16,12 @@ export default function Otpsign() {
   const [emailOtpValue, setEmailOtpValue] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const {
     username,
     email,
     contactNumber,
     employeeID,
-    assetName,
+    organizationName,
     department,
     roleInRTMS,
     idCardPhoto,
@@ -35,7 +34,7 @@ export default function Otpsign() {
     email,
     contactNumber,
     employeeID,
-    assetName,
+    organizationName,
     department,
     roleInRTMS,
     idCardPhoto,
@@ -50,33 +49,30 @@ export default function Otpsign() {
     formData.append("email", email);
     formData.append("contactNumber", contactNumber);
     formData.append("employeeID", employeeID);
-    formData.append("assetName", assetName);
+    formData.append("organizationName", organizationName);
     formData.append("department", department);
     formData.append("roleInRTMS", roleInRTMS);
     formData.append("emailOtp", emailOtpValue);
-
     // Append the files from Redux (ensure they are File objects)
     if (passportPhoto instanceof File)
       formData.append("passportPhoto", passportPhoto);
     if (idCardPhoto instanceof File)
       formData.append("idCardPhoto", idCardPhoto);
 
-    // Debugging: Log formData fields to verify they're populated correctly
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1], "formdata print1");
-    }
-
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value, "formdata print");
-    }
+    // // Debugging: Log formData fields to verify they're populated correctly
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0], pair[1], "formdata print1");
+    // }
 
     try {
       const response = await register(formData); // Verify OTP
       if (response.success) {
         dispatch(setRegisterAuthenticated(true)); // Set authorized state to true
-        toast.success("Signup Successful!");
+        toast.success(
+          "Signup successful! Please wait for approval and check your status here."
+        );
 
-        navigate("/");
+        navigate("/popup");
 
         dispatch(clearRegisterAuth()); // Clear auth data after login success
       } else {
@@ -167,334 +163,3 @@ export default function Otpsign() {
     </PageContainer>
   );
 }
-
-// import React, { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { toast } from "react-hot-toast";
-// import PageContainer from "../../components/HOC/PageContainer";
-// import { Button, Grid, Paper, Typography } from "@mui/material";
-// import OTPInput from "react-otp-input";
-// import { useDispatch, useSelector } from "react-redux";
-// import { register, sendOtpRegister } from "../../apis/Service";
-// import {
-//   setEmailOtp,
-//   clearRegisterAuth,
-//   setRegisterAuthenticated,
-// } from "../../apis/authSlice";
-
-// export default function Otpsign() {
-//   const [emailOtpValue, setEmailOtpValue] = useState("");
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const {
-//     username,
-//     email,
-//     contactNumber,
-//     employeeID,
-//     assetName,
-//     department,
-//     roleInRTMS,
-//     idCardPhoto,
-//     passportPhoto,
-//   } = useSelector((state) => state.registerAuth);
-
-//   console.log(
-//     "foam value",
-//     username,
-//     email,
-//     contactNumber,
-//     employeeID,
-//     assetName,
-//     department,
-//     roleInRTMS,
-//     idCardPhoto,
-//     passportPhoto
-//   );
-
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-
-//   //   const formData = {
-//   //     username,
-//   //     email,
-//   //     contactNumber,
-//   //     employeeID,
-//   //     assetName,
-//   //     department,
-//   //     roleInRTMS,
-//   //     idCardPhoto,
-//   //     passportPhoto,
-//   //     emailOtp: emailOtpValue,
-//   //   };
-
-//   const formData = new FormData(); {
-//   formData.append("username", username);
-//   formData.append("email", email);
-//   formData.append("contactNumber", contactNumber);
-//   formData.append("employeeID", employeeID);
-//   formData.append("assetName", assetName);
-//   formData.append("department", department);
-//   formData.append("roleInRTMS", roleInRTMS);
-//   formData.append("emailOtp", emailOtpValue);
-
-//   // Append the files from Redux (if they are actual File objects)
-//   if (passportPhoto) formData.append("passportPhoto", passportPhoto);
-//   if (idCardPhoto) formData.append("idCardPhoto", idCardPhoto);
-//   };
-
-//     try {
-//       const response = await register(formData); // Verify OTP
-//       if (response.success) {
-//         // dispatch(setEmailOtp(emailOtpValue)); // Store OTP in Redux
-//         dispatch(setRegisterAuthenticated(true)); // Set authorized state to true
-//         toast.success("Signup Successful!");
-
-//         navigate("/");
-
-//         dispatch(clearRegisterAuth()); // Clear auth data after login success
-//       } else {
-//         toast.error("OTP Does Not Match");
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("OTP Verification Failed");
-//     }
-//   };
-
-//   const handleResendOtp = async () => {
-//     try {
-//       const response = await sendOtpRegister({ email, contactNumber }); // Resend OTP API call
-//       if (response.success) {
-//         toast.success("OTP Resent Successfully!");
-//       } else {
-//         toast.error("Failed to Resend OTP");
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Error Resending OTP");
-//     }
-//   };
-
-//   return (
-//     <PageContainer
-//       showheader="true"
-//       showfooter="true"
-//       className="bgImg"
-//       style={{ display: "grid", placeContent: "center" }}
-//     >
-//       <Grid container m={0}>
-//         <Grid item xs={12}>
-//           <Paper sx={{ borderRadius: "10px" }}>
-//             <Grid item p={2}>
-//               <form onSubmit={handleSubmit}>
-//                 <Grid item xs={12} mt={2}>
-//                   <Typography
-//                     fontSize={"x-large"}
-//                     sx={{ color: "#0c1352", textAlign: "center" }}
-//                   >
-//                     Enter OTP To Verify Mobile
-//                   </Typography>
-//                 </Grid>
-//                 <Grid
-//                   item
-//                   xs={12}
-//                   mt={3}
-//                   display="flex"
-//                   justifyContent="center"
-//                 >
-//                   <OTPInput
-//                     value={emailOtpValue}
-//                     onChange={setEmailOtpValue}
-//                     numInputs={6}
-//                     renderSeparator={<span>&nbsp; &nbsp;</span>}
-//                     renderInput={(props) => <input {...props} />}
-//                   />
-//                 </Grid>
-//                 <Grid item xs={12} mt={3} textAlign="center">
-//                   <Button
-//                     variant="contained"
-//                     color="primary"
-//                     size="small"
-//                     sx={{ bgcolor: "#0c113b" }}
-//                     onClick={handleSubmit}
-//                   >
-//                     <Typography>Submit</Typography>
-//                   </Button>
-//                 </Grid>
-//                 <Grid item xs={12} textAlign="center" py={1}>
-//                   <Link
-//                     to="#"
-//                     style={{ textDecoration: "none" }}
-//                     onClick={handleResendOtp}
-//                   >
-//                     <Typography style={{ cursor: "pointer" }}>
-//                       Resend One-Time Password
-//                     </Typography>
-//                   </Link>
-//                 </Grid>
-//               </form>
-//             </Grid>
-//           </Paper>
-//         </Grid>
-//       </Grid>
-//     </PageContainer>
-//   );
-// }
-
-// import React, { useState } from "react";
-// import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { toast } from "react-hot-toast";
-// import PageContainer from "../../components/HOC/PageContainer";
-// import { Button, Grid, Paper, Typography } from "@mui/material";
-// import OTPInput from "react-otp-input";
-// import { useDispatch, useSelector } from "react-redux";
-// import { register, sendOtpRegister } from "../../apis/Service";
-// import { setEmailOtp,clearRegisterAuth, setRegisterAuthenticated } from "../../apis/authSlice";
-
-// export default function Otpsign() {
-//   const [emailOtpValue, setEmailOtpValue] = useState("");
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const {
-//     username,
-//     email,
-//     contactNumber,
-//     employeeID,
-//     assetName,
-//     department,
-//     roleInRTMS,
-//     idCardPhoto, //this is Image Uploaded by USer
-//     passportPhoto, //this is Image Uploaded by USer
-//   } = useSelector((state) => state.auth); // Get username and password from Redux store
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//   };
-
-//   const formData = {
-//     username,
-//     email,
-//     contactNumber,
-//     employeeID,
-//     assetName,
-//     department,
-//     roleInRTMS,
-//     idCardPhoto,
-//     passportPhoto,
-//     emailOtp: emailOtpValue
-//   };
-
-//     try {
-//       const response = await register(formData); //verify otp
-//       if(response.success) {
-//         dispatch(setEmailOtpValue(emailOtpValue)); //Store Otp in Redux
-//         dispatch(setRegisterAuthenticated(true)); //set authorized State to true
-//         toast.success("Signup Successfull!");
-
-//         navigate("/");
-
-//         dispatch(clearRegisterAuth()); // clear auth data after login success
-//       } else {
-//         toast.error("OTP Does not Match");
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("OTP Verification Failed");
-//     }
-//   };
-
-//   const handleResendOtp = async () => {
-//     try {
-//       const response = await sendOtpRegister({ email, contactNumber}); //Call Api to resend OTP
-//       if(response.success) {
-//         toast.success("OTP Resend Successfully!");
-//       } else {
-//         toast.error("Failed to resend OTP");
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Error resending OTP");
-//     }
-//   };
-
-//   return (
-//     <PageContainer
-//       showheader="true"
-//       showfooter="true"
-//       className="bgImg"
-//       style={{ display: "grid", placeContent: "center" }}
-//     >
-//       <Grid container m={0}>
-//         <Grid item xs={12} md={12} sm={12}>
-//           <Paper sx={{ borderRadius: "10px" }}>
-//             <Grid item p={2}>
-//               <form onSubmit={handleSubmit}>
-//                 <Grid item xs={12} md={12} sm={12} lg={12} mt={2}>
-//                   <Typography
-//                     fontSize={"x-large"}
-//                     sx={{ color: "#0c1352", textAlign: "center" }}
-//                   >
-//                     Enter OTP To Verify Mobile
-//                   </Typography>
-//                 </Grid>
-//                 <Grid
-//                   item
-//                   xs={12}
-//                   md={12}
-//                   sm={12}
-//                   lg={12}
-//                   mt={3}
-//                   display="flex"
-//                   justifyContent={"center"}
-//                 >
-//                   <OTPInput
-//                     value={emailOtpValue}
-//                     onChange={setEmailOtpValue}
-//                     numInputs={6}
-//                     renderSeparator={<span>&nbsp; &nbsp; </span>}
-//                     renderInput={(props) => <input {...props} />}
-//                   />
-//                 </Grid>
-//                 <Grid
-//                   item
-//                   xs={12}
-//                   md={12}
-//                   sm={12}
-//                   lg={12}
-//                   mt={3}
-//                   justifyContent="center"
-//                   sx={{ textAlign: "center" }}
-//                 >
-//                   <Button
-//                     variant="contained"
-//                     color="primary"
-//                     size="small"
-//                     sx={{ bgcolor: "#0c113b" }}
-//                   >
-//                     <Typography>Submit</Typography>
-//                   </Button>
-//                 </Grid>
-//                 <Grid
-//                   item
-//                   xs={12}
-//                   md={12}
-//                   sm={12}
-//                   lg={12}
-//                   textAlign="center"
-//                   py={1}
-//                 >
-//                   <Link to="#" style={{ textDecoration: "none" }}
-//                   onClick={handleResendOtp}>
-//                     <Typography style={{ cursor: "pointer" }}>Resend One-Time Password</Typography>
-//                   </Link>
-//                 </Grid>
-//               </form>
-//             </Grid>
-//           </Paper>
-//         </Grid>
-//       </Grid>
-//     </PageContainer>
-//   );
-// }

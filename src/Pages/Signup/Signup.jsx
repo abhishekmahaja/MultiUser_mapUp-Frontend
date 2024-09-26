@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Grid, Typography, TextField, Box, Button } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  TextField,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import EmailIcon from "@mui/icons-material/Email";
@@ -14,14 +24,14 @@ import { toast } from "react-toastify";
 import { sendOtpRegister } from "../../apis/Service";
 
 function Signup() {
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [IdCard, setIdCard] = useState(null);
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null); // To store the passport photo name
+  const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
     contactNumber: "",
     employeeID: "",
-    assetName: "",
+    organizationName: "",
     department: "",
     roleInRTMS: "",
     idCardPhoto: "", //this is Image Uploaded by User
@@ -37,8 +47,15 @@ function Signup() {
     if (type === "file") {
       setFormValues((prev) => ({
         ...prev,
-        [name]: files[0], // Store the actual file object, not just the name
+        [name]: files[0], // Store the actual file object
       }));
+
+      // Update file name for preview
+      if (name === "passportPhoto") {
+        setSelectedPhotoName(files[0].name);
+      } else if (name === "idCardPhoto") {
+        setIdCardName(files[0].name);
+      }
     } else {
       setFormValues((prev) => ({
         ...prev,
@@ -55,30 +72,25 @@ function Signup() {
       formData.append(key, value);
     });
 
-    if (selectedPhoto) {
-      formData.append("passportPhoto", selectedPhoto); // append the actual file
-    }
-    if (IdCard) {
-      formData.append("idCardPhoto", IdCard); // append the actual file
-    }
-
     // Integration
     try {
-      const response = await sendOtpRegister(formData); // Ensure that `sendOtpRegister` can handle `FormData`
+      const response = await sendOtpRegister(formData); // Ensure that sendOtpRegister can handle FormData
       // console.log("OTP Response:", response);
       if (response?.success) {
         // Store data in Redux Store
+        const passportPhotoURL = response?.passportPhoto;
+        const idCardPhotoURL = response?.idCardPhoto;
         dispatch(
           setRegisterDetails({
             username: formValues.username,
             email: formValues.email,
             contactNumber: formValues.contactNumber,
             employeeID: formValues.employeeID,
-            assetName: formValues.assetName,
+            organizationName: formValues.organizationName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
-            passportPhoto: selectedPhoto,
-            idCardPhoto: IdCard,
+            passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
+            idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
 
@@ -145,7 +157,22 @@ function Signup() {
                         name="contactNumber"
                         variant="standard"
                         value={formValues.contactNumber}
-                        onChange={handleUsernameChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Ensure the value starts with '+91'
+                          if (value.startsWith("+91")) {
+                            setFormValues((prev) => ({
+                              ...prev,
+                              contactNumber: value,
+                            }));
+                          } else {
+                            setFormValues((prev) => ({
+                              ...prev,
+                              contactNumber: `+91${value}`,
+                            }));
+                          }
+                        }}
+                        placeholder="+91 (Mobile Number)"
                       />
                     </Box>
 
@@ -166,9 +193,9 @@ function Signup() {
                       <TextField
                         fullWidth
                         label="Organization"
-                        name="assetName"
+                        name="organizationName"
                         variant="standard"
-                        value={formValues.assetName}
+                        value={formValues.organizationName}
                         onChange={handleUsernameChange}
                       />
                     </Box>
@@ -187,21 +214,28 @@ function Signup() {
 
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
-                      <TextField
-                        fullWidth
-                        label="Role in RTMS"
-                        name="roleInRTMS"
-                        variant="standard"
-                        value={formValues.roleInRTMS}
-                        onChange={handleUsernameChange}
-                      />
+                      <FormControl fullWidth variant="standard">
+                        <InputLabel>Role in RTMS</InputLabel>
+                        <Select
+                          name="roleInRTMS"
+                          value={formValues.roleInRTMS}
+                          onChange={handleUsernameChange}
+                          label="Role in RTMS"
+                        >
+                          <MenuItem value="manager">Manager</MenuItem>
+                          <MenuItem value="employee">Employee</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Box>
 
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", mb: 2 }}
+                    >
+                      <Box
+                        sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}
+                      >
                         <CameraAltIcon sx={{ mr: 1 }} fontSize="large" />
                         <Button variant="outlined" component="label" fullWidth>
-                          Upload Photo
                           <input
                             type="file"
                             accept="image/*"
@@ -209,13 +243,21 @@ function Signup() {
                             onChange={handleUsernameChange}
                             hidden
                           />
+                          {!selectedPhotoName ? (
+                            <Typography>Upload photo</Typography>
+                          ) : (
+                            <Typography variant="body2" color="textSecondary">
+                              {selectedPhotoName}
+                            </Typography>
+                          )}
                         </Button>
                       </Box>
 
-                      <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}
+                      >
                         <CameraAltIcon sx={{ mr: 1 }} fontSize="large" />
                         <Button variant="outlined" component="label" fullWidth>
-                          Upload ID Card
                           <input
                             type="file"
                             accept="image/*"
@@ -223,6 +265,13 @@ function Signup() {
                             onChange={handleUsernameChange}
                             hidden
                           />
+                          {!idCardName ? (
+                            <Typography>Upload ID Card</Typography>
+                          ) : (
+                            <Typography variant="body2" color="textSecondary">
+                              {idCardName}
+                            </Typography>
+                          )}
                         </Button>
                       </Box>
                     </Box>
@@ -235,13 +284,19 @@ function Signup() {
                 <Grid item textAlign="center" mt={0.5}>
                   <Typography fontSize={"medium"}>
                     Already have an account?{" "}
-                    <Link to="/" style={{ textDecoration: "none", cursor: "pointer" }}>
+                    <Link
+                      to="/"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
                       Login
                     </Link>
                   </Typography>
                   <Typography fontSize={"medium"}>
                     Have Registration?{" "}
-                    <Link to="/Popup" style={{ textDecoration: "none", cursor: "pointer" }}>
+                    <Link
+                      to="/Popup"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
                       Check Status
                     </Link>
                   </Typography>
@@ -256,3 +311,4 @@ function Signup() {
 }
 
 export default Signup;
+
