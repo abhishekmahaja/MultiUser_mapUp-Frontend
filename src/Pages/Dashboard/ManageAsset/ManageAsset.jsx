@@ -12,7 +12,7 @@ import {
   StepLabel,
   Stepper,
   TextField,
-  Typography,
+  Typography, 
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
@@ -33,9 +33,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
   },
-  // [&.${tableCellClasses.body}]: {
-  //   fontSize: 14,
-  // },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
