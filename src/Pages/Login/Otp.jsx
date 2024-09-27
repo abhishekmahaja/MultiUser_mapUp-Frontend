@@ -27,8 +27,6 @@ export default function OtpLogin() {
 
     const formData = { username, password, otp: otpValue };
 
-    // console.log("define role",response.data.role);
-
     try {
       const response = await login(formData);
 
@@ -41,7 +39,14 @@ export default function OtpLogin() {
 
         toast.success("Login successful!");
 
-        navigate("/dashboard");
+        // navigate("/dashboard");
+
+        // Conditionally navigate based on role
+        if (response.data.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
 
         // dispatch(clearAuth()); // Clear auth data after login success
       } else {

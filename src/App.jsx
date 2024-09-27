@@ -92,10 +92,10 @@ function App() {
   } else if (role === "manager") {
     // Manager sees all routes except "ManageAsset"
     commonRoutes.push({ path: "message", element: <Approval /> });
-  } else if (role === "admin") {
-    // Admin sees only the admin route
-    commonRoutes.length = 0; // Clear the commonRoutes
-    commonRoutes.push({ path: "adminpage", element: <SuperAdmin /> }); // Only admin route
+    // } else if (role === "admin") {
+    //   // Admin sees only the admin route
+    //   // commonRoutes.length = 0; // Clear the commonRoutes
+    //   // commonRoutes.push({ path: "", element: <SuperAdmin /> }); // Only admin route
   } else if (role === "employee") {
     // Employee does not see "ManageAsset" and "message"
     // All other routes are already visible
@@ -103,6 +103,7 @@ function App() {
 
   // Configure the routes with children under "/dashboard"
   const route = useRoutes([
+    { path: "admin", element: <SuperAdmin /> },
     { path: "/", element: <Login /> },
     { path: "/otp", element: <Otp /> },
     { path: "/signup", element: <Signup /> },
@@ -131,5 +132,71 @@ function App() {
     </>
   );
 }
+
+// function App() {
+//   // Fetch the role from Redux
+//   const role = useSelector((state) => state.auth.role);
+
+//   // Define common routes (visible to all roles)
+//   const commonRoutes = [
+//     { path: "", element: <Home /> },
+//     { path: "monitor", element: <Monitor /> },
+//     { path: "virtual", element: <Virtual /> },
+//     { path: "crystal", element: <Crystal /> },
+//     { path: "complaint", element: <ComplaintHistory /> },
+//     { path: "notification", element: <NotificationHistory /> },
+//     { path: "edit", element: <Edit /> },
+//     { path: "logout", element: <Logout /> },
+//     { path: "wellmaster", element: <WellMaster /> },
+//     { path: "addwell", element: <AddWell /> },
+//     { path: "singlewell", element: <SingleWell /> },
+//     { path: "DeviceManage", element: <DeviceManage /> },
+//     { path: "AddDevice", element: <AddDevice /> },
+//     { path: "Network", element: <Network /> },
+//     { path: "AddDevices", element: <AddDevices /> },
+//     { path: "technicalSupport", element: <TechnicalSupport /> },
+//   ];
+
+//   // Add role-specific routes
+//   if (role === "owner") {
+//     // Owner sees all routes including ManageAsset and message
+//     commonRoutes.push(
+//       { path: "ManageAsset", element: <ManageAsset /> },
+//       { path: "message", element: <Approval /> }
+//     );
+//   } else if (role === "manager") {
+//     // Manager sees all routes except "ManageAsset"
+//     commonRoutes.push({ path: "message", element: <Approval /> });
+//   } else if (role === "admin") {
+//     // Admin is redirected to a dedicated admin page
+//     return useRoutes([
+//       { path: "/", element: <Navigate to="/admin" /> },
+//       { path: "/admin", element: <SuperAdmin /> },
+//     ]);
+//   }
+
+//   // Configure routes for all other roles (e.g., employee, owner, etc.)
+//   return useRoutes([
+//     { path: "/", element: <Login /> },
+//     { path: "/otp", element: <Otp /> },
+//     { path: "/signup", element: <Signup /> },
+//     { path: "/otpsignup", element: <OtpSignUp /> },
+//     { path: "/forgot", element: <Forgot /> },
+//     { path: "/reset", element: <Reset /> },
+//     { path: "/popup", element: <PopUp /> },
+//     { path: "/CheckStatus", element: <CheckStatus /> },
+//     {
+//       path: "/dashboard",
+//       element: <PrivateRoute />, // Protect the dashboard route
+//       children: [
+//         {
+//           path: "",
+//           element: <Dashboard />,
+//           children: commonRoutes,
+//         },
+//       ],
+//     },
+//   ]);
+// }
 
 export default App;
