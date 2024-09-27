@@ -27,6 +27,8 @@ export default function OtpLogin() {
 
     const formData = { username, password, otp: otpValue };
 
+    // console.log("define role",response.data.role);
+
     try {
       const response = await login(formData);
 
@@ -35,7 +37,7 @@ export default function OtpLogin() {
         dispatch(setOtp(otpValue)); // Store OTP in Redux
         dispatch(setAuthenticated(true)); // Set authenticated state to true
         dispatch(setAuthToken(response.token)); // Store auth token
-        dispatch(setRole(response.role)); // Store user role
+        dispatch(setRole(response.data.role)); // Store user role
 
         toast.success("Login successful!");
 
