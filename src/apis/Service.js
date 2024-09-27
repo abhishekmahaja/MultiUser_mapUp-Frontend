@@ -1,5 +1,5 @@
 import axios from "axios";
-import { USER_API } from "../apis/Client";
+import { ORGANIZATION_API, USER_API } from "../apis/Client";
 import { catchError } from "../helper/helper";
 
 // Function to send OTP for login
@@ -174,6 +174,31 @@ export const rejectByOwner = async (formData, authToken) => {
           Authorization: `Bearer ${authToken}`, // Include Bearer token
         },
       }
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//organization dropdown in signuppage
+export const organizationDropDown = async () => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API}/organization-drop-down`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//add department by owner
+export const addDepartment = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/add-department`,
+      formData
     );
     return response.data;
   } catch (error) {
