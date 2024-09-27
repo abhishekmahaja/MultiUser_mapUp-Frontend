@@ -5,19 +5,18 @@ import {
   CardContent,
   Grid,
   InputAdornment,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Box } from "@mui/system";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HttpsIcon from "@mui/icons-material/Https";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import EmailIcon from "@mui/icons-material/Email";
 import CallIcon from "@mui/icons-material/Call";
 import StoreIcon from "@mui/icons-material/Store";
-// import PageContainer from '../../components/HOC/PageContainer';
+import PageContainer from "../../../components/HOC/PageContainer";
 
 // -------------------------------popupOTP----------------------------------------------
 import PropTypes from "prop-types";
@@ -25,10 +24,30 @@ import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import Fade from "@mui/material/Fade";
 import OTPInput from "react-otp-input";
+import { useDispatch } from "react-redux";
+// import { createOrg, generateOtpOragnization } from "../../apis/Service";
+// import {
+//   setEmailOrgOtp,
+//   setOragnizationAuthenticated,
+//   setOragnizationDetails,
+// } from "../../apis/authSlice";
+import { toast } from "react-toastify";
 
 export default function SuperAdmin() {
-  const [formValues, setFormValues] = useState({ username: "", password: "" });
+  // const[otpValue,setOtpValue] = useState("");
   const [visible, setVisible] = useState(false);
+  const [formValues, setFormValues] = useState({
+    organizationName: "",
+    username: "",
+    password: "",
+    // employeeID: "",
+    email: "",
+    contactNumber: "",
+    emailOtp: "",
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClickShowPassword = () => {
     setVisible((prev) => !prev);
@@ -38,8 +57,92 @@ export default function SuperAdmin() {
     event.preventDefault();
   };
 
-  const handleInputs = (e) => {
-    setFormValues((pre) => ({ ...pre, [e.target?.name]: e.target?.value }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const [emailOtp, setEmailOtp] = useState(""); // Separate state for OTP
+
+  const handleOtpChange = (otp) => {
+    setEmailOtp(otp);
+    setFormValues((prev) => ({ ...prev, emailOtp: otp })); // Ensure this is the correct OTP
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Always prevent default on form submission.
+
+    const formData = new FormData();
+    Object.entries(formValues).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    try {
+      const response = await generateOtpOragnization(formData);
+
+      // Log the response for debugging
+      console.log("API Response:", response);
+
+      if (response && response.success) {
+        // Make sure response is valid and has success property
+        dispatch(
+          setOragnizationDetails({
+            organizationName: formValues.organizationName,
+            username: formValues.username,
+            password: formValues.password,
+            email: formValues.email,
+            contactNumber: formValues.contactNumber,
+            otpValue: formValues.otpValue,
+          })
+        );
+        toast.success("OTP Sent Successfully!");
+        setOpen(true); // Open the OTP popup here instead of navigating to the next page
+      } else {
+        toast.error(response?.message || "Invalid Provided Details"); // Provide more context on the error
+      }
+    } catch (error) {
+      // Improved error logging
+      console.error("Error occurred while sending OTP:", error);
+
+      // If the error response is an object, log its details
+      if (error.response) {
+        console.error("Error response:", error.response);
+        toast.error("An error occurred");
+      } else {
+        toast.error("Organization failed due to a network error.");
+      }
+    }
+  };
+
+  console.log("e----------------", formValues);
+  // console.log('e----------------',otpValue)
+
+  const handleOtp = async (e) => {
+    e.preventDefault(); // Always prevent default on form submission.
+
+    const formData = new FormData();
+    Object.entries(formValues).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    formData.append("emailOtp", formValues.emailOtp);
+
+    try {
+      const response = await createOrg(formData); // Ensure sendOtpRegister handles FormData
+      console.log(formData, ">>>>>>>>>>>>>>>>>>>>form data for otp");
+      if (response?.success) {
+        dispatch(setEmailOrgOtp(formData)); // Store OTP in Redux
+        console.log(formData, ">>>>>>>>>>>>>>>>>>>>form data for otp");
+        dispatch(setOragnizationAuthenticated(true)); // Set authenticated state to true
+        toast.success("Successfully created Organization!");
+        navigate("/");
+      } else {
+        toast.error("Invalid Provided Details");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Organization  Failed");
+    }
   };
 
   // ---------------------popupOTP----------------------------------------------
@@ -48,11 +151,16 @@ export default function SuperAdmin() {
   const handleClose = () => setOpen(false);
 
   return (
-    <div>
+    <PageContainer
+    
+      className="admin-bg-image"
+      showheader="true"
+      showfooter="true"
+    >
       <Grid
         container
         display={"flex"}
-        justifyContent={"center"}
+        justifyContent={"start"}
         height="100%"
         alignItems={"center"}
         p="5%"
@@ -66,7 +174,7 @@ export default function SuperAdmin() {
                 </Typography>
               </Grid>
               <Grid item px={4} alignItems={"center"}>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <Grid
                     item
                     gap="9px"
@@ -87,7 +195,9 @@ export default function SuperAdmin() {
                           label="Organization "
                           variant="standard"
                           color="info"
-                          name="Organization Name"
+                          name="organizationName"
+                          value={formValues.organizationName}
+                          onChange={handleInputChange}
                         />
                       </Box>
 
@@ -100,12 +210,14 @@ export default function SuperAdmin() {
                           fontSize="large"
                         />
                         <TextField
-                          label="User ID"
-                          name="User ID"
+                          label="Username"
                           variant="standard"
                           color="info"
                           fullWidth
                           className="custom-textfield"
+                          name="username"
+                          value={formValues.username}
+                          onChange={handleInputChange}
                         />
                       </Box>
 
@@ -120,11 +232,11 @@ export default function SuperAdmin() {
                         <TextField
                           className="custom-textfield"
                           variant="standard"
-                          name="password"
                           type={visible ? "text" : "password"}
                           label="Password"
+                          name="password"
                           value={formValues.password}
-                          onChange={handleInputs}
+                          onChange={handleInputChange}
                           fullWidth
                           InputProps={{
                             endAdornment: (
@@ -156,6 +268,8 @@ export default function SuperAdmin() {
                           variant="standard"
                           color="info"
                           fullWidth
+                          value={formValues.email}
+                          onChange={handleInputChange}
                           className="custom-textfield"
                         />
                       </Box>
@@ -174,27 +288,35 @@ export default function SuperAdmin() {
                           name="contactNumber"
                           variant="standard"
                           color="info"
+                          value={formValues.contactNumber}
+                          onChange={handleInputChange}
                           className="custom-textfield"
                         />
                       </Box>
                     </Grid>
 
                     <Grid item mt={2}>
-                      <TriggerButton
+                      {/* <TriggerButton
                         variant="contained"
                         sx={{
-                          bgcolor: "green",
-                          "&:hover": {
-                            bgcolor: "green", // Hover par bhi green rahega
+                          bgcolor: 'green',
+                          '&:hover': {
+                            bgcolor: 'green',  // Hover par bhi green rahega
                           },
                         }}
                         fullWidth
                         onClick={handleOpen}
                       >
-                        <Typography variant="h6" color={"white"}>
-                          Create A New Customer
-                        </Typography>
-                      </TriggerButton>
+                        <Typography variant="h6" color={'white'}>Create A New Customer</Typography>
+                      </TriggerButton> */}
+                      <Button
+                        variant="contained"
+                        className="btn-primary"
+                        fullWidth
+                        type="submit"
+                      >
+                        Create A New Customer
+                      </Button>
                     </Grid>
                   </Grid>
                 </form>
@@ -245,6 +367,11 @@ export default function SuperAdmin() {
                       }}
                       // value={otpValue}
                       // onChange={setOtpValue}
+
+                      value={emailOtp}
+                      // label="Mobile"
+                      name="emailOtp"
+                      onChange={handleOtpChange}
                       numInputs={6}
                       renderSeparator={<span> &nbsp; &nbsp; </span>}
                       renderInput={(props) => <input {...props} />}
@@ -265,6 +392,7 @@ export default function SuperAdmin() {
                       size="small"
                       sx={{ bgcolor: "#0c113b" }}
                       type="submit"
+                      onClick={handleOtp}
                     >
                       <Typography>Submit</Typography>
                     </Button>
@@ -288,7 +416,7 @@ export default function SuperAdmin() {
           </Fade>
         </Modal>
       </Grid>
-    </div>
+    </PageContainer>
   );
 }
 
