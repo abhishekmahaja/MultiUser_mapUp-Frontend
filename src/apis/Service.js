@@ -181,6 +181,32 @@ export const rejectByOwner = async (formData, authToken) => {
   }
 };
 
+// generate otp for Organization api
+export const genrateOtpOrg = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/generate-otp-oragnization`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+// create Organization api
+export const createOrg = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}//create-organization`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
 //organization dropdown in signuppage
 export const organizationDropDown = async () => {
   try {
