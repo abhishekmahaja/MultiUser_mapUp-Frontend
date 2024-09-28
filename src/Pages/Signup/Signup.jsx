@@ -112,18 +112,15 @@ function Signup() {
 
   const fetchDepartmentsForOrg = async (orgId) => {
     try {
-      const depResponse = await departmentDropdown(orgId); // Fetch departments based on selected organization _id
-      console.log("API Response (Departments):", depResponse);
-      console.log("Selected Organization ID:", orgId);
-      console.log(departmentDropdown, "--------------");
+      const depResponse = await departmentDropdown(orgId); 
       if (depResponse.success && Array.isArray(depResponse.data)) {
         setDepartments(depResponse.data); // Set departments if data is valid
       } else {
-        console.error("Expected array but got:", depResponse);
+        // console.error("Expected array but got:", depResponse);
         toast.error("Invalid department data format");
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      // console.error("Error fetching departments:", error);
       toast.error("Failed to load departments");
     }
   };
@@ -131,30 +128,27 @@ function Signup() {
   // Fetch organizations only on component mount
   const fetchData = async () => {
     try {
-      // Fetch organization data
       const orgResponse = await organizationDropDown();
-      console.log("API Response (Organizations):", orgResponse);
+      // console.log("API Response (Organizations):", orgResponse);
 
       if (orgResponse.success && Array.isArray(orgResponse.data)) {
-        setOrganizations(orgResponse.data); // Set organizations if data is valid
-
-        // Fetch departments only if an organization is selected
-        const selectedOrgId = formValues.organizationName; // Assuming you have an organizationName in formValues
+        setOrganizations(orgResponse.data); 
+        const selectedOrgId = formValues.organizationName; 
         if (selectedOrgId) {
-          fetchDepartmentsForOrg(selectedOrgId); // Fetch departments for selected organization
+          fetchDepartmentsForOrg(selectedOrgId); 
         }
       } else {
-        console.error("Expected array but got:", orgResponse);
+        // console.error("Expected array but got:", orgResponse);
         toast.error("Invalid organization data format");
       }
     } catch (error) {
-      console.error("Error fetching organizations:", error);
+      // console.error("Error fetching organizations:", error);
       toast.error("Failed to load organizations");
     }
   };
   useEffect(() => {
     fetchData();
-  }, []); // Empty dependency array to run only on component mount
+  }, []); 
 
   const handleOrganizationChange = (event) => {
     const orgId = event.target.value;
@@ -163,7 +157,6 @@ function Signup() {
       organizationName: orgId,
     }));
 
-    // Fetch departments for the selected organization
     if (orgId) {
       fetchDepartmentsForOrg(orgId);
     }
