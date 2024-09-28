@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -23,9 +23,8 @@ import Paper from "@mui/material/Paper";
 import { Box } from "@mui/system";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { ToastContainer } from "react-toastify";
-import { addDepartment } from "../../../apis/Service";
+import { toast } from "react-toastify";
+import { addDepartment, departmentDropdown } from "../../../apis/Service";
 
 function ManageAsset() {
   const inputRef = useRef();
@@ -35,11 +34,16 @@ function ManageAsset() {
   const [add, setAdd] = useState([]);
   const organizationName = useSelector((state) => state.auth.organization);
   const inputRefDepartment = useRef(null);
-  const [departments, setDepartments] = useState([]);
   const inputRefPosition = useRef();
   const [parameter, setParameter] = React.useState("");
+  const [DepartmentLoading, setDepartmentLoading] = useState(true);
+  const [departments, setDepartments] = useState([]);
+  const [selectedPositionDepartment, setSelectedPositionDepartment] =
+    useState("");
+  const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
+    useState("");
 
-  //integration
+  //integration for add department
   const handleAddDepartment = async () => {
     const inputValue = inputRefDepartment.current
       ? inputRefDepartment.current.value
@@ -50,7 +54,6 @@ function ManageAsset() {
       toast.error("Organization name is missing");
       return;
     }
-
     if (value) {
       try {
         const formData = {
@@ -77,13 +80,34 @@ function ManageAsset() {
     }
   };
 
-  //for add position
-  const handleAddPosition = () => {
-    const value = inputRefPosition.current.value.trim();
-    if (value && parameter) {
-      setRows([...rows, { department: parameter, position: value }]);
-      inputRefPosition.current.value = "";
+  // Fetch departments from API To Show
+  const fetchDepartments = async (organizationName) => {
+    setDepartmentLoading(true);
+    try {
+      const formData = { organizationName };
+      const response = await departmentDropdown(formData);
+      if (response.data && response.data.length > 0) {
+        const departmentList = response.data[0].departments.map(
+          (department) => department.departmentName
+        );
+        // console.log("Fetched Departments:", departmentList);
+        setDepartments(departmentList); // Store department names in state
+      } else {
+        console.warn("No department data found in response.");
+        setDepartments([]); // Set to an empty array if no departments found
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    } finally {
+      setDepartmentLoading(false);
     }
+  };
+
+  // Handle submit or save button for selected departments (optional)
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("Selected Position Department:", selectedPositionDepartment);
+    console.log("Selected Approval Department:", selectedApprovalDepartment);
   };
 
   const handleAdd = () => {
@@ -105,9 +129,7 @@ function ManageAsset() {
     inputRef3.current.value = null;
   };
 
-  const steps = ["Head of Department", "Manager", "Team Leader"];
-
-  // -------------------------------------Table--------------------------------------------
+  // -------------------Table--------------------------------
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -144,9 +166,11 @@ function ManageAsset() {
     createData("4"),
   ];
 
-  const handleChangeParameter = (event) => {
-    setParameter(event.target.value);
-  };
+  useEffect(() => {
+    if (organizationName) {
+      fetchDepartments(organizationName);
+    }
+  }, [organizationName]);
 
   return (
     <div>
@@ -286,20 +310,28 @@ function ManageAsset() {
                         >
                           Department
                         </StyledTableCell>
-                        <StyledTableCell
-                          sx={{ fontSize: "18px", width: "10%" }}
-                        ></StyledTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                          <StyledTableCell component="th" scope="row">
-                            {row.name}
+                      {DepartmentLoading ? (
+                        <TableRow>
+                          <StyledTableCell colSpan={1}>
+                            Loading...
                           </StyledTableCell>
-                          <StyledTableCell align="left">1</StyledTableCell>
-                        </StyledTableRow>
-                      ))}
+                        </TableRow>
+                      ) : departments && departments.length > 0 ? (
+                        departments.map((departmentName, index) => (
+                          <TableRow key={index}>
+                            <StyledTableCell>{departmentName}</StyledTableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <StyledTableCell colSpan={1}>
+                            No departments available
+                          </StyledTableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </TableContainer>
@@ -320,26 +352,39 @@ function ManageAsset() {
               <Typography variant="h5"> Add Position</Typography>
               <Box display="flex" gap={1}>
                 <Grid item lg={12} md={12} sm={12} xs={12}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-select-large-label">
-                      Department
-                    </InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-large"
-                      value={parameter}
-                      label="Well Location"
-                      onChange={handleChangeParameter}
-                    >
-                      <MenuItem value="">
-                        <em>All</em>
-                      </MenuItem>
-                      <MenuItem value={1}>Software</MenuItem>
-                      <MenuItem value={2}>Hardware</MenuItem>
-                      <MenuItem value={3}></MenuItem>
-                    </Select>
-                  </FormControl>
+                  {DepartmentLoading ? (
+                    <div>Loading...</div>
+                  ) : (
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="demo-select-large-label">
+                        Department
+                      </InputLabel>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-large"
+                        label="Well Location"
+                        value={selectedPositionDepartment}
+                        onChange={(e) =>
+                          setSelectedPositionDepartment(e.target.value)
+                        }
+                      >
+                        <option value="">Select a department</option>
+                        {departments && departments.length > 0 ? (
+                          departments.map((departmentName, index) => (
+                            <option key={departmentName} value={index}>
+                              {departmentName}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No departments available
+                          </option>
+                        )}
+                      </Select>
+                    </FormControl>
+                  )}
                 </Grid>
+
                 <TextField
                   variant="outlined"
                   size="small"
@@ -349,7 +394,7 @@ function ManageAsset() {
                 />
                 <Button
                   variant="contained"
-                  onClick={handleAdd}
+                  onClick={handleSubmit}
                   size="small"
                   sx={{
                     backgroundColor: "green", // Change button color to green
@@ -411,26 +456,39 @@ function ManageAsset() {
               <Typography variant="h5"> Approval Chain</Typography>
               <Box display="flex" gap={1}>
                 <Grid item lg={12} md={12} sm={12} xs={12}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-select-large-label">
-                      Department
-                    </InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-large"
-                      value={parameter}
-                      label="Well Location"
-                      onChange={handleChangeParameter}
-                    >
-                      <MenuItem value="">
-                        <em>All</em>
-                      </MenuItem>
-                      <MenuItem value={1}>Software</MenuItem>
-                      <MenuItem value={2}>Hardware</MenuItem>
-                      <MenuItem value={3}></MenuItem>
-                    </Select>
-                  </FormControl>
+                  {DepartmentLoading ? (
+                    <div>Loading...</div>
+                  ) : (
+                    <FormControl fullWidth size="small">
+                      <InputLabel id="demo-select-large-label">
+                        Department
+                      </InputLabel>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-large"
+                        label="Well Location"
+                        value={selectedApprovalDepartment}
+                        onChange={(e) =>
+                          setSelectedApprovalDepartment(e.target.value)
+                        }
+                      >
+                        <option value="">Select a department</option>
+                        {departments && departments.length > 0 ? (
+                          departments.map((departmentName, index) => (
+                            <option key={departmentName} value={index}>
+                              {departmentName}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            No departments available
+                          </option>
+                        )}
+                      </Select>
+                    </FormControl>
+                  )}
                 </Grid>
+
                 <TextField
                   variant="outlined"
                   label="Action"
@@ -451,7 +509,7 @@ function ManageAsset() {
                 />
                 <Button
                   variant="contained"
-                  onClick={handleAdd}
+                  onClick={handleSubmit}
                   size="small"
                   sx={{
                     backgroundColor: "green", // Change button color to green

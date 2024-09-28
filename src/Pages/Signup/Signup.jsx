@@ -21,14 +21,16 @@ import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import { setRegisterDetails } from "../../apis/authSlice";
 import { toast } from "react-toastify";
-import { sendOtpRegister } from "../../apis/Service";
-import { organizationDropDown } from "../../apis/Service";
-import { departmentDropdown } from "../../apis/Service";
+import {
+  departmentDropdown,
+  organizationDropDown,
+  sendOtpRegister,
+} from "../../apis/Service";
 
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedPhotoName, setSelectedPhotoName] = useState(null); 
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null);
   const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [organizations, setOrganizations] = useState([]);
   const [departments, setDepartments] = useState("");
@@ -67,17 +69,15 @@ function Signup() {
     }
   };
 
+  // Integration for registration page
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
     Object.entries(formValues).forEach(([key, value]) => {
       formData.append(key, value);
     });
-
-    // Integration for registration page
     try {
-      const response = await sendOtpRegister(formData); 
+      const response = await sendOtpRegister(formData);
       if (response?.success) {
         // Store data in Redux Store
         const passportPhotoURL = response?.passportPhoto;
@@ -91,14 +91,13 @@ function Signup() {
             organizationName: formValues.organizationName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
-            passportPhoto: passportPhotoURL || formValues.passportPhoto, 
+            passportPhoto: passportPhotoURL || formValues.passportPhoto,
             idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
         toast.success(response.message);
         // console.log("OTP sent, about to navigate...",response?.message);
         navigate("/otpsignup");
-
       } else {
         toast.error(response.message);
       }
@@ -108,15 +107,15 @@ function Signup() {
     }
   };
 
-  // Fetch organizations only 
+  // Fetch organizations only
   const fetchData = async () => {
     try {
       const orgResponse = await organizationDropDown();
       if (orgResponse.success && Array.isArray(orgResponse.data)) {
         setOrganizations(orgResponse.data);
-        const selectedOrgId = formValues.organizationName; 
+        const selectedOrgId = formValues.organizationName;
         if (selectedOrgId) {
-          fetchDepartmentsForOrg(selectedOrgId); 
+          fetchDepartmentsForOrg(selectedOrgId);
         }
       } else {
         toast.error("Invalid organization data format");
@@ -163,7 +162,7 @@ function Signup() {
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, []);
 
   return (
     <PageContainer className="bgImg" showheader="true" showfooter="true">
@@ -295,7 +294,7 @@ function Signup() {
                             const selectedDept = event.target.value;
                             setFormValues((prev) => ({
                               ...prev,
-                              department: selectedDept, 
+                              department: selectedDept,
                             }));
                           }}
                           label="Department"

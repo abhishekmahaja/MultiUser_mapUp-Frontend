@@ -223,7 +223,7 @@ export const organizationDropDown = async () => {
 export const departmentDropdown = async (formData) => {
   try {
     const response = await axios.post(
-      `${ORG_API}/department-base-org-name-dropdown`,
+      `${ORGANIZATION_API}/department-base-org-name-dropdown`,
       formData
     );
     return response.data;
