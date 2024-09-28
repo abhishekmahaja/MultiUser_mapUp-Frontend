@@ -24,14 +24,10 @@ import { Box } from "@mui/system";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addDepartment, departmentDropdown } from "../../../apis/Service";
+import { addDepartment, departmentDropdown, addPosition } from "../../../apis/Service";
 
 function ManageAsset() {
   const inputRef = useRef();
-  const inputRef1 = useRef();
-  const inputRef2 = useRef();
-  const inputRef3 = useRef();
-  const [add, setAdd] = useState([]);
   const organizationName = useSelector((state) => state.auth.organization);
   const inputRefDepartment = useRef(null);
   const inputRefPosition = useRef();
@@ -102,6 +98,9 @@ function ManageAsset() {
     }
   };
 
+  //fetch position from api on the base of department
+  
+
   // Handle submit or save button for selected departments (optional)
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -109,26 +108,7 @@ function ManageAsset() {
     console.log("Selected Approval Department:", selectedApprovalDepartment);
   };
 
-  const handleAdd = () => {
-    const value = inputRef?.current.value;
-    const value1 = inputRef1?.current.value;
-    const value2 = inputRef2?.current.value;
-    const value3 = inputRef3?.current.value;
-
-    // Add the values as an object to the state array
-    setAdd([
-      ...add,
-      { department: value, head: value1, email: value2, phone: value3 },
-    ]);
-
-    // Clear the input fields after adding
-    inputRef.current.value = null;
-    inputRef1.current.value = null;
-    inputRef2.current.value = null;
-    inputRef3.current.value = null;
-  };
-
-  // -------------------Table--------------------------------
+  // -------------------Table------------------------
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {

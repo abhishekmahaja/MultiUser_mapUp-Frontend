@@ -244,3 +244,16 @@ export const addDepartment = async (formData) => {
     return catchError(error);
   }
 };
+
+//Add Position on the basic of department
+export const addPosition = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/add-position`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
