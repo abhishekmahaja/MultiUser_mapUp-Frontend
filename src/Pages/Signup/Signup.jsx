@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import { organizationDropDown, sendOtpRegister } from "../../apis/Service";
 
 function Signup() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [selectedPhotoName, setSelectedPhotoName] = useState(null); // To store the passport photo name
   const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [organizations, setOrganizations] = useState([]);
@@ -38,9 +40,6 @@ function Signup() {
     idCardPhoto: "", //this is Image Uploaded by User
     passportPhoto: "", //this is Image Uploaded by User
   });
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleUsernameChange = (e) => {
     const { name, value, files, type } = e.target;
@@ -108,24 +107,25 @@ function Signup() {
   };
 
   // Fetch organization data on component mount
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const response = await organizationDropDown(); // Get the full response
-        // console.log("API Response:", response); // Log response for debugging
-
-        if (response.success && Array.isArray(response.data)) {
-          setOrganizations(response.data); // Access the `data` field
-        } else {
-          console.error("Expected array but got:", response);
-          toast.error("Invalid organization data format");
-        }
-      } catch (error) {
-        console.error("Error fetching organizations:", error);
-        toast.error("Failed to load organizations");
+  const fetchOrganizations = async () => {
+    try {
+      const response = await organizationDropDown(); // Get the full response
+      // console.log("API Response:", response);
+      if (response.success && Array.isArray(response.data)) {
+        setOrganizations(response.data); // Access the `data` field
+      } else {
+        toast.error(response?.message);
       }
-    };
+    } catch (error) {
+      // console.error("Error fetching organizations:", error);
+      toast.error(error.message);
+    }
+    //department dropdown
+    try {
+    } catch (error) {}
+  };
 
+  useEffect(() => {
     fetchOrganizations();
   }, []);
 
