@@ -35,7 +35,6 @@ function ManageAsset() {
   const organizationName = useSelector((state) => state.auth.organization);
   const inputRefDepartment = useRef(null);
   const inputRefPosition = useRef();
-  const [parameter, setParameter] = React.useState("");
   const [DepartmentLoading, setDepartmentLoading] = useState(true);
   const [departments, setDepartments] = useState([]);
   const [selectedPositionDepartment, setSelectedPositionDepartment] =
