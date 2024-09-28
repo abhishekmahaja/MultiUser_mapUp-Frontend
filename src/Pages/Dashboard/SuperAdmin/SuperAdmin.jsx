@@ -24,30 +24,22 @@ import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import Fade from "@mui/material/Fade";
 import OTPInput from "react-otp-input";
-import { useDispatch } from "react-redux";
-// import { createOrg, generateOtpOragnization } from "../../apis/Service";
-// import {
-//   setEmailOrgOtp,
-//   setOragnizationAuthenticated,
-//   setOragnizationDetails,
-// } from "../../apis/authSlice";
+import { createOrg, genrateOtpOrg } from "../../../apis/Service";
 import { toast } from "react-toastify";
 
 export default function SuperAdmin() {
-  // const[otpValue,setOtpValue] = useState("");
-  const [visible, setVisible] = useState(false);
   const [formValues, setFormValues] = useState({
     organizationName: "",
     username: "",
     password: "",
-    // employeeID: "",
     email: "",
     contactNumber: "",
     emailOtp: "",
   });
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleClickShowPassword = () => {
     setVisible((prev) => !prev);
@@ -57,102 +49,74 @@ export default function SuperAdmin() {
     event.preventDefault();
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+  const handleInputs = (e) => {
+    setFormValues((pre) => ({ ...pre, [e.target?.name]: e.target?.value }));
+    // console.log(formValues, ">>>>>>>>>>>>form value");
   };
 
-  const [emailOtp, setEmailOtp] = useState(""); // Separate state for OTP
-
+  // Separate handler for OTP input
   const handleOtpChange = (otp) => {
-    setEmailOtp(otp);
-    setFormValues((prev) => ({ ...prev, emailOtp: otp })); // Ensure this is the correct OTP
+    setFormValues((prev) => ({
+      ...prev,
+      emailOtp: otp, // Directly set OTP value
+    }));
   };
 
+  //generated otp
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Always prevent default on form submission.
-
+    e.preventDefault();
+    // console.log(formValues, ">>>>>>>>>>>>form value")
     const formData = new FormData();
     Object.entries(formValues).forEach(([key, value]) => {
       formData.append(key, value);
     });
-
     try {
-      const response = await generateOtpOragnization(formData);
-
-      // Log the response for debugging
-      console.log("API Response:", response);
-
-      if (response && response.success) {
-        // Make sure response is valid and has success property
-        dispatch(
-          setOragnizationDetails({
-            organizationName: formValues.organizationName,
-            username: formValues.username,
-            password: formValues.password,
-            email: formValues.email,
-            contactNumber: formValues.contactNumber,
-            otpValue: formValues.otpValue,
-          })
-        );
-        toast.success("OTP Sent Successfully!");
-        setOpen(true); // Open the OTP popup here instead of navigating to the next page
-      } else {
-        toast.error(response?.message || "Invalid Provided Details"); // Provide more context on the error
-      }
-    } catch (error) {
-      // Improved error logging
-      console.error("Error occurred while sending OTP:", error);
-
-      // If the error response is an object, log its details
-      if (error.response) {
-        console.error("Error response:", error.response);
-        toast.error("An error occurred");
-      } else {
-        toast.error("Organization failed due to a network error.");
-      }
-    }
-  };
-
-  console.log("e----------------", formValues);
-  // console.log('e----------------',otpValue)
-
-  const handleOtp = async (e) => {
-    e.preventDefault(); // Always prevent default on form submission.
-
-    const formData = new FormData();
-    Object.entries(formValues).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    formData.append("emailOtp", formValues.emailOtp);
-
-    try {
-      const response = await createOrg(formData); // Ensure sendOtpRegister handles FormData
-      console.log(formData, ">>>>>>>>>>>>>>>>>>>>form data for otp");
+      const response = await genrateOtpOrg(formData);
       if (response?.success) {
-        dispatch(setEmailOrgOtp(formData)); // Store OTP in Redux
-        console.log(formData, ">>>>>>>>>>>>>>>>>>>>form data for otp");
-        dispatch(setOragnizationAuthenticated(true)); // Set authenticated state to true
-        toast.success("Successfully created Organization!");
-        navigate("/");
+        toast.success(response.message);
+        setOpen(true);
       } else {
-        toast.error("Invalid Provided Details");
+        toast.error(response?.message);
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Organization  Failed");
+      toast.error(error.message);
     }
   };
 
-  // ---------------------popupOTP----------------------------------------------
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  //created organization
+  const creasteOrganizaton = async (e) => {
+    e.preventDefault();
+    const {
+      organizationName,
+      username,
+      password,
+      email,
+      contactNumber,
+      emailOtp,
+    } = formValues;
+    try {
+      const response = await createOrg({
+        organizationName,
+        username,
+        password,
+        email,
+        emailOtp,
+        contactNumber,
+      });
+
+      if (response?.success) {
+        toast.success(response.message);
+        setOpen(false);
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <PageContainer
-    
       className="admin-bg-image"
       showheader="true"
       showfooter="true"
@@ -197,7 +161,7 @@ export default function SuperAdmin() {
                           color="info"
                           name="organizationName"
                           value={formValues.organizationName}
-                          onChange={handleInputChange}
+                          onChange={handleInputs}
                         />
                       </Box>
 
@@ -217,7 +181,7 @@ export default function SuperAdmin() {
                           className="custom-textfield"
                           name="username"
                           value={formValues.username}
-                          onChange={handleInputChange}
+                          onChange={handleInputs}
                         />
                       </Box>
 
@@ -236,7 +200,7 @@ export default function SuperAdmin() {
                           label="Password"
                           name="password"
                           value={formValues.password}
-                          onChange={handleInputChange}
+                          onChange={handleInputs}
                           fullWidth
                           InputProps={{
                             endAdornment: (
@@ -269,7 +233,7 @@ export default function SuperAdmin() {
                           color="info"
                           fullWidth
                           value={formValues.email}
-                          onChange={handleInputChange}
+                          onChange={handleInputs}
                           className="custom-textfield"
                         />
                       </Box>
@@ -289,26 +253,29 @@ export default function SuperAdmin() {
                           variant="standard"
                           color="info"
                           value={formValues.contactNumber}
-                          onChange={handleInputChange}
+                          // onChange={handleInputs}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Ensure the value starts with '+91'
+                            if (value.startsWith("+91")) {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                contactNumber: value,
+                              }));
+                            } else {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                contactNumber: `+91${value}`,
+                              }));
+                            }
+                          }}
+                          placeholder="+91 (Mobile Number)"
                           className="custom-textfield"
                         />
                       </Box>
                     </Grid>
 
                     <Grid item mt={2}>
-                      {/* <TriggerButton
-                        variant="contained"
-                        sx={{
-                          bgcolor: 'green',
-                          '&:hover': {
-                            bgcolor: 'green',  // Hover par bhi green rahega
-                          },
-                        }}
-                        fullWidth
-                        onClick={handleOpen}
-                      >
-                        <Typography variant="h6" color={'white'}>Create A New Customer</Typography>
-                      </TriggerButton> */}
                       <Button
                         variant="contained"
                         className="btn-primary"
@@ -337,10 +304,8 @@ export default function SuperAdmin() {
         >
           <Fade in={open}>
             <ModalContent sx={style}>
-              {/* <Grid item xs={12} md={12} sm={12}> */}
-              {/* <Paper sx={{ borderRadius: "10px" }}> */}
               <Grid container>
-                <form>
+                <form onSubmit={creasteOrganizaton}>
                   <Grid item xs={12} md={12} sm={12} lg={12} mt={2}>
                     <Typography
                       fontSize="x-large"
@@ -365,12 +330,8 @@ export default function SuperAdmin() {
                         height: "4vh",
                         fontSize: "18px",
                       }}
-                      // value={otpValue}
-                      // onChange={setOtpValue}
-
-                      value={emailOtp}
-                      // label="Mobile"
                       name="emailOtp"
+                      value={formValues.emailOtp}
                       onChange={handleOtpChange}
                       numInputs={6}
                       renderSeparator={<span> &nbsp; &nbsp; </span>}
@@ -392,26 +353,22 @@ export default function SuperAdmin() {
                       size="small"
                       sx={{ bgcolor: "#0c113b" }}
                       type="submit"
-                      onClick={handleOtp}
+                      onClick={handleOpen}
                     >
                       <Typography>Submit</Typography>
                     </Button>
                   </Grid>
                   <Grid item xs={12} textAlign="center" py={1}>
-                    <Link
-                      to="#"
-                      style={{ textDecoration: "none" }}
-                      // onClick={handleResendOtp}
-                    >
-                      <Typography style={{ cursor: "pointer" }}>
-                        Resend One-Time Password
-                      </Typography>
+                    <Link to="#" style={{ textDecoration: "none" }}>
+                      <Button onClick={handleSubmit}>
+                        <Typography style={{ cursor: "pointer" }}>
+                          Resend One-Time Password
+                        </Typography>
+                      </Button>
                     </Link>
                   </Grid>
                 </form>
               </Grid>
-              {/* </Paper> */}
-              {/* </Grid> */}
             </ModalContent>
           </Fade>
         </Modal>
@@ -512,38 +469,6 @@ const ModalContent = styled("div")(
       font-weight: 400;
       color: ${theme.palette.mode === "dark" ? grey[400] : grey[800]};
       margin-bottom: 4px;
-    }
-  `
-);
-
-const TriggerButton = styled(Button)(
-  ({ theme }) => css`
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 150ms ease;
-    cursor: pointer;
-    background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-    border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-    color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-
-    &:hover {
-      background: ${theme.palette.mode === "dark" ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === "dark" ? grey[600] : grey[300]};
-    }
-
-    &:active {
-      background: ${theme.palette.mode === "dark" ? grey[900] : grey[100]};
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 4px
-        ${theme.palette.mode === "dark" ? blue[300] : blue[200]};
-      outline: none;
     }
   `
 );

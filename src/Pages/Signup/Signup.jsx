@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Typography,
@@ -21,12 +21,15 @@ import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import { setRegisterDetails } from "../../apis/authSlice";
 import { toast } from "react-toastify";
-import { organizationDropDown, sendOtpRegister } from "../../apis/Service";
+import { sendOtpRegister } from "../../apis/Service";
+import { organizationDropDown } from "../../apis/Service";
+import { departmentDropdown } from "../../apis/Service";
 
 function Signup() {
-  const [selectedPhotoName, setSelectedPhotoName] = useState(null); // To store the passport photo name
+  const [selectedPhotoName, setSelectedPhotoName] = useState("null"); // To store the passport photo name
   const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [organizations, setOrganizations] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
@@ -107,27 +110,57 @@ function Signup() {
     }
   };
 
-  // Fetch organization data on component mount
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const response = await organizationDropDown(); // Get the full response
-        // console.log("API Response:", response); // Log response for debugging
-
-        if (response.success && Array.isArray(response.data)) {
-          setOrganizations(response.data); // Access the `data` field
-        } else {
-          console.error("Expected array but got:", response);
-          toast.error("Invalid organization data format");
-        }
-      } catch (error) {
-        console.error("Error fetching organizations:", error);
-        toast.error("Failed to load organizations");
+  const fetchDepartmentsForOrg = async (orgId) => {
+    try {
+      const depResponse = await departmentDropdown(orgId); 
+      if (depResponse.success && Array.isArray(depResponse.data)) {
+        setDepartments(depResponse.data); // Set departments if data is valid
+      } else {
+        // console.error("Expected array but got:", depResponse);
+        toast.error("Invalid department data format");
       }
-    };
+    } catch (error) {
+      // console.error("Error fetching departments:", error);
+      toast.error("Failed to load departments");
+    }
+  };
 
-    fetchOrganizations();
-  }, []);
+  // Fetch organizations only on component mount
+  const fetchData = async () => {
+    try {
+      const orgResponse = await organizationDropDown();
+      // console.log("API Response (Organizations):", orgResponse);
+
+      if (orgResponse.success && Array.isArray(orgResponse.data)) {
+        setOrganizations(orgResponse.data); 
+        const selectedOrgId = formValues.organizationName; 
+        if (selectedOrgId) {
+          fetchDepartmentsForOrg(selectedOrgId); 
+        }
+      } else {
+        // console.error("Expected array but got:", orgResponse);
+        toast.error("Invalid organization data format");
+      }
+    } catch (error) {
+      // console.error("Error fetching organizations:", error);
+      toast.error("Failed to load organizations");
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []); 
+
+  const handleOrganizationChange = (event) => {
+    const orgId = event.target.value;
+    setFormValues((prev) => ({
+      ...prev,
+      organizationName: orgId,
+    }));
+
+    if (orgId) {
+      fetchDepartmentsForOrg(orgId);
+    }
+  };
 
   return (
     <PageContainer className="bgImg" showheader="true" showfooter="true">
@@ -211,6 +244,7 @@ function Signup() {
                       />
                     </Box>
 
+                    {/* Organization Dropdown */}
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
                       <FormControl fullWidth variant="standard">
@@ -221,7 +255,7 @@ function Signup() {
                           labelId="organization-label"
                           name="organizationName"
                           value={formValues.organizationName}
-                          onChange={handleUsernameChange}
+                          onChange={handleOrganizationChange}
                           label="Organization"
                         >
                           {Array.isArray(organizations) &&
@@ -243,16 +277,35 @@ function Signup() {
                       </FormControl>
                     </Box>
 
+                    {/* Department Dropdown */}
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
-                      <TextField
-                        fullWidth
-                        label="Department"
-                        name="department"
-                        variant="standard"
-                        value={formValues.department}
-                        onChange={handleUsernameChange}
-                      />
+                      <FormControl fullWidth variant="standard">
+                        <InputLabel id="department-label">
+                          Department
+                        </InputLabel>
+                        <Select
+                          labelId="department-label"
+                          name="department"
+                          value={formValues.department}
+                          label="Department"
+                        >
+                          {departments.length > 0 ? (
+                            departments.map((dept) => (
+                              <MenuItem
+                                key={dept._id}
+                                value={dept.departmentName}
+                              >
+                                {dept.departmentName}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem value="">
+                              No departments available
+                            </MenuItem>
+                          )}
+                        </Select>
+                      </FormControl>
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>

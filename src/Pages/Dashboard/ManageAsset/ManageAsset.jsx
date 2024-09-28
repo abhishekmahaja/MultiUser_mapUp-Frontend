@@ -23,14 +23,9 @@ import Paper from "@mui/material/Paper";
 import { Box } from "@mui/system";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import { useSelector } from "react-redux";
-
-// -------------------Table Function-------------------------
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-}));
+import toast from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import { addDepartment } from "../../../apis/Service";
 
 function ManageAsset() {
   const inputRef = useRef();
@@ -39,6 +34,57 @@ function ManageAsset() {
   const inputRef3 = useRef();
   const [add, setAdd] = useState([]);
   const organizationName = useSelector((state) => state.auth.organization);
+  const inputRefDepartment = useRef(null);
+  const [departments, setDepartments] = useState([]);
+  const inputRefPosition = useRef();
+  const [parameter, setParameter] = React.useState("");
+
+  //integration
+  const handleAddDepartment = async () => {
+    const inputValue = inputRefDepartment.current
+      ? inputRefDepartment.current.value
+      : "";
+    const value = inputValue.trim();
+
+    if (!organizationName) {
+      toast.error("Organization name is missing");
+      return;
+    }
+
+    if (value) {
+      try {
+        const formData = {
+          organizationName: organizationName, // Use dynamic organization name
+          departmentName: value,
+        };
+        const result = await addDepartment(formData);
+        if (result && result.success) {
+          setDepartments((prevDepartments) => [...prevDepartments, value]);
+          inputRefDepartment.current.value = ""; // Clear input
+          toast.success(result.message || "Department added successfully");
+        } else {
+          toast.error(result.message || "Failed to add department");
+        }
+      } catch (error) {
+        console.error("API call error: ", error.response || error.message);
+        toast.error(
+          "Error adding department: " +
+            (error.response?.data?.message || error.message)
+        );
+      }
+    } else {
+      toast.error("Department name cannot be empty");
+    }
+  };
+
+  //for add position
+  const handleAddPosition = () => {
+    const value = inputRefPosition.current.value.trim();
+    if (value && parameter) {
+      setRows([...rows, { department: parameter, position: value }]);
+      inputRefPosition.current.value = "";
+    }
+  };
 
   const handleAdd = () => {
     const value = inputRef?.current.value;
@@ -97,8 +143,6 @@ function ManageAsset() {
     createData("3"),
     createData("4"),
   ];
-
-  const [parameter, setParameter] = React.useState("");
 
   const handleChangeParameter = (event) => {
     setParameter(event.target.value);
@@ -205,30 +249,30 @@ function ManageAsset() {
               display="flex"
               flexDirection={"column"}
             >
-              <Typography variant="h5"> Add Department</Typography>
+              <Typography variant="h5">Add Department</Typography>
               <Box display="flex" gap={1}>
                 <TextField
                   variant="outlined"
                   size="small"
                   label="Department"
-                  inputRef={inputRef}
+                  inputRef={inputRefDepartment} // Use inputRef instead of ref
                   fullWidth
                 />
                 <Button
                   variant="contained"
-                  onClick={handleAdd}
+                  onClick={handleAddDepartment}
                   size="small"
                   sx={{
-                    backgroundColor: "green", // Change button color to green
+                    backgroundColor: "green",
                     "&:hover": {
-                      backgroundColor: "darkgreen", // Optional: Change color on hover
+                      backgroundColor: "darkgreen",
                     },
                   }}
                 >
                   ADD
                 </Button>
               </Box>
-              {/* /-----------------------------------------------Table--------------------------------- */}
+
               <Grid container>
                 <TableContainer
                   component={Paper}
