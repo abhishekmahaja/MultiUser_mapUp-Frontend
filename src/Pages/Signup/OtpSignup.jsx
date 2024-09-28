@@ -76,11 +76,11 @@ export default function Otpsign() {
 
         dispatch(clearRegisterAuth()); // Clear auth data after login success
       } else {
-        toast.error("OTP Does Not Match");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error(error);
-      toast.error("OTP Verification Failed");
+      toast.error(response.message);
     }
   };
 

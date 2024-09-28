@@ -26,10 +26,12 @@ import { organizationDropDown } from "../../apis/Service";
 import { departmentDropdown } from "../../apis/Service";
 
 function Signup() {
-  const [selectedPhotoName, setSelectedPhotoName] = useState("null"); // To store the passport photo name
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null); 
   const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [organizations, setOrganizations] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const [departments, setDepartments] = useState("");
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
@@ -41,9 +43,6 @@ function Signup() {
     idCardPhoto: "", //this is Image Uploaded by User
     passportPhoto: "", //this is Image Uploaded by User
   });
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleUsernameChange = (e) => {
     const { name, value, files, type } = e.target;
@@ -76,10 +75,9 @@ function Signup() {
       formData.append(key, value);
     });
 
-    // Integration
+    // Integration for registration page
     try {
-      const response = await sendOtpRegister(formData); // Ensure that sendOtpRegister can handle FormData
-      // console.log("OTP Response:", response);
+      const response = await sendOtpRegister(formData); 
       if (response?.success) {
         // Store data in Redux Store
         const passportPhotoURL = response?.passportPhoto;
@@ -93,16 +91,16 @@ function Signup() {
             organizationName: formValues.organizationName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
-            passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
+            passportPhoto: passportPhotoURL || formValues.passportPhoto, 
             idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
-
-        toast.success("OTP Sent Successfully!");
+        toast.success(response.message);
         // console.log("OTP sent, about to navigate...",response?.message);
         navigate("/otpsignup");
+
       } else {
-        toast.error("Invalid Provided Details");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error(error);
@@ -110,45 +108,45 @@ function Signup() {
     }
   };
 
-  const fetchDepartmentsForOrg = async (orgId) => {
-    try {
-      const depResponse = await departmentDropdown(orgId); 
-      if (depResponse.success && Array.isArray(depResponse.data)) {
-        setDepartments(depResponse.data); // Set departments if data is valid
-      } else {
-        // console.error("Expected array but got:", depResponse);
-        toast.error("Invalid department data format");
-      }
-    } catch (error) {
-      // console.error("Error fetching departments:", error);
-      toast.error("Failed to load departments");
-    }
-  };
-
-  // Fetch organizations only on component mount
+  // Fetch organizations only 
   const fetchData = async () => {
     try {
       const orgResponse = await organizationDropDown();
-      // console.log("API Response (Organizations):", orgResponse);
-
       if (orgResponse.success && Array.isArray(orgResponse.data)) {
-        setOrganizations(orgResponse.data); 
+        setOrganizations(orgResponse.data);
         const selectedOrgId = formValues.organizationName; 
         if (selectedOrgId) {
           fetchDepartmentsForOrg(selectedOrgId); 
         }
       } else {
-        // console.error("Expected array but got:", orgResponse);
         toast.error("Invalid organization data format");
       }
     } catch (error) {
-      // console.error("Error fetching organizations:", error);
       toast.error("Failed to load organizations");
     }
   };
-  useEffect(() => {
-    fetchData();
-  }, []); 
+
+  //show department dropdown on the organization select
+  const fetchDepartmentsForOrg = async (orgId) => {
+    try {
+      const formData = { organizationName: orgId };
+      const depResponse = await departmentDropdown(formData);
+      if (depResponse.success && Array.isArray(depResponse.data)) {
+        if (depResponse.data.length === 0) {
+          toast.info("No departments found for the selected organization");
+        } else {
+          // console.log("Departments data:", depResponse.data[0].departments);
+          setDepartments(depResponse.data[0].departments);
+        }
+      } else {
+        console.error("Expected array but got:", depResponse);
+        toast.error("Invalid department data format");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Failed to load departments");
+    }
+  };
 
   const handleOrganizationChange = (event) => {
     const orgId = event.target.value;
@@ -157,10 +155,15 @@ function Signup() {
       organizationName: orgId,
     }));
 
+    // Fetch departments for the selected organization
     if (orgId) {
       fetchDepartmentsForOrg(orgId);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []); 
 
   return (
     <PageContainer className="bgImg" showheader="true" showfooter="true">
@@ -288,6 +291,13 @@ function Signup() {
                           labelId="department-label"
                           name="department"
                           value={formValues.department}
+                          onChange={(event) => {
+                            const selectedDept = event.target.value;
+                            setFormValues((prev) => ({
+                              ...prev,
+                              department: selectedDept, 
+                            }));
+                          }}
                           label="Department"
                         >
                           {departments.length > 0 ? (
@@ -340,7 +350,7 @@ function Signup() {
                             hidden
                           />
                           {!selectedPhotoName ? (
-                            <Typography>Upload photo</Typography>
+                            <Typography>Update Photo</Typography>
                           ) : (
                             <Typography variant="body2" color="textSecondary">
                               {selectedPhotoName}
