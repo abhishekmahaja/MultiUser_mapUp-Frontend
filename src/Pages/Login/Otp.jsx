@@ -12,6 +12,7 @@ import {
   clearAuth,
   setAuthToken,
   setRole,
+  setOrganizationName,
 } from "../../apis/authSlice";
 import { toast } from "react-toastify";
 
@@ -27,10 +28,11 @@ export default function OtpLogin() {
 
     const formData = { username, password, otp: otpValue };
 
-    // console.log("define role",response.data.role);
-
     try {
       const response = await login(formData);
+
+      // console.log("Login Response:", response);  // Log the full response
+      // console.log("orgnzaition anme", response.data.organization);
 
       console.log(response);
       if (response.success) {
@@ -38,10 +40,18 @@ export default function OtpLogin() {
         dispatch(setAuthenticated(true)); // Set authenticated state to true
         dispatch(setAuthToken(response.token)); // Store auth token
         dispatch(setRole(response.data.role)); // Store user role
+        dispatch(setOrganizationName(response.data.organization)) //store organization role
 
         toast.success("Login successful!");
 
-        navigate("/dashboard");
+        // navigate("/dashboard");
+
+        // Conditionally navigate based on role
+        if (response.data.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
 
         // dispatch(clearAuth()); // Clear auth data after login success
       } else {

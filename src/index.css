@@ -106,3 +106,10 @@
 .deleteIconColor{
   color: red;
 }
+
+.admin-bg-image{
+    background-image: url("https://omdia.tech.informa.com/-/media/tech/omdia/omdia-website-enhancement-oct-2023/iot-coverage-2.jpg?rev=4fa2eb28f841448c9d126f911019398f");
+    background-size: cover;
+    background-position: right;
+    background-repeat: no-repeat;
+}

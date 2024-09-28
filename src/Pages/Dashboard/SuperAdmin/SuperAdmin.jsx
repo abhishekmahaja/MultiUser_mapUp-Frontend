@@ -5,19 +5,18 @@ import {
   CardContent,
   Grid,
   InputAdornment,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Box } from "@mui/system";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HttpsIcon from "@mui/icons-material/Https";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import EmailIcon from "@mui/icons-material/Email";
 import CallIcon from "@mui/icons-material/Call";
 import StoreIcon from "@mui/icons-material/Store";
-// import PageContainer from '../../components/HOC/PageContainer';
+import PageContainer from "../../../components/HOC/PageContainer";
 
 // -------------------------------popupOTP----------------------------------------------
 import PropTypes from "prop-types";
@@ -25,10 +24,22 @@ import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import Fade from "@mui/material/Fade";
 import OTPInput from "react-otp-input";
+import { createOrg, genrateOtpOrg } from "../../../apis/Service";
+import { toast } from "react-toastify";
 
 export default function SuperAdmin() {
-  const [formValues, setFormValues] = useState({ username: "", password: "" });
+  const [formValues, setFormValues] = useState({
+    organizationName: "",
+    username: "",
+    password: "",
+    email: "",
+    contactNumber: "",
+    emailOtp: "",
+  });
   const [visible, setVisible] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const handleClickShowPassword = () => {
     setVisible((prev) => !prev);
@@ -40,19 +51,80 @@ export default function SuperAdmin() {
 
   const handleInputs = (e) => {
     setFormValues((pre) => ({ ...pre, [e.target?.name]: e.target?.value }));
+    // console.log(formValues, ">>>>>>>>>>>>form value");
   };
 
-  // ---------------------popupOTP----------------------------------------------
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // Separate handler for OTP input
+  const handleOtpChange = (otp) => {
+    setFormValues((prev) => ({
+      ...prev,
+      emailOtp: otp, // Directly set OTP value
+    }));
+  };
+
+  //generated otp
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log(formValues, ">>>>>>>>>>>>form value")
+    const formData = new FormData();
+    Object.entries(formValues).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    try {
+      const response = await genrateOtpOrg(formData);
+      if (response?.success) {
+        toast.success(response.message);
+        setOpen(true);
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  //created organization
+  const creasteOrganizaton = async (e) => {
+    e.preventDefault();
+    const {
+      organizationName,
+      username,
+      password,
+      email,
+      contactNumber,
+      emailOtp,
+    } = formValues;
+    try {
+      const response = await createOrg({
+        organizationName,
+        username,
+        password,
+        email,
+        emailOtp,
+        contactNumber,
+      });
+
+      if (response?.success) {
+        toast.success(response.message);
+        setOpen(false);
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
-    <div>
+    <PageContainer
+      className="admin-bg-image"
+      showheader="true"
+      showfooter="true"
+    >
       <Grid
         container
         display={"flex"}
-        justifyContent={"center"}
+        justifyContent={"start"}
         height="100%"
         alignItems={"center"}
         p="5%"
@@ -66,7 +138,7 @@ export default function SuperAdmin() {
                 </Typography>
               </Grid>
               <Grid item px={4} alignItems={"center"}>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <Grid
                     item
                     gap="9px"
@@ -87,7 +159,9 @@ export default function SuperAdmin() {
                           label="Organization "
                           variant="standard"
                           color="info"
-                          name="Organization Name"
+                          name="organizationName"
+                          value={formValues.organizationName}
+                          onChange={handleInputs}
                         />
                       </Box>
 
@@ -100,12 +174,14 @@ export default function SuperAdmin() {
                           fontSize="large"
                         />
                         <TextField
-                          label="User ID"
-                          name="User ID"
+                          label="Username"
                           variant="standard"
                           color="info"
                           fullWidth
                           className="custom-textfield"
+                          name="username"
+                          value={formValues.username}
+                          onChange={handleInputs}
                         />
                       </Box>
 
@@ -120,9 +196,9 @@ export default function SuperAdmin() {
                         <TextField
                           className="custom-textfield"
                           variant="standard"
-                          name="password"
                           type={visible ? "text" : "password"}
                           label="Password"
+                          name="password"
                           value={formValues.password}
                           onChange={handleInputs}
                           fullWidth
@@ -156,6 +232,8 @@ export default function SuperAdmin() {
                           variant="standard"
                           color="info"
                           fullWidth
+                          value={formValues.email}
+                          onChange={handleInputs}
                           className="custom-textfield"
                         />
                       </Box>
@@ -174,27 +252,38 @@ export default function SuperAdmin() {
                           name="contactNumber"
                           variant="standard"
                           color="info"
+                          value={formValues.contactNumber}
+                          // onChange={handleInputs}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Ensure the value starts with '+91'
+                            if (value.startsWith("+91")) {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                contactNumber: value,
+                              }));
+                            } else {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                contactNumber: `+91${value}`,
+                              }));
+                            }
+                          }}
+                          placeholder="+91 (Mobile Number)"
                           className="custom-textfield"
                         />
                       </Box>
                     </Grid>
 
                     <Grid item mt={2}>
-                      <TriggerButton
+                      <Button
                         variant="contained"
-                        sx={{
-                          bgcolor: "green",
-                          "&:hover": {
-                            bgcolor: "green", // Hover par bhi green rahega
-                          },
-                        }}
+                        className="btn-primary"
                         fullWidth
-                        onClick={handleOpen}
+                        type="submit"
                       >
-                        <Typography variant="h6" color={"white"}>
-                          Create A New Customer
-                        </Typography>
-                      </TriggerButton>
+                        Create A New Customer
+                      </Button>
                     </Grid>
                   </Grid>
                 </form>
@@ -215,10 +304,8 @@ export default function SuperAdmin() {
         >
           <Fade in={open}>
             <ModalContent sx={style}>
-              {/* <Grid item xs={12} md={12} sm={12}> */}
-              {/* <Paper sx={{ borderRadius: "10px" }}> */}
               <Grid container>
-                <form>
+                <form onSubmit={creasteOrganizaton}>
                   <Grid item xs={12} md={12} sm={12} lg={12} mt={2}>
                     <Typography
                       fontSize="x-large"
@@ -243,8 +330,9 @@ export default function SuperAdmin() {
                         height: "4vh",
                         fontSize: "18px",
                       }}
-                      // value={otpValue}
-                      // onChange={setOtpValue}
+                      name="emailOtp"
+                      value={formValues.emailOtp}
+                      onChange={handleOtpChange}
                       numInputs={6}
                       renderSeparator={<span> &nbsp; &nbsp; </span>}
                       renderInput={(props) => <input {...props} />}
@@ -265,30 +353,27 @@ export default function SuperAdmin() {
                       size="small"
                       sx={{ bgcolor: "#0c113b" }}
                       type="submit"
+                      onClick={handleOpen}
                     >
                       <Typography>Submit</Typography>
                     </Button>
                   </Grid>
                   <Grid item xs={12} textAlign="center" py={1}>
-                    <Link
-                      to="#"
-                      style={{ textDecoration: "none" }}
-                      // onClick={handleResendOtp}
-                    >
-                      <Typography style={{ cursor: "pointer" }}>
-                        Resend One-Time Password
-                      </Typography>
+                    <Link to="#" style={{ textDecoration: "none" }}>
+                      <Button onClick={handleSubmit}>
+                        <Typography style={{ cursor: "pointer" }}>
+                          Resend One-Time Password
+                        </Typography>
+                      </Button>
                     </Link>
                   </Grid>
                 </form>
               </Grid>
-              {/* </Paper> */}
-              {/* </Grid> */}
             </ModalContent>
           </Fade>
         </Modal>
       </Grid>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -384,38 +469,6 @@ const ModalContent = styled("div")(
       font-weight: 400;
       color: ${theme.palette.mode === "dark" ? grey[400] : grey[800]};
       margin-bottom: 4px;
-    }
-  `
-);
-
-const TriggerButton = styled(Button)(
-  ({ theme }) => css`
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 150ms ease;
-    cursor: pointer;
-    background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-    border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-    color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-
-    &:hover {
-      background: ${theme.palette.mode === "dark" ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === "dark" ? grey[600] : grey[300]};
-    }
-
-    &:active {
-      background: ${theme.palette.mode === "dark" ? grey[900] : grey[100]};
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 4px
-        ${theme.palette.mode === "dark" ? blue[300] : blue[200]};
-      outline: none;
     }
   `
 );
