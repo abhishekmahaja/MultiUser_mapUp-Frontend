@@ -219,6 +219,19 @@ export const organizationDropDown = async () => {
   }
 };
 
+//Post Api department-base-org-name-dropdown
+export const departmentDropdown = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORG_API}/department-base-org-name-dropdown`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
 //add department by owner
 export const addDepartment = async (formData) => {
   try {
