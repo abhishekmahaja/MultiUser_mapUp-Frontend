@@ -24,17 +24,31 @@ import { Box } from "@mui/system";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addDepartment, departmentDropdown, addPosition } from "../../../apis/Service";
+import {
+  addDepartment,
+  departmentDropdown,
+  addPosition,
+  addApprovalChain,
+  getPosition,
+  getApprovalChain,
+  organizationAddData,
+} from "../../../apis/Service";
 
 function ManageAsset() {
-  const inputRef = useRef();
   const organizationName = useSelector((state) => state.auth.organization);
   const inputRefDepartment = useRef(null);
-  const inputRefPosition = useRef();
   const [DepartmentLoading, setDepartmentLoading] = useState(true);
   const [departments, setDepartments] = useState([]);
   const [selectedPositionDepartment, setSelectedPositionDepartment] =
     useState("");
+  const [position, setPosition] = useState("");
+  const [positionRows, setPositionRows] = useState([]);
+  const [positionLoading, setPositionLoading] = useState(true);
+  const [approvalChainLoading, setApprovalChainLoading] = useState(true);
+  const [approvalChains, setApprovalChains] = useState(""); // For Action
+  const [level1, setLevel1] = useState(""); // For Level-1
+  const [level2, setLevel2] = useState(""); // For Level-2
+  const [approvalChainRows, setApprovalChainRows] = useState([]);
   const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
     useState("");
 
@@ -75,6 +89,85 @@ function ManageAsset() {
     }
   };
 
+  //ADD position from api on the base of department
+  const handlePositionSubmit = async (event) => {
+    event.preventDefault();
+    if (!organizationName) {
+      toast.error("Organization name is required.");
+      return;
+    }
+    // Check if department and position are selected
+    if (!selectedPositionDepartment || !position) {
+      toast.error("Please select a department and enter a position.");
+      return;
+    }
+    const formData = {
+      organizationName,
+      departmentName: selectedPositionDepartment,
+      positions: [position],
+    };
+    try {
+      const response = await addPosition(formData);
+      if (response.data.success) {
+        toast.message(response.data.message);
+        setPositionRows((prevRows) => [
+          ...prevRows,
+          { name: selectedPositionDepartment, position },
+        ]);
+        toast.success(response.message || "Position Add Successfully");
+        setPosition("");
+      } else {
+        toast.error(response.message || "Failed to add Position");
+      }
+    } catch (error) {
+      console.error("Error adding position:", error.message);
+    }
+  };
+
+  //ADD approval chain from api on the base of department
+  const handleApprovalChainSubmit = async (event) => {
+    event.preventDefault();
+    // Check if all fields are filled out
+    if (!organizationName) {
+      toast.error("Organization Name is required");
+      return;
+    }
+    if (!selectedApprovalDepartment) {
+      toast.error("Please select a department");
+      return;
+    }
+    if (!approvalChains || !level1 || !level2) {
+      toast.error("Please fill out Action, Level-1, and Level-2");
+      return;
+    }
+    const formData = {
+      organizationName,
+      departmentName: selectedApprovalDepartment,
+      action: approvalChains, // Flattened
+      level1, // Flattened
+      level2, // Flattened
+    };
+    try {
+      const response = await addApprovalChain(formData);
+      if (response.data.success) {
+        // toast.message(response.data.message);
+        setApprovalChainRows((prevRows) => [
+          ...prevRows,
+          { name: selectedApprovalDepartment, approvalChains, level1, level2 },
+        ]);
+        setApprovalChains("");
+        setLevel1("");
+        setLevel2("");
+        toast.success(response.message || "Approval Chain added successfully");
+      } else {
+        toast.error(response.data.message || "Failed to add approval chain");
+      }
+    } catch (error) {
+      console.error("Error adding approval chain:", error.message);
+      toast.error("An error occurred while adding the approval chain");
+    }
+  };
+
   // Fetch departments from API To Show
   const fetchDepartments = async (organizationName) => {
     setDepartmentLoading(true);
@@ -96,20 +189,78 @@ function ManageAsset() {
     } finally {
       setDepartmentLoading(false);
     }
+    // Fetch all departments and their respective positions
+    setPositionLoading(true);
+    try {
+      const formData = { organizationName };
+      const departmentResponse = await departmentDropdown(formData); // Fetch departments
+      if (departmentResponse.data && departmentResponse.data.length > 0) {
+        const departmentList = departmentResponse.data[0].departments.map(
+          (dept) => dept.departmentName
+        );
+        // Fetch positions for each department
+        const allPositions = await Promise.all(
+          departmentList.map(async (department) => {
+            const positionResponse = await getPosition(
+              organizationName,
+              department
+            );
+            return {
+              departmentName: department,
+              positions: positionResponse.data || [], // Store positions if found
+            };
+          })
+        );
+        setPositionRows(allPositions);
+      } else {
+        console.warn("No departments found");
+        setPositionRows([]); // Clear if no departments are available
+      }
+    } catch (error) {
+      console.error("Error fetching departments and positions:", error);
+    } finally {
+      setPositionLoading(false);
+    }
+    // Fetch all departments and their respective Approval Chain
+    setApprovalChainLoading(true);
+    try {
+      const formData = { organizationName };
+      const departmentResponse = await departmentDropdown(formData);
+      if (departmentResponse.data && departmentResponse.data.length > 0) {
+        const departmentList = departmentResponse.data[0].departments.map(
+          (dept) => dept.departmentName
+        );
+        const allApprovalChain = await Promise.all(
+          departmentList.map(async (department) => {
+            const approvalChainResponse = await getApprovalChain(
+              organizationName,
+              department
+            );
+            return {
+              departmentName: department,
+              approvalChains: approvalChainResponse.data || [],
+            };
+          })
+        );
+        // console.log(
+        //   "Approval Chain Data:",
+        //   JSON.stringify(allApprovalChain, null, 2)
+        // );
+        setApprovalChainRows(allApprovalChain);
+      } else {
+        console.warn("No Departments Found");
+        setApprovalChainRows([]);
+      }
+    } catch (error) {
+      console.error("Error fetching departments and Approval Chain:", error);
+    } finally {
+      setApprovalChainLoading(false);
+    }
   };
 
-  //fetch position from api on the base of department
-  
-
-  // Handle submit or save button for selected departments (optional)
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Selected Position Department:", selectedPositionDepartment);
-    console.log("Selected Approval Department:", selectedApprovalDepartment);
-  };
+  //Organization ADD Data
 
   // -------------------Table------------------------
-
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -133,17 +284,6 @@ function ManageAsset() {
       border: 0,
     },
   }));
-
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-
-  const rows = [
-    createData("1"),
-    createData("2"),
-    createData("3"),
-    createData("4"),
-  ];
 
   useEffect(() => {
     if (organizationName) {
@@ -294,19 +434,22 @@ function ManageAsset() {
                     <TableBody>
                       {DepartmentLoading ? (
                         <TableRow>
-                          <StyledTableCell colSpan={1}>
+                          <StyledTableCell colSpan={2}>
                             Loading...
                           </StyledTableCell>
                         </TableRow>
                       ) : departments && departments.length > 0 ? (
                         departments.map((departmentName, index) => (
                           <TableRow key={index}>
-                            <StyledTableCell>{departmentName}</StyledTableCell>
+                            {/* Numbering and Department Name */}
+                            <StyledTableCell>
+                              {index + 1}. {departmentName}
+                            </StyledTableCell>
                           </TableRow>
                         ))
                       ) : (
                         <TableRow>
-                          <StyledTableCell colSpan={1}>
+                          <StyledTableCell colSpan={2}>
                             No departments available
                           </StyledTableCell>
                         </TableRow>
@@ -347,33 +490,38 @@ function ManageAsset() {
                           setSelectedPositionDepartment(e.target.value)
                         }
                       >
-                        <option value="">Select a department</option>
+                        <MenuItem value="" disabled>
+                          Select a department
+                        </MenuItem>
                         {departments && departments.length > 0 ? (
                           departments.map((departmentName, index) => (
-                            <option key={departmentName} value={index}>
-                              {departmentName}
-                            </option>
+                            <MenuItem
+                              key={departmentName}
+                              value={departmentName}
+                            >
+                              {index + 1}. {departmentName}
+                            </MenuItem>
                           ))
                         ) : (
-                          <option value="" disabled>
+                          <MenuItem value="" disabled>
                             No departments available
-                          </option>
+                          </MenuItem>
                         )}
                       </Select>
                     </FormControl>
                   )}
                 </Grid>
-
                 <TextField
                   variant="outlined"
                   size="small"
                   label="Position"
-                  inputRef={inputRef}
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
                   fullWidth
                 />
                 <Button
                   variant="contained"
-                  onClick={handleSubmit}
+                  onClick={handlePositionSubmit}
                   size="small"
                   sx={{
                     backgroundColor: "green", // Change button color to green
@@ -407,21 +555,46 @@ function ManageAsset() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                          <StyledTableCell component="th" scope="row">
-                            {row.name}
+                      {positionLoading ? (
+                        <TableRow>
+                          <StyledTableCell colSpan={2}>
+                            Loading...
                           </StyledTableCell>
-                          <StyledTableCell align="left">1</StyledTableCell>
-                        </StyledTableRow>
-                      ))}
+                        </TableRow>
+                      ) : departments && departments.length > 0 ? (
+                        positionRows.map((row, index) => (
+                          <StyledTableRow key={index}>
+                            {/* Department column */}
+                            <StyledTableCell component="th" scope="row">
+                              {index + 1}. {row.departmentName}
+                              {/* Department with numbering */}
+                            </StyledTableCell>
+                            {/* Positions column */}
+                            <StyledTableCell align="left">
+                              {row.positions.length > 0
+                                ? row.positions.map((position, posIndex) => (
+                                    <div key={posIndex}>
+                                      {posIndex + 1}. {position}
+                                      {/* Position with numbering */}
+                                    </div>
+                                  ))
+                                : "No positions available"}
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <StyledTableCell colSpan={2}>
+                            No Positions available
+                          </StyledTableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </TableContainer>
               </Grid>
             </Grid>
             {/* ------------------------APPROVAL CHAIN------------------------------ */}
-
             <Grid
               item
               xs={12}
@@ -445,50 +618,60 @@ function ManageAsset() {
                       <Select
                         labelId="demo-select-small-label"
                         id="demo-select-large"
-                        label="Well Location"
+                        label="Department"
                         value={selectedApprovalDepartment}
                         onChange={(e) =>
                           setSelectedApprovalDepartment(e.target.value)
                         }
                       >
-                        <option value="">Select a department</option>
+                        <MenuItem value="" disabled>
+                          Select a department
+                        </MenuItem>
                         {departments && departments.length > 0 ? (
                           departments.map((departmentName, index) => (
-                            <option key={departmentName} value={index}>
-                              {departmentName}
-                            </option>
+                            <MenuItem
+                              key={departmentName}
+                              value={departmentName}
+                            >
+                              {index + 1}. {departmentName}
+                            </MenuItem>
                           ))
                         ) : (
-                          <option value="" disabled>
+                          <MenuItem value="" disabled>
                             No departments available
-                          </option>
+                          </MenuItem>
                         )}
                       </Select>
                     </FormControl>
                   )}
                 </Grid>
-
                 <TextField
                   variant="outlined"
                   label="Action"
                   size="small"
+                  value={approvalChains}
+                  onChange={(e) => setApprovalChains(e.target.value)}
                   fullWidth
                 />
                 <TextField
                   variant="outlined"
                   label="Level-1"
                   size="small"
+                  value={level1}
+                  onChange={(e) => setLevel1(e.target.value)}
                   fullWidth
                 />
                 <TextField
                   variant="outlined"
                   label="Level-2"
                   size="small"
+                  value={level2}
+                  onChange={(e) => setLevel2(e.target.value)}
                   fullWidth
                 />
                 <Button
                   variant="contained"
-                  onClick={handleSubmit}
+                  onClick={handleApprovalChainSubmit}
                   size="small"
                   sx={{
                     backgroundColor: "green", // Change button color to green
@@ -500,7 +683,7 @@ function ManageAsset() {
                   ADD
                 </Button>
               </Box>
-              {/* --------------------------Table 3----------------------------- */}
+              {/* --------------------------Table----------------------------- */}
               <Grid container>
                 <TableContainer
                   component={Paper}
@@ -510,38 +693,62 @@ function ManageAsset() {
                     <TableHead>
                       <TableRow>
                         <StyledTableCell
-                          sx={{ fontSize: "18px", width: "15%" }}
+                          sx={{ fontSize: "18px", width: "25%" }}
                         >
                           Department
                         </StyledTableCell>
-                        <StyledTableCell align="left" sx={{ width: "15%" }}>
+                        <StyledTableCell align="left" sx={{ width: "25%" }}>
                           Action
                         </StyledTableCell>
                         <StyledTableCell
                           align="left"
-                          sx={{ fontSize: "18px", width: "15%" }}
+                          sx={{ fontSize: "18px", width: "25%" }}
                         >
                           Level-1
                         </StyledTableCell>
                         <StyledTableCell
                           align="left"
-                          sx={{ fontSize: "18px", width: "15%" }}
+                          sx={{ fontSize: "18px", width: "25%" }}
                         >
                           Level-2
                         </StyledTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => (
-                        <StyledTableRow key={row.name}>
-                          <StyledTableCell component="th" scope="row">
-                            {row.name}
+                      {approvalChainLoading ? (
+                        <TableRow>
+                          <StyledTableCell colSpan={4}>
+                            Loading...
                           </StyledTableCell>
-                          <StyledTableCell align="left">1</StyledTableCell>
-                          <StyledTableCell align="left"></StyledTableCell>
-                          <StyledTableCell align="left"></StyledTableCell>
-                        </StyledTableRow>
-                      ))}
+                        </TableRow>
+                      ) : approvalChainRows && approvalChainRows.length > 0 ? (
+                        approvalChainRows.map((row, index) => (
+                          <StyledTableRow key={index}>
+                            {/* Department column */}
+                            <StyledTableCell component="th" scope="row">
+                              {index + 1}. {row.departmentName}
+                            </StyledTableCell>
+                            {/* Action column */}
+                            <StyledTableCell align="left" scope="row">
+                              {index + 1}. {row.approvalChains.action || "N/A"}
+                            </StyledTableCell>
+                            {/* Level-1 column */}
+                            <StyledTableCell align="left" scope="row">
+                              {index + 1}. {row.approvalChains.level1 || "N/A"}
+                            </StyledTableCell>
+                            {/* Level-2 column */}
+                            <StyledTableCell align="left" scope="row">
+                              {index + 1}. {row.approvalChains.level2 || "N/A"}
+                            </StyledTableCell>
+                          </StyledTableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <StyledTableCell colSpan={4}>
+                            No Approval Chain Available
+                          </StyledTableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </TableContainer>
@@ -549,7 +756,6 @@ function ManageAsset() {
             </Grid>
 
             {/* ------------------------BUTTON BOX------------------------------ */}
-
             <Grid
               container
               mt={2}
