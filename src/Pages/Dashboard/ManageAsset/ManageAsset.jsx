@@ -32,6 +32,7 @@ import {
   getPosition,
   getApprovalChain,
   organizationAddData,
+  getOrganizationData,
 } from "../../../apis/Service";
 
 function ManageAsset() {
@@ -51,6 +52,19 @@ function ManageAsset() {
   const [approvalChainRows, setApprovalChainRows] = useState([]);
   const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
     useState("");
+  //organization Data Add
+  const [formData, setFormData] = useState({
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+    pinCode: "",
+    phone: "",
+    fax: "",
+    email: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [organiatioLoading, setOrganiationLoading] = useState(false);
 
   //integration for add department
   const handleAddDepartment = async () => {
@@ -117,7 +131,7 @@ function ManageAsset() {
         toast.success(response.message || "Position Add Successfully");
         setPosition("");
       } else {
-        toast.error(response.message || "Failed to add Position");
+        toast.success(response.message || "Position Add Successfully");
       }
     } catch (error) {
       console.error("Error adding position:", error.message);
@@ -160,7 +174,9 @@ function ManageAsset() {
         setLevel2("");
         toast.success(response.message || "Approval Chain added successfully");
       } else {
-        toast.error(response.data.message || "Failed to add approval chain");
+        toast.success(
+          response.data.message || "Approval Chain added successfully"
+        );
       }
     } catch (error) {
       console.error("Error adding approval chain:", error.message);
@@ -256,9 +272,68 @@ function ManageAsset() {
     } finally {
       setApprovalChainLoading(false);
     }
+    // Fetch organization data using the organization name
+    setOrganiationLoading(true);
+    try {
+      const response = await getOrganizationData(organizationName);
+      setFormData({
+        address: response.address || "",
+        city: response.city || "",
+        state: response.state || "",
+        country: response.country || "",
+        pinCode: response.pinCode || "",
+        phone: response.phone || "",
+        fax: response.fax || "",
+        email: response.email || "",
+      });
+      console.log("organization", response);
+    } catch (error) {
+      console.error("Error fetching organization data:", error);
+    } finally {
+      setOrganiationLoading(false);
+    }
   };
 
   //Organization ADD Data
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  // Handle Save
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const updatedFormData = {
+        ...formData,
+        organizationName: organizationName,
+      };
+      const response = await organizationAddData(updatedFormData);
+      if (response.status === 200) {
+        toast.success("Data saved successfully:", response.message);
+      } else {
+        toast.success("Data saved successfully", response.message);
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+    } finally {
+      setLoading(false); // End loading state
+    }
+  };
+  // Handle Cancel Clear form fields
+  const handleCancel = () => {
+    setFormData({
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      pinCode: "",
+      phone: "",
+      fax: "",
+      email: "",
+    });
+  };
 
   // -------------------Table------------------------
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -295,88 +370,91 @@ function ManageAsset() {
     <div>
       <Paper>
         <Grid container gap={1} p={3}>
+          {/* Icon and Organization Name */}
           <IconButton>
-            <AssetsIcon sx={{ fontSize: 30, color: "green " }} />
+            <AssetsIcon sx={{ fontSize: 30, color: "green" }} />
           </IconButton>
           <Typography variant="h4" mt={1}>
             Organization = [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
-
+          {/* Form Fields */}
           <Grid container spacing={3}>
             <Grid item md={10} sm={10} xs={12} lg={12}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Address</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">City</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">State</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Country</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Pin Code</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Phone</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Fax</Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    value={""}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} md={3} lg={3}>
-                  <Typography variant="h6">Email </Typography>
-                  <TextField variant="outlined" size="small" fullWidth />
-                </Grid>
+                {[
+                  "address",
+                  "city",
+                  "state",
+                  "country",
+                  "pinCode",
+                  "phone",
+                  "fax",
+                  "email",
+                ].map((field) => (
+                  <Grid item xs={12} sm={3} md={3} lg={3} key={field}>
+                    <Typography variant="h6">
+                      {field.charAt(0).toUpperCase() + field.slice(1)}
+                    </Typography>
+                    <TextField
+                      type="text"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name={field}
+                      value={formData[field]}
+                      onChange={handleInputChange}
+                      disabled={organiatioLoading} // Disable field if loading
+                    />
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
           </Grid>
+          {/* Button Section */}
+          <Grid
+            container
+            mt={2}
+            display={"flex"}
+            justifyContent={"end"}
+            gap={1}
+          >
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "green",
+                  "&:hover": {
+                    backgroundColor: "darkgreen",
+                  },
+                  fontSize: "16px",
+                  width: "150px",
+                }}
+                onClick={handleSave}
+                disabled={loading}
+              >
+                {loading ? "SAVING..." : "SAVE"}
+              </Button>
+            </Box>
+            <Box>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "green",
+                  "&:hover": {
+                    backgroundColor: "darkgreen",
+                  },
+                  fontSize: "16px",
+                  width: "150px",
+                }}
+                onClick={handleCancel}
+              >
+                CANCEL
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
       </Paper>
+
       {/* ------------Input textfield for table------------------- */}
       <Card sx={{ my: 2 }}>
         <CardContent>
@@ -755,7 +833,7 @@ function ManageAsset() {
               </Grid>
             </Grid>
 
-            {/* ------------------------BUTTON BOX------------------------------ */}
+            {/* ------------------------BUTTON BOX------------------------------
             <Grid
               container
               mt={2}
@@ -794,7 +872,7 @@ function ManageAsset() {
                   EDIT
                 </Button>
               </Box>
-            </Grid>
+            </Grid> */}
           </Grid>
         </CardContent>
       </Card>

@@ -307,3 +307,15 @@ export const organizationAddData = async (formData) => {
     return catchError(error);
   }
 };
+
+// https://rtms-backend.onrender.com/api/v1/organization/organization-get-data?organizationName=Foxboro.in.co
+export const getOrganizationData = async (organizationName) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API}/organization-get-data?organizationName=${organizationName}`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
