@@ -219,11 +219,87 @@ export const organizationDropDown = async () => {
   }
 };
 
+//Post Api department-base-org-name-dropdown
+export const departmentDropdown = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/department-base-org-name-dropdown`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
 //add department by owner
 export const addDepartment = async (formData) => {
   try {
     const response = await axios.post(
       `${ORGANIZATION_API}/add-department`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//Add Position on the basic of department
+export const addPosition = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/add-position`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+// https://rtms-backend.onrender.com/api/v1/organization/get-positions?organizationName=Foxboro.in.co&departmentName=Finance
+export const getPosition = async (organizationName, departmentName) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API}/get-positions?organizationName=${organizationName}&departmentName=${departmentName}`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//Add Approval Chain on the basic of department
+export const addApprovalChain = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/add-approval-chain`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+// https://rtms-backend.onrender.com/api/v1/organization/get-approval-chain?organizationName=AbhiCompany&departmentName=HOD dep
+export const getApprovalChain = async (organizationName, departmentName) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API}/get-approval-chain?organizationName=${organizationName}&departmentName=${departmentName}`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//organization-add-data
+export const organizationAddData = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/organization-add-data`,
       formData
     );
     return response.data;

@@ -1,91 +1,107 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@config "./tailwindcss-config.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden] {
+  display: none;
+}
+
 /* @import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'); */
 
 * {
-    margin: 0;
-    padding: 0;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    --shadow: rgba(255, 255, 255, 0.922) 0px 6px 12px -2px, rgba(255, 255, 255, 0.956) 0px 3px 7px -3px;
+  margin: 0;
+  padding: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  --shadow: rgba(255, 255, 255, 0.922) 0px 6px 12px -2px, rgba(255, 255, 255, 0.956) 0px 3px 7px -3px;
 }
 
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 :root {
-    /* font-family: 'Roboto', sans-serif; */
-    font-size: 14px;
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
+  /* font-family: 'Roboto', sans-serif; */
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
 }
 
 .custom-textfield .MuiInput-root {
-    color: #000;
-    font-weight: 500;
+  color: #000;
+  font-weight: 500;
 }
 
 .custom-textfield .MuiInput-root:before {
-    border-color: black;
-    border-width: 2px;
-    content: "";
-    display: block;
+  border-color: black;
+  border-width: 2px;
+  content: "";
+  display: block;
 }
 
 .custom-textfield .MuiInput-root:after {
-    border-color: black;
-    border-width: 3px;
-    content: "";
-    display: block;
+  border-color: black;
+  border-width: 3px;
+  content: "";
+  display: block;
 }
 
 .custom-textfield .MuiInputLabel-standard {
-    color: #2e2e2e;
-    font-weight: 500;
+  color: #2e2e2e;
+  font-weight: 500;
 }
 
 .custom-textfield .MuiInputLabel-standard.Mui-focused {
-    color: black;
+  color: black;
 }
 
 .btn:hover,
 .btn:active {
-    color: #000 !important;
-    border: 2px solid #E6E6E6;
-    box-shadow: var(--shadow);
+  color: #000 !important;
+  border: 2px solid #E6E6E6;
+  box-shadow: var(--shadow);
 }
 
 /* ---- -------------MUI Black Button --------- */
+
 .btn-primary {
-    background-color: #000 !important;
-    font-size: 14px;
-    color: white;
-    border: unset;
-    padding: 8px;
-    border-radius: 6px;
-    border: 2px solid #E6E6E6;
+  background-color: #000 !important;
+  font-size: 14px;
+  color: white;
+  border: unset;
+  padding: 8px;
+  border-radius: 6px;
+  border: 2px solid #E6E6E6;
 }
 
-
-
 /* ------------------ Login Page ------------------------------- */
-.login-form-bg-image {
-    background-image: url("/assets/11.jpg");
-    background-size: cover;
-    background-position: right;
-    background-repeat: no-repeat;
 
+.login-form-bg-image {
+  background-image: url("/assets/11.jpg");
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
 }
 
 /* ---------------------SignUp Page ----------------------------- */
 
 .bgImg {
-    background-image: url("/assets/13.png");
-    background-size: cover;
-    background-position: left;
-    background-repeat: no-repeat;
+  background-image: url("/assets/13.png");
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
 }
 
 /* .item1 {
@@ -93,23 +109,23 @@
 } */
 
 .active :hover{
-        background-color: 'lightgrey';
-}
-.bg-imgManageAsset {
-    background-image: url("https://media.istockphoto.com/id/959381934/photo/sunset-over-pumpjack-silhouette-with-copy-space.jpg?s=612x612&w=0&k=20&c=fcyH9ZVieEwbLHk9LkjxdX7vveS56TFqRbUMV6xpRcA=");
-    background-size: cover;
-    background-position: left;
-    background-repeat: no-repeat;
+  background-color: 'lightgrey';
 }
 
+.bg-imgManageAsset {
+  background-image: url("https://media.istockphoto.com/id/959381934/photo/sunset-over-pumpjack-silhouette-with-copy-space.jpg?s=612x612&w=0&k=20&c=fcyH9ZVieEwbLHk9LkjxdX7vveS56TFqRbUMV6xpRcA=");
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+}
 
 .deleteIconColor{
   color: red;
 }
 
 .admin-bg-image{
-    background-image: url("https://omdia.tech.informa.com/-/media/tech/omdia/omdia-website-enhancement-oct-2023/iot-coverage-2.jpg?rev=4fa2eb28f841448c9d126f911019398f");
-    background-size: cover;
-    background-position: right;
-    background-repeat: no-repeat;
+  background-image: url("https://omdia.tech.informa.com/-/media/tech/omdia/omdia-website-enhancement-oct-2023/iot-coverage-2.jpg?rev=4fa2eb28f841448c9d126f911019398f");
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
 }

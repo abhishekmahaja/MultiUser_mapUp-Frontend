@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Typography,
@@ -21,14 +21,19 @@ import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import { setRegisterDetails } from "../../apis/authSlice";
 import { toast } from "react-toastify";
-import { organizationDropDown, sendOtpRegister } from "../../apis/Service";
+import {
+  departmentDropdown,
+  organizationDropDown,
+  sendOtpRegister,
+} from "../../apis/Service";
 
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedPhotoName, setSelectedPhotoName] = useState(null); // To store the passport photo name
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null);
   const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
   const [organizations, setOrganizations] = useState([]);
+  const [departments, setDepartments] = useState("");
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",
@@ -64,18 +69,15 @@ function Signup() {
     }
   };
 
+  // Integration for registration page
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
     Object.entries(formValues).forEach(([key, value]) => {
       formData.append(key, value);
     });
-
-    // Integration
     try {
-      const response = await sendOtpRegister(formData); // Ensure that sendOtpRegister can handle FormData
-      // console.log("OTP Response:", response);
+      const response = await sendOtpRegister(formData);
       if (response?.success) {
         // Store data in Redux Store
         const passportPhotoURL = response?.passportPhoto;
@@ -89,16 +91,15 @@ function Signup() {
             organizationName: formValues.organizationName,
             department: formValues.department,
             roleInRTMS: formValues.roleInRTMS,
-            passportPhoto: passportPhotoURL || formValues.passportPhoto, // Store the image URL
+            passportPhoto: passportPhotoURL || formValues.passportPhoto,
             idCardPhoto: idCardPhotoURL || formValues.idCardPhoto, // Store the image URL
           })
         );
-
-        toast.success("OTP Sent Successfully!");
+        toast.success(response.message);
         // console.log("OTP sent, about to navigate...",response?.message);
         navigate("/otpsignup");
       } else {
-        toast.error("Invalid Provided Details");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error(error);
@@ -106,27 +107,61 @@ function Signup() {
     }
   };
 
-  // Fetch organization data on component mount
-  const fetchOrganizations = async () => {
+  // Fetch organizations only
+  const fetchData = async () => {
     try {
-      const response = await organizationDropDown(); // Get the full response
-      // console.log("API Response:", response);
-      if (response.success && Array.isArray(response.data)) {
-        setOrganizations(response.data); // Access the `data` field
+      const orgResponse = await organizationDropDown();
+      if (orgResponse.success && Array.isArray(orgResponse.data)) {
+        setOrganizations(orgResponse.data);
+        const selectedOrgId = formValues.organizationName;
+        if (selectedOrgId) {
+          fetchDepartmentsForOrg(selectedOrgId);
+        }
       } else {
-        toast.error(response?.message);
+        toast.error("Invalid organization data format");
       }
     } catch (error) {
-      // console.error("Error fetching organizations:", error);
-      toast.error(error.message);
+      toast.error("Failed to load organizations");
     }
-    //department dropdown
+  };
+
+  //show department dropdown on the organization select
+  const fetchDepartmentsForOrg = async (orgId) => {
     try {
-    } catch (error) {}
+      const formData = { organizationName: orgId };
+      const depResponse = await departmentDropdown(formData);
+      if (depResponse.success && Array.isArray(depResponse.data)) {
+        if (depResponse.data.length === 0) {
+          toast.info("No departments found for the selected organization");
+        } else {
+          // console.log("Departments data:", depResponse.data[0].departments);
+          setDepartments(depResponse.data[0].departments);
+        }
+      } else {
+        console.error("Expected array but got:", depResponse);
+        toast.error("Invalid department data format");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Failed to load departments");
+    }
+  };
+
+  const handleOrganizationChange = (event) => {
+    const orgId = event.target.value;
+    setFormValues((prev) => ({
+      ...prev,
+      organizationName: orgId,
+    }));
+
+    // Fetch departments for the selected organization
+    if (orgId) {
+      fetchDepartmentsForOrg(orgId);
+    }
   };
 
   useEffect(() => {
-    fetchOrganizations();
+    fetchData();
   }, []);
 
   return (
@@ -211,6 +246,7 @@ function Signup() {
                       />
                     </Box>
 
+                    {/* Organization Dropdown */}
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
                       <FormControl fullWidth variant="standard">
@@ -221,7 +257,7 @@ function Signup() {
                           labelId="organization-label"
                           name="organizationName"
                           value={formValues.organizationName}
-                          onChange={handleUsernameChange}
+                          onChange={handleOrganizationChange}
                           label="Organization"
                         >
                           {Array.isArray(organizations) &&
@@ -243,16 +279,42 @@ function Signup() {
                       </FormControl>
                     </Box>
 
+                    {/* Department Dropdown */}
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
                       <AccountCircle sx={{ mr: 1 }} fontSize="large" />
-                      <TextField
-                        fullWidth
-                        label="Department"
-                        name="department"
-                        variant="standard"
-                        value={formValues.department}
-                        onChange={handleUsernameChange}
-                      />
+                      <FormControl fullWidth variant="standard">
+                        <InputLabel id="department-label">
+                          Department
+                        </InputLabel>
+                        <Select
+                          labelId="department-label"
+                          name="department"
+                          value={formValues.department}
+                          onChange={(event) => {
+                            const selectedDept = event.target.value;
+                            setFormValues((prev) => ({
+                              ...prev,
+                              department: selectedDept,
+                            }));
+                          }}
+                          label="Department"
+                        >
+                          {departments.length > 0 ? (
+                            departments.map((dept) => (
+                              <MenuItem
+                                key={dept._id}
+                                value={dept.departmentName}
+                              >
+                                {dept.departmentName}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem value="">
+                              No departments available
+                            </MenuItem>
+                          )}
+                        </Select>
+                      </FormControl>
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "flex-end" }}>
@@ -287,7 +349,7 @@ function Signup() {
                             hidden
                           />
                           {!selectedPhotoName ? (
-                            <Typography>Upload photo</Typography>
+                            <Typography>Update Photo</Typography>
                           ) : (
                             <Typography variant="body2" color="textSecondary">
                               {selectedPhotoName}
