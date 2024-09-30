@@ -9,16 +9,15 @@ import {
   Typography,
 } from "@mui/material";
 import { IconButton } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, height } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 import HttpsIcon from "@mui/icons-material/Https";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import EmailIcon from "@mui/icons-material/Email";
 import CallIcon from "@mui/icons-material/Call";
 import StoreIcon from "@mui/icons-material/Store";
-import PageContainer from "../../../components/HOC/PageContainer";
-
-// -------------------------------popupOTP----------------------------------------------
+import FoxboroHeader from "../../../components/Header/FoxboroHeader";
+import FoxboroFooter from "../../../components/Footer/FoxboroFooter";
 import PropTypes from "prop-types";
 import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
@@ -26,6 +25,7 @@ import Fade from "@mui/material/Fade";
 import OTPInput from "react-otp-input";
 import { createOrg, genrateOtpOrg } from "../../../apis/Service";
 import { toast } from "react-toastify";
+import PageContainer from "../../../components/HOC/PageContainer";
 
 export default function SuperAdmin() {
   const [formValues, setFormValues] = useState({
@@ -116,264 +116,270 @@ export default function SuperAdmin() {
   };
 
   return (
-    <PageContainer
-      className="admin-bg-image"
-      showheader="true"
-      showfooter="true"
-    >
-      <Grid
-        container
-        display={"flex"}
-        justifyContent={"start"}
-        height="100%"
-        alignItems={"center"}
-        p="5%"
-      >
-        <Grid item padding={2} width={550}>
-          <Card>
-            <CardContent orientation="vertical">
-              <Grid item sx={{ textAlign: "center" }}>
-                <Typography variant="h4" color="green">
-                  NEW CUSTOMER
-                </Typography>
-              </Grid>
-              <Grid item px={4} alignItems={"center"}>
-                <form onSubmit={handleSubmit}>
-                  <Grid
-                    item
-                    gap="9px"
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <Grid item>
-                      <Box
-                        mt={0.5}
-                        sx={{ display: "flex", alignItems: "flex-end" }}
-                      >
-                        <StoreIcon
-                          sx={{ color: "action.active", mr: 1, my: 0.5 }}
-                          fontSize="large"
-                        />
-                        <TextField
-                          fullWidth
-                          className="custom-textfield"
-                          label="Organization "
-                          variant="standard"
-                          color="info"
-                          name="organizationName"
-                          value={formValues.organizationName}
-                          onChange={handleInputs}
-                        />
-                      </Box>
+    <div>
+      <PageContainer className="admin-bg-image ">
+        <FoxboroHeader />
+        <Grid
+          container
+          display={"flex"}
+          justifyContent={"start"}
+          height="85%"
+          alignItems={"center"}
+          pl="5%"
+        >
+          <Grid item padding={2} width={550} >
+            <Card>
+              <CardContent orientation="vertical">
+                <Grid item sx={{ textAlign: "center" }}>
+                  <Typography variant="h4" color="green">
+                    NEW CUSTOMER
+                  </Typography>
+                </Grid>
+                <Grid item px={4} alignItems={"center"}>
+                  <form onSubmit={handleSubmit}>
+                    <Grid
+                      item
+                      gap="9px"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <Grid item>
+                        <Box
+                          mt={0.5}
+                          sx={{ display: "flex", alignItems: "flex-end" }}
+                        >
+                          <StoreIcon
+                            sx={{ color: "action.active", mr: 1, my: 0.5 }}
+                            fontSize="large"
+                          />
+                          <TextField
+                            fullWidth
+                            className="custom-textfield"
+                            label="Organization "
+                            variant="standard"
+                            color="info"
+                            name="organizationName"
+                            value={formValues.organizationName}
+                            onChange={handleInputs}
+                          />
+                        </Box>
 
-                      <Box
-                        mt={0.5}
-                        sx={{ display: "flex", alignItems: "flex-end" }}
-                      >
-                        <AccountCircle
-                          sx={{ color: "action.active", mr: 1, my: 0.5 }}
-                          fontSize="large"
-                        />
-                        <TextField
-                          label="Username"
-                          variant="standard"
-                          color="info"
-                          fullWidth
-                          className="custom-textfield"
-                          name="username"
-                          value={formValues.username}
-                          onChange={handleInputs}
-                        />
-                      </Box>
+                        <Box
+                          mt={0.5}
+                          sx={{ display: "flex", alignItems: "flex-end" }}
+                        >
+                          <AccountCircle
+                            sx={{ color: "action.active", mr: 1, my: 0.5 }}
+                            fontSize="large"
+                          />
+                          <TextField
+                            label="Username"
+                            variant="standard"
+                            color="info"
+                            fullWidth
+                            className="custom-textfield"
+                            name="username"
+                            value={formValues.username}
+                            onChange={handleInputs}
+                          />
+                        </Box>
 
-                      <Box
-                        mt={0.5}
-                        sx={{ display: "flex", alignItems: "flex-end" }}
-                      >
-                        <HttpsIcon
-                          sx={{ color: "action.active", mr: 1 }}
-                          fontSize="large"
-                        />
-                        <TextField
-                          className="custom-textfield"
-                          variant="standard"
-                          type={visible ? "text" : "password"}
-                          label="Password"
-                          name="password"
-                          value={formValues.password}
-                          onChange={handleInputs}
-                          fullWidth
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={handleClickShowPassword}
-                                  onMouseDown={handleMouseDownPassword}
-                                  edge="end"
-                                >
-                                  {visible ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Box>
+                        <Box
+                          mt={0.5}
+                          sx={{ display: "flex", alignItems: "flex-end" }}
+                        >
+                          <HttpsIcon
+                            sx={{ color: "action.active", mr: 1 }}
+                            fontSize="large"
+                          />
+                          <TextField
+                            className="custom-textfield"
+                            variant="standard"
+                            type={visible ? "text" : "password"}
+                            label="Password"
+                            name="password"
+                            value={formValues.password}
+                            onChange={handleInputs}
+                            fullWidth
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                  >
+                                    {visible ? (
+                                      <VisibilityOff />
+                                    ) : (
+                                      <Visibility />
+                                    )}
+                                  </IconButton>
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Box>
 
-                      <Box
-                        mt={0.5}
-                        sx={{ display: "flex", alignItems: "flex-end" }}
-                      >
-                        <EmailIcon
-                          sx={{ color: "action.active", mr: 1, my: 0.5 }}
-                          fontSize="large"
-                        />
-                        <TextField
-                          label="Email"
-                          name="email"
-                          variant="standard"
-                          color="info"
-                          fullWidth
-                          value={formValues.email}
-                          onChange={handleInputs}
-                          className="custom-textfield"
-                        />
-                      </Box>
+                        <Box
+                          mt={0.5}
+                          sx={{ display: "flex", alignItems: "flex-end" }}
+                        >
+                          <EmailIcon
+                            sx={{ color: "action.active", mr: 1, my: 0.5 }}
+                            fontSize="large"
+                          />
+                          <TextField
+                            label="Email"
+                            name="email"
+                            variant="standard"
+                            color="info"
+                            fullWidth
+                            value={formValues.email}
+                            onChange={handleInputs}
+                            className="custom-textfield"
+                          />
+                        </Box>
 
-                      <Box
-                        mt={0.5}
-                        sx={{ display: "flex", alignItems: "flex-end" }}
-                      >
-                        <CallIcon
-                          sx={{ color: "action.active", mr: 1, my: 0.5 }}
-                          fontSize="large"
-                        />
-                        <TextField
+                        <Box
+                          mt={0.5}
+                          sx={{ display: "flex", alignItems: "flex-end" }}
+                        >
+                          <CallIcon
+                            sx={{ color: "action.active", mr: 1, my: 0.5 }}
+                            fontSize="large"
+                          />
+                          <TextField
+                            fullWidth
+                            label="Mobile"
+                            name="contactNumber"
+                            variant="standard"
+                            color="info"
+                            value={formValues.contactNumber}
+                            // onChange={handleInputs}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              // Ensure the value starts with '+91'
+                              if (value.startsWith("+91")) {
+                                setFormValues((prev) => ({
+                                  ...prev,
+                                  contactNumber: value,
+                                }));
+                              } else {
+                                setFormValues((prev) => ({
+                                  ...prev,
+                                  contactNumber: `+91${value}`,
+                                }));
+                              }
+                            }}
+                            placeholder="+91 (Mobile Number)"
+                            className="custom-textfield"
+                          />
+                        </Box>
+                      </Grid>
+
+                      <Grid item mt={2}>
+                        <Button
+                          variant="contained"
+                          className="btn-primary"
                           fullWidth
-                          label="Mobile"
-                          name="contactNumber"
-                          variant="standard"
-                          color="info"
-                          value={formValues.contactNumber}
-                          // onChange={handleInputs}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            // Ensure the value starts with '+91'
-                            if (value.startsWith("+91")) {
-                              setFormValues((prev) => ({
-                                ...prev,
-                                contactNumber: value,
-                              }));
-                            } else {
-                              setFormValues((prev) => ({
-                                ...prev,
-                                contactNumber: `+91${value}`,
-                              }));
-                            }
-                          }}
-                          placeholder="+91 (Mobile Number)"
-                          className="custom-textfield"
-                        />
-                      </Box>
+                          type="submit"
+                        >
+                          Create A New Customer
+                        </Button>
+                      </Grid>
                     </Grid>
+                  </form>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
 
-                    <Grid item mt={2}>
+        <Grid container>
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            slots={{ backdrop: StyledBackdrop }}
+          >
+            <Fade in={open}>
+              <ModalContent sx={style}>
+                <Grid container>
+                  <form onSubmit={creasteOrganizaton}>
+                    <Grid item xs={12} md={12} sm={12} lg={12} mt={2}>
+                      <Typography
+                        fontSize="x-large"
+                        sx={{ color: "#0c1352", textAlign: "center" }}
+                      >
+                        Enter OTP To Verify E-Mail
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      sm={12}
+                      lg={12}
+                      mt={3}
+                      display="flex"
+                      justifyContent="center"
+                    >
+                      <OTPInput
+                        inputStyle={{
+                          width: "2rem",
+                          height: "4vh",
+                          fontSize: "18px",
+                        }}
+                        name="emailOtp"
+                        value={formValues.emailOtp}
+                        onChange={handleOtpChange}
+                        numInputs={6}
+                        renderSeparator={<span> &nbsp; &nbsp; </span>}
+                        renderInput={(props) => <input {...props} />}
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      sm={12}
+                      lg={12}
+                      mt={3}
+                      textAlign="center"
+                    >
                       <Button
                         variant="contained"
-                        className="btn-primary"
-                        fullWidth
+                        color="primary"
+                        size="small"
+                        sx={{ bgcolor: "#0c113b" }}
                         type="submit"
+                        onClick={handleOpen}
                       >
-                        Create A New Customer
+                        <Typography>Submit</Typography>
                       </Button>
                     </Grid>
-                  </Grid>
-                </form>
-              </Grid>
-            </CardContent>
-          </Card>
+                    <Grid item xs={12} textAlign="center" py={1}>
+                      <Link to="#" style={{ textDecoration: "none" }}>
+                        <Button onClick={handleSubmit}>
+                          <Typography style={{ cursor: "pointer" }}>
+                            Resend One-Time Password
+                          </Typography>
+                        </Button>
+                      </Link>
+                    </Grid>
+                  </form>
+                </Grid>
+              </ModalContent>
+            </Fade>
+          </Modal>
         </Grid>
-      </Grid>
-
-      <Grid container>
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={open}
-          onClose={handleClose}
-          closeAfterTransition
-          slots={{ backdrop: StyledBackdrop }}
-        >
-          <Fade in={open}>
-            <ModalContent sx={style}>
-              <Grid container>
-                <form onSubmit={creasteOrganizaton}>
-                  <Grid item xs={12} md={12} sm={12} lg={12} mt={2}>
-                    <Typography
-                      fontSize="x-large"
-                      sx={{ color: "#0c1352", textAlign: "center" }}
-                    >
-                      Enter OTP To Verify E-Mail
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    sm={12}
-                    lg={12}
-                    mt={3}
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    <OTPInput
-                      inputStyle={{
-                        width: "2rem",
-                        height: "4vh",
-                        fontSize: "18px",
-                      }}
-                      name="emailOtp"
-                      value={formValues.emailOtp}
-                      onChange={handleOtpChange}
-                      numInputs={6}
-                      renderSeparator={<span> &nbsp; &nbsp; </span>}
-                      renderInput={(props) => <input {...props} />}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    sm={12}
-                    lg={12}
-                    mt={3}
-                    textAlign="center"
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      sx={{ bgcolor: "#0c113b" }}
-                      type="submit"
-                      onClick={handleOpen}
-                    >
-                      <Typography>Submit</Typography>
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} textAlign="center" py={1}>
-                    <Link to="#" style={{ textDecoration: "none" }}>
-                      <Button onClick={handleSubmit}>
-                        <Typography style={{ cursor: "pointer" }}>
-                          Resend One-Time Password
-                        </Typography>
-                      </Button>
-                    </Link>
-                  </Grid>
-                </form>
-              </Grid>
-            </ModalContent>
-          </Fade>
-        </Modal>
-      </Grid>
-    </PageContainer>
+        <Grid >
+          <FoxboroFooter />
+        </Grid>
+      </PageContainer>
+    </div>
   );
 }
 
