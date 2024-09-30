@@ -11,10 +11,6 @@ import {
   CardContent,
 } from "@mui/material";
 import PageContainer from "../../components/HOC/PageContainer";
-import { useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import { setLoginDetails } from "../../apis/authSlice";
-import { sendOtpLogin } from "../../apis/Service";
 import { useDispatch } from "react-redux"; 
 import { useNavigate, Link } from "react-router-dom";
 import { setLoginDetails } from "../../apis/authSlice"; 
