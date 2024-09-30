@@ -832,47 +832,6 @@ function ManageAsset() {
                 </TableContainer>
               </Grid>
             </Grid>
-
-            {/* ------------------------BUTTON BOX------------------------------
-            <Grid
-              container
-              mt={2}
-              display={"flex"}
-              justifyContent={"end"}
-              gap={1}
-              flexDirection={{ xs: "row" }}
-            >
-              <Box>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "green", // Change button color to green
-                    "&:hover": {
-                      backgroundColor: "darkgreen", // Optional: Change color on hover
-                    },
-                    fontSize: "16px",
-                    width: "150px",
-                  }}
-                >
-                  SAVE
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "green", // Change button color to green
-                    "&:hover": {
-                      backgroundColor: "darkgreen", // Optional: Change color on hover
-                    },
-                    fontSize: "16px",
-                    width: "150px",
-                  }}
-                >
-                  EDIT
-                </Button>
-              </Box>
-            </Grid> */}
           </Grid>
         </CardContent>
       </Card>
