@@ -286,7 +286,7 @@ function ManageAsset() {
         fax: response.fax || "",
         email: response.email || "",
       });
-      console.log("organization", response);
+      // console.log("organization", response);
     } catch (error) {
       console.error("Error fetching organization data:", error);
     } finally {
