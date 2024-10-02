@@ -23,6 +23,10 @@ import Paper from "@mui/material/Paper";
 import { Box } from "@mui/system";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import { useSelector } from "react-redux";
+import {
+  Edit as EditIcon,
+  DeleteForever as DeleteForeverIcon,
+} from "@mui/icons-material";
 import { toast } from "react-toastify";
 import {
   addDepartment,
@@ -33,6 +37,7 @@ import {
   getApprovalChain,
   organizationAddData,
   getOrganizationData,
+  UpdateDepartment,
 } from "../../../apis/Service";
 
 function ManageAsset() {
@@ -40,6 +45,9 @@ function ManageAsset() {
   const inputRefDepartment = useRef(null);
   const [DepartmentLoading, setDepartmentLoading] = useState(true);
   const [departments, setDepartments] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [newDepartmentName, setNewDepartmentName] = useState("");
   const [selectedPositionDepartment, setSelectedPositionDepartment] =
     useState("");
   const [position, setPosition] = useState("");
@@ -96,6 +104,67 @@ function ManageAsset() {
         toast.error(
           "Error adding department: " +
             (error.response?.data?.message || error.message)
+        );
+      }
+    } else {
+      toast.error("Department name cannot be empty");
+    }
+  };
+
+  // Function to initiate editing
+  const handleEditClick = (index) => {
+    setNewDepartmentName(departments[index]); // Set current department name to input
+    setIsEditing(true); // Set editing mode
+    setEditingIndex(index); // Set index of the department being edited
+  };
+
+  //Update Department Integration
+  const handleAddOrUpdateDepartment = async () => {
+    const value = newDepartmentName.trim();
+
+    if (!organizationName) {
+      toast.error("Organization name is missing");
+      return;
+    }
+
+    if (value) {
+      try {
+        const formData = {
+          organizationName: organizationName,
+        };
+        if (isEditing) {
+          // Handle updating the department
+          const oldDepartmentName = departments[editingIndex]; // Current department name
+          formData.oldDepartmentName = oldDepartmentName; // Set the old department name
+          formData.newDepartmentName = value; // Set the new department name
+          const result = await UpdateDepartment(formData); // Call the update API
+          if (result && result.success) {
+            const updatedDepartments = [...departments];
+            updatedDepartments[editingIndex] = value; // Update the department name
+            setDepartments(updatedDepartments);
+            toast.success(result.message || "Department updated successfully");
+          } else {
+            toast.error(result.message || "Failed to update department");
+          }
+        } else {
+          // Handle adding the department
+          formData.departmentName = value; // Set the new department name for adding
+          const result = await addDepartment(formData);
+          if (result && result.success) {
+            setDepartments((prevDepartments) => [...prevDepartments, value]);
+            toast.success(result.message || "Department added successfully");
+          } else {
+            toast.error(result.message || "Failed to add department");
+          }
+        }
+        // Reset state after operation
+        setNewDepartmentName(""); // Clear input
+        setIsEditing(false); // Reset editing mode
+        setEditingIndex(null); // Reset editing index
+      } catch (error) {
+        console.error("API call error: ", error.response || error.message);
+        toast.error(
+          "Error: " + (error.response?.data?.message || error.message)
         );
       }
     } else {
@@ -258,10 +327,10 @@ function ManageAsset() {
             };
           })
         );
-        // console.log(
-        //   "Approval Chain Data:",
-        //   JSON.stringify(allApprovalChain, null, 2)
-        // );
+        console.log(
+          "Approval Chain Data:",
+          JSON.stringify(allApprovalChain, null, 2)
+        );
         setApprovalChainRows(allApprovalChain);
       } else {
         console.warn("No Departments Found");
@@ -476,12 +545,13 @@ function ManageAsset() {
                   variant="outlined"
                   size="small"
                   label="Department"
-                  inputRef={inputRefDepartment} // Use inputRef instead of ref
+                  value={newDepartmentName} // Bind value to newDepartmentName state
+                  onChange={(e) => setNewDepartmentName(e.target.value)} // Update state on change
                   fullWidth
                 />
                 <Button
                   variant="contained"
-                  onClick={handleAddDepartment}
+                  onClick={handleAddOrUpdateDepartment} // Use combined function for both adding and updating
                   size="small"
                   sx={{
                     backgroundColor: "green",
@@ -490,7 +560,8 @@ function ManageAsset() {
                     },
                   }}
                 >
-                  ADD
+                  {isEditing ? "UPDATE" : "ADD"}{" "}
+                  {/* Change button label based on mode */}
                 </Button>
               </Box>
 
@@ -521,7 +592,47 @@ function ManageAsset() {
                           <TableRow key={index}>
                             {/* Numbering and Department Name */}
                             <StyledTableCell>
-                              {index + 1}. {departmentName}
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="space-between"
+                              >
+                                {/* Department Name with Numbering */}
+                                <span>
+                                  {index + 1}. {departmentName}
+                                </span>
+
+                                {/* Icon Buttons */}
+                                <Box display="flex">
+                                  <IconButton
+                                    sx={{
+                                      color: "red",
+                                      "&:hover": { color: "darkred" },
+                                      marginRight: "8px", // Add some spacing between buttons
+                                    }}
+                                  >
+                                    <DeleteForeverIcon fontSize="medium" />
+                                  </IconButton>
+                                  <IconButton
+                                    onClick={() => handleEditClick(index)}
+                                  >
+                                    {" "}
+                                    {/* Update edit button */}
+                                    <EditIcon fontSize="medium" />
+                                  </IconButton>
+                                  {/* <IconButton
+                                    sx={{
+                                      color: "darkblue",
+                                      "&:hover": { color: "black" },
+                                    }}
+                                    onClick={() =>
+                                      handleUpdateDepartment(index)
+                                    } // Trigger PUT API on Edit click
+                                  >
+                                    <EditIcon fontSize="medium" />
+                                  </IconButton> */}
+                                </Box>
+                              </Box>
                             </StyledTableCell>
                           </TableRow>
                         ))
