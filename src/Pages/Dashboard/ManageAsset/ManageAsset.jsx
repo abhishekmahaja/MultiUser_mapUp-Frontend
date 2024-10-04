@@ -36,7 +36,7 @@ import {
   getPosition,
   getApprovalChain,
   organizationAddData,
-  getOrganizationData,
+  // getOrganizationData,
   UpdateDepartment,
   DeleteDepartment,
 } from "../../../apis/Service";
@@ -143,7 +143,7 @@ function ManageAsset() {
     try {
       const response = await DeleteDepartment({
         organizationName,
-        departmentName, 
+        departmentName,
       });
       if (response && response.data.success) {
         setDepartments((prevDepartments) =>
@@ -243,6 +243,29 @@ function ManageAsset() {
     }
   };
 
+  //fetch organization data based on username\
+  // const fetchOrganization = async () => {
+  //   setOrganiationLoading(true);
+  //   try {
+  //     const response = await getOrganizationData(organizationName);
+  //     setFormData({
+  //       address: response.address || "",
+  //       city: response.city || "",
+  //       state: response.state || "",
+  //       country: response.country || "",
+  //       pinCode: response.pinCode || "",
+  //       phone: response.phone || "",
+  //       fax: response.fax || "",
+  //       email: response.email || "",
+  //     });
+  //     // console.log("organization", response);
+  //   } catch (error) {
+  //     console.error("Error fetching organization data:", error);
+  //   } finally {
+  //     setOrganiationLoading(false);
+  //   }
+  // };
+
   // Fetch departments, position, approvalchain from API To Show
   const fetchDepartments = async (organizationName) => {
     setDepartmentLoading(true);
@@ -331,26 +354,6 @@ function ManageAsset() {
     } finally {
       setApprovalChainLoading(false);
     }
-    // Fetch all Organization and their respective Organization
-    setOrganiationLoading(true);
-    try {
-      const response = await getOrganizationData(organizationName);
-      setFormData({
-        address: response.address || "",
-        city: response.city || "",
-        state: response.state || "",
-        country: response.country || "",
-        pinCode: response.pinCode || "",
-        phone: response.phone || "",
-        fax: response.fax || "",
-        email: response.email || "",
-      });
-      // console.log("organization", response);
-    } catch (error) {
-      console.error("Error fetching organization data:", error);
-    } finally {
-      setOrganiationLoading(false);
-    }
   };
 
   //Organization ADD Data
@@ -426,6 +429,10 @@ function ManageAsset() {
       fetchDepartments(organizationName);
     }
   }, [organizationName]);
+
+  // useEffect(() => {
+  //   fetchOrganization();
+  // });
 
   return (
     <div>

@@ -347,14 +347,14 @@ export const organizationAddData = async (formData) => {
   }
 };
 
-// https://rtms-backend.onrender.com/api/v1/organization/organization-get-data?organizationName=Foxboro.in.co
-export const getOrganizationData = async (organizationName) => {
-  try {
-    const response = await axios.get(
-      `${ORGANIZATION_API}/organization-get-data?organizationName=${organizationName}`
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
+//http://localhost:5000/api/v1/organization/get-data-based-on-organization?username=abhi_123
+// export const getOrganizationData = async (uername) => {
+//   try {
+//     const response = await axios.get(
+//       `${ORGANIZATION_API}/get-data-based-on-organization?username=${uername}`
+//     );
+//     return response.data;
+//   } catch (error) {
+//     return catchError(error);
+//   }
+// };
