@@ -1,271 +1,362 @@
-import { Button, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import Input from '@mui/joy/Input';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-// import map from '../../../../public/assets/map2.png';
-import { Box } from '@mui/system';
-import NotificationsIcon from '@mui/icons-material/NotificationsActive';
-import Brightness5Icon from '@mui/icons-material/Brightness5';
-
+import {
+  Button,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
+import Input from "@mui/joy/Input";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import { Link } from 'react-router-dom';
+import { Box } from "@mui/system";
+import NotificationsIcon from "@mui/icons-material/NotificationsActive";
+import Brightness5Icon from "@mui/icons-material/Brightness5";
 
 const data = [
   {
-    employeeId: '01',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'GIP(kg)',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "01",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "GIP(kg)",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '02',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'CHP(kg)',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "02",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "CHP(kg)",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '03',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'THP(kg)',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "03",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "THP(kg)",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '04',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'Battery %',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "04",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "Battery %",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '05',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'Solar Power(V)',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "05",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "Solar Power(V)",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '06',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'Communication',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "06",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "Communication",
+    Condition1: "",
+    Description1: "",
   },
   {
-    employeeId: '07',
-    NormalAlert: '',
-    CriticalAlert: '',
-    Condition: '',
-    Description: '',
-    Parameter: 'CPU Temperature',
-    Condition1: '',
-    Description1: '',
-
+    employeeId: "07",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "CPU Temperature",
+    Condition1: "",
+    Description1: "",
   },
-]
+];
 
 function AddWell() {
-  const [employeeData, setEmployeeData] = useState(data)
+  const [employeeData, setEmployeeData] = useState(data);
 
   const onChangeInput = (e, employeeId) => {
-    const { name, value } = e.target
-    console.log('name', name)
-    console.log('value', value)
-    console.log('employeeId', employeeId)
+    const { name, value } = e.target;
+    console.log("name", name);
+    console.log("value", value);
+    console.log("employeeId", employeeId);
 
     const editData = employeeData.map((item) =>
       item.employeeId === employeeId && name ? { ...item, [name]: value } : item
-    )
+    );
 
-    console.log('editData', editData)
+    console.log("editData", editData);
 
-    setEmployeeData(editData)
-  }
+    setEmployeeData(editData);
+  };
 
   return (
     <div>
       <Paper>
-      <Grid container>
+        <Grid container>
           <IconButton>
-            <Brightness5Icon sx={{ fontSize: "40px", color: 'red' }} />
+            <Brightness5Icon sx={{ fontSize: "40px", color: "red" }} />
           </IconButton>
-          <Typography variant='h4' mt={1}>Add New Well</Typography>
+          <Typography variant="h4" mt={1}>
+            Add New Well
+          </Typography>
         </Grid>
-        <Grid container p={1.7} sx={{ display: 'flex', justifyContent: 'space-between' }} >
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Well Number" variant="outlined" /></Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Well Installation" variant="outlined" /></Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Well Location" variant="outlined" /></Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Latitude" variant="outlined" /></Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Longitude" variant="outlined" /></Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}><TextField fullWidth size='small' label="Land Mark" variant="outlined" /></Grid>
+        <Grid
+          container
+          p={1.7}
+          sx={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Well Number"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Well Installation"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Well Location"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Latitude"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Longitude"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item sm={6} md={3} xs={12} lg={1.8}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Land Mark"
+              variant="outlined"
+            />
+          </Grid>
         </Grid>
       </Paper>
 
-      <Grid container sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', }} mt={1} p={1} >
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-evenly",
+        }}
+        mt={1}
+        p={1}
+      >
         <Grid container>
           <IconButton>
-            <NotificationsIcon sx={{ fontSize: "40px", color: 'red' }} />
+            <NotificationsIcon sx={{ fontSize: "40px", color: "red" }} />
           </IconButton>
-          <Typography variant='h4' mt={1}>Notification History</Typography>
+          <Typography variant="h4" mt={1}>
+            Notification History
+          </Typography>
         </Grid>
-        <Grid item >
+        <Grid item>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontSize: '1.5rem' }}>Parameter</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }} align='center'>Normal Alert</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }}>Condition</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }} align='center'>Description</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }} align='center'>Critical Alert</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }}>Condition</TableCell>
-                <TableCell sx={{ fontSize: '1.5rem' }} align='center'>Description</TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }}>Parameter</TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }} align="center">
+                  Normal Alert
+                </TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }}>Condition</TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }} align="center">
+                  Description
+                </TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }} align="center">
+                  Critical Alert
+                </TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }}>Condition</TableCell>
+                <TableCell sx={{ fontSize: "1.5rem" }} align="center">
+                  Description
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {employeeData?.map(({ employeeId, Parameter, NormalAlert, CriticalAlert, Condition, Condition1, Description, Description1 }) => (
-                <TableRow key={employeeId}>
-                  <TableCell>
-                    <Typography>{Parameter}</Typography>
-                  </TableCell>
+              {employeeData?.map(
+                ({
+                  employeeId,
+                  Parameter,
+                  NormalAlert,
+                  CriticalAlert,
+                  Condition,
+                  Condition1,
+                  Description,
+                  Description1,
+                }) => (
+                  <TableRow key={employeeId}>
+                    <TableCell>
+                      <Typography>{Parameter}</Typography>
+                    </TableCell>
 
-                  <TableCell>
-                    <TextField
-                      name="NormalAlert"
-                      value={NormalAlert}
-                      onChange={(e) => onChangeInput(e, employeeId)}
-                      variant="outlined"
-                      size="small"
-                      // style={{ width: '90px' }}
-                      fullWidth
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FormControl variant="outlined" size="small" fullWidth>
-                      <Select
-                        labelId={`condition-label-${employeeId}`}
-                        name="Condition1"
-                        value={Condition1}
+                    <TableCell>
+                      <TextField
+                        name="NormalAlert"
+                        value={NormalAlert}
                         onChange={(e) => onChangeInput(e, employeeId)}
+                        variant="outlined"
                         size="small"
                         // style={{ width: '90px' }}
                         fullWidth
-                      >
-                        <MenuItem value="High">High</MenuItem>
-                        <MenuItem value="Low">Low</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <FormControl variant="outlined" size="small" fullWidth>
+                        <Select
+                          labelId={`condition-label-${employeeId}`}
+                          name="Condition1"
+                          value={Condition1}
+                          onChange={(e) => onChangeInput(e, employeeId)}
+                          size="small"
+                          // style={{ width: '90px' }}
+                          fullWidth
+                        >
+                          <MenuItem value="High">High</MenuItem>
+                          <MenuItem value="Low">Low</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </TableCell>
 
-                  <TableCell>
-                    <TextField
-                      name="Description"
-                      value={Description}
-                      onChange={(e) => onChangeInput(e, employeeId)}
-                      variant="outlined"
-                      size="small"
-                      // style={{ width: '450px' }}
-                      fullWidth
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      name="CriticalAlert"
-                      value={CriticalAlert}
-                      onChange={(e) => onChangeInput(e, employeeId)}
-                      variant="outlined"
-                      size="small"
-                      // style={{ width: '90px' }}
-                      fullWidth
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FormControl variant="outlined" size="small" fullWidth>
-                      <Select
-                        labelId={`condition-label-${employeeId}`}
-                        name="Condition"
-                        value={Condition}
+                    <TableCell>
+                      <TextField
+                        name="Description"
+                        value={Description}
                         onChange={(e) => onChangeInput(e, employeeId)}
+                        variant="outlined"
+                        size="small"
+                        // style={{ width: '450px' }}
+                        fullWidth
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        name="CriticalAlert"
+                        value={CriticalAlert}
+                        onChange={(e) => onChangeInput(e, employeeId)}
+                        variant="outlined"
                         size="small"
                         // style={{ width: '90px' }}
                         fullWidth
-                      >
-                        <MenuItem value="High">High</MenuItem>
-                        <MenuItem value="Low">Low</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      name="Description"
-                      value={Description1}
-                      onChange={(e) => onChangeInput(e, employeeId)}
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                    // style={{ width: '350px' }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <FormControl variant="outlined" size="small" fullWidth>
+                        <Select
+                          labelId={`condition-label-${employeeId}`}
+                          name="Condition"
+                          value={Condition}
+                          onChange={(e) => onChangeInput(e, employeeId)}
+                          size="small"
+                          // style={{ width: '90px' }}
+                          fullWidth
+                        >
+                          <MenuItem value="High">High</MenuItem>
+                          <MenuItem value="Low">Low</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        name="Description"
+                        value={Description1}
+                        onChange={(e) => onChangeInput(e, employeeId)}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        // style={{ width: '350px' }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
             </TableBody>
           </Table>
         </Grid>
-        <Grid item p={2} sx={{ display: 'flex', justifyContent: 'flex-end' }} gap={2}>
-          <Button variant='contained'
+        <Grid
+          item
+          p={2}
+          sx={{ display: "flex", justifyContent: "flex-end" }}
+          gap={2}
+        >
+          <Button
+            variant="contained"
             sx={{
-              backgroundColor: 'green',   // Change button color to green
-              '&:hover': {
-                backgroundColor: 'darkgreen', // Optional: Change color on hover
+              backgroundColor: "green", // Change button color to green
+              "&:hover": {
+                backgroundColor: "darkgreen", // Optional: Change color on hover
               },
-              fontSize: '16px',
-            }}> Add Well</Button>
-          <Button variant='contained'
-            sx={{
-              backgroundColor: 'green',   // Change button color to green
-              '&:hover': {
-                backgroundColor: 'darkgreen', // Optional: Change color on hover
-              },
-              fontSize: '16px',
-            }}>Cancel</Button>
-          {/* <Button variant='contained'
+              fontSize: "16px",
+            }}
+          >
+            {" "}
+            Add Well
+          </Button>
+          <Link to="/dashboard/wellmaster">
+            <Button
+              variant="contained"
               sx={{
-                backgroundColor: 'green',   // Change button color to green
-                '&:hover': {
-                  backgroundColor: 'darkgreen', // Optional: Change color on hover
+                backgroundColor: "green", // Change button color to green
+                "&:hover": {
+                  backgroundColor: "darkgreen", // Optional: Change color on hover
                 },
-                fontSize: '16px',
-              }}> Delete</Button> */}
+                fontSize: "16px",
+              }}
+            >
+              Cancel
+            </Button>
+          </Link>
         </Grid>
       </Grid>
-
-
     </div>
-  )
+  );
 }
 
-export default AddWell
+export default AddWell;

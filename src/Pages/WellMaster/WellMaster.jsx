@@ -10,9 +10,9 @@ import TableRow from '@mui/material/TableRow';
 import { Box, color } from '@mui/system';
 import master from '/assets/wellMaster.png'
 import { Link } from 'react-router-dom';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
-
+import SettingsIcon from '@mui/icons-material/Settings';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+// import Othertable from '../Dashboard/OtherTable.jsx';
 
 // -------------------------------Table for  Moblie --------------------------
 const StyledGridItem = styled(Grid)(({ theme }) => ({
@@ -126,27 +126,11 @@ function WellMaster() {
                         <Typography variant='h4'>Well Master</Typography>
                     </Box>
                 </Grid>
-                <Grid item lg={6} md={6} sm={6} xs={6} display={'flex'} justifyContent={'end'}>
-                    <Link to='/dashboard/addwell' style={{ textDecoration: 'none' }}>
-                        <Button variant='contained'
-                            sx={{
-                                backgroundColor: 'green',   // Change button color to green
-                                '&:hover': {
-                                    backgroundColor: 'darkgreen', // Optional: Change color on hover
-                                },
-                                fontSize: '16px',
-                                // Hide button on small screens
-                                display: {
-                                    xs: 'none', // Hide on extra small screens (mobile)
-                                    sm: 'block', // Show on small screens and above
-                                }
-                            }} >
-                            Add Well +
-                        </Button>
-                    </Link>
-                </Grid>
             </Grid>
 
+            {/* <Grid container >
+                <Othertable />
+            </Grid> */}
             {/* ------------------Table for Desktop--------------------------------- */}
             <Grid container md={12}
                 lg={12}
@@ -157,35 +141,35 @@ function WellMaster() {
                     <Table aria-label="customized table" stickyHeader>
                         <TableHead >
                             <TableRow  >
-                                <StyledTableCell sx={{ fontSize: '18px' }}>Well Number</StyledTableCell>
-                                <StyledTableCell sx={{ fontSize: '18px' }} align="left">Well Installation</StyledTableCell>
-                                <StyledTableCell sx={{ fontSize: '18px' }} align="left">Well Location </StyledTableCell>
-                                <StyledTableCell sx={{ fontSize: '18px' }} align="left">Latitude</StyledTableCell>
-                                <StyledTableCell sx={{ fontSize: '18px' }} align="left">Longitude</StyledTableCell>
-                                <StyledTableCell sx={{ fontSize: '18px' }} align="left">LandMark</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="center">Loaction</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="center">Installation</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="center">Well Type</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="center">Well Number</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="center">Landmark</StyledTableCell>
+                                <StyledTableCell sx={{ fontSize: '18px' }} align="right">Geolocation</StyledTableCell>
                                 <StyledTableCell sx={{ fontSize: '18px' }} align="center">Action</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {rows.map((row) => (
                                 <StyledTableRow key={row.name}>
-                                    <StyledTableCell component="th" scope="row">
+                                    <StyledTableCell align="center" component="th" scope="row">
                                         {row.name}
                                     </StyledTableCell>
-                                    <StyledTableCell align="left"></StyledTableCell>
-                                    <StyledTableCell align="left"></StyledTableCell>
-                                    <StyledTableCell align="left"></StyledTableCell>
-                                    <StyledTableCell align="left"></StyledTableCell>
-                                    <StyledTableCell align="left"></StyledTableCell>
-                                    <StyledTableCell align='left'>
-                                        <Box display={'flex'} justifyContent={'space-evenly'}>
-                                            <IconButton sx={{ color: 'red', '&:hover': { color: 'darkred' }, marginRight: '5px' }}>
-                                                <DeleteForeverIcon fontSize='large' />
-                                            </IconButton>
-                                            <IconButton sx={{ color: 'darkblue', '&:hover': { color: 'black' } }}>
-                                                <EditIcon fontSize='large' />
-                                            </IconButton>
-                                        </Box>
+                                    <StyledTableCell align="center"></StyledTableCell>
+                                    <StyledTableCell align="center"></StyledTableCell>
+                                    <StyledTableCell align="center"></StyledTableCell>
+                                    <StyledTableCell align="center"></StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        <IconButton sx={{ color: 'grey', '&:hover': { color: 'darkred' }, marginRight: '5px' }}>
+                                            <LocationOnIcon fontSize='large' />
+                                        </IconButton></StyledTableCell>
+                                    <StyledTableCell align='center'>
+                                            <Link to="/dashboard/addwell">
+                                                <IconButton sx={{ color: 'darkblue', '&:hover': { color: 'black' } }}>
+                                                    <SettingsIcon fontSize='large' />
+                                                </IconButton>
+                                            </Link>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}

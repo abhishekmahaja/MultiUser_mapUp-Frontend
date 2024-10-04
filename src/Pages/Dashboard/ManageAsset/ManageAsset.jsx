@@ -36,8 +36,9 @@ import {
   getPosition,
   getApprovalChain,
   organizationAddData,
-  getOrganizationData,
+  // getOrganizationData,
   UpdateDepartment,
+  DeleteDepartment,
 } from "../../../apis/Service";
 
 function ManageAsset() {
@@ -74,59 +75,20 @@ function ManageAsset() {
   const [loading, setLoading] = useState(false);
   const [organiatioLoading, setOrganiationLoading] = useState(false);
 
-  //integration for add department
-  const handleAddDepartment = async () => {
-    const inputValue = inputRefDepartment.current
-      ? inputRefDepartment.current.value
-      : "";
-    const value = inputValue.trim();
-
-    if (!organizationName) {
-      toast.error("Organization name is missing");
-      return;
-    }
-    if (value) {
-      try {
-        const formData = {
-          organizationName: organizationName, // Use dynamic organization name
-          departmentName: value,
-        };
-        const result = await addDepartment(formData);
-        if (result && result.success) {
-          setDepartments((prevDepartments) => [...prevDepartments, value]);
-          inputRefDepartment.current.value = ""; // Clear input
-          toast.success(result.message || "Department added successfully");
-        } else {
-          toast.error(result.message || "Failed to add department");
-        }
-      } catch (error) {
-        console.error("API call error: ", error.response || error.message);
-        toast.error(
-          "Error adding department: " +
-            (error.response?.data?.message || error.message)
-        );
-      }
-    } else {
-      toast.error("Department name cannot be empty");
-    }
-  };
-
-  // Function to initiate editing
+  // Function to initiate Updating department
   const handleEditClick = (index) => {
     setNewDepartmentName(departments[index]); // Set current department name to input
     setIsEditing(true); // Set editing mode
     setEditingIndex(index); // Set index of the department being edited
   };
 
-  //Update Department Integration
+  //integration for add department and Update department
   const handleAddOrUpdateDepartment = async () => {
     const value = newDepartmentName.trim();
-
     if (!organizationName) {
       toast.error("Organization name is missing");
       return;
     }
-
     if (value) {
       try {
         const formData = {
@@ -169,6 +131,34 @@ function ManageAsset() {
       }
     } else {
       toast.error("Department name cannot be empty");
+    }
+  };
+
+  //delete department
+  const handleDeleteClick = async (departmentName) => {
+    if (!organizationName || !departmentName) {
+      toast.error("Organization name and department name are required");
+      return;
+    }
+    try {
+      const response = await DeleteDepartment({
+        organizationName,
+        departmentName,
+      });
+      if (response && response.data.success) {
+        setDepartments((prevDepartments) =>
+          prevDepartments.filter((dep) => dep !== departmentName)
+        );
+        toast.error(response.data.message || "Failed to delete department");
+      } else {
+        toast.success(`Department "${departmentName}" deleted successfully`);
+      }
+    } catch (error) {
+      console.error(
+        "Error deleting department: ",
+        error.response || error.message
+      );
+      toast.error("Error: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -253,7 +243,30 @@ function ManageAsset() {
     }
   };
 
-  // Fetch departments from API To Show
+  //fetch organization data based on username\
+  // const fetchOrganization = async () => {
+  //   setOrganiationLoading(true);
+  //   try {
+  //     const response = await getOrganizationData(organizationName);
+  //     setFormData({
+  //       address: response.address || "",
+  //       city: response.city || "",
+  //       state: response.state || "",
+  //       country: response.country || "",
+  //       pinCode: response.pinCode || "",
+  //       phone: response.phone || "",
+  //       fax: response.fax || "",
+  //       email: response.email || "",
+  //     });
+  //     // console.log("organization", response);
+  //   } catch (error) {
+  //     console.error("Error fetching organization data:", error);
+  //   } finally {
+  //     setOrganiationLoading(false);
+  //   }
+  // };
+
+  // Fetch departments, position, approvalchain from API To Show
   const fetchDepartments = async (organizationName) => {
     setDepartmentLoading(true);
     try {
@@ -274,7 +287,7 @@ function ManageAsset() {
     } finally {
       setDepartmentLoading(false);
     }
-    // Fetch all departments and their respective positions
+    // Fetch all Positions and their respective department
     setPositionLoading(true);
     try {
       const formData = { organizationName };
@@ -306,7 +319,7 @@ function ManageAsset() {
     } finally {
       setPositionLoading(false);
     }
-    // Fetch all departments and their respective Approval Chain
+    // Fetch all Approval chain and their respective department
     setApprovalChainLoading(true);
     try {
       const formData = { organizationName };
@@ -337,29 +350,9 @@ function ManageAsset() {
         setApprovalChainRows([]);
       }
     } catch (error) {
-      console.error("Error fetching departments and Approval Chain:", error);
+      console.error("An error occurred while fetching data.");
     } finally {
       setApprovalChainLoading(false);
-    }
-    // Fetch organization data using the organization name
-    setOrganiationLoading(true);
-    try {
-      const response = await getOrganizationData(organizationName);
-      setFormData({
-        address: response.address || "",
-        city: response.city || "",
-        state: response.state || "",
-        country: response.country || "",
-        pinCode: response.pinCode || "",
-        phone: response.phone || "",
-        fax: response.fax || "",
-        email: response.email || "",
-      });
-      // console.log("organization", response);
-    } catch (error) {
-      console.error("Error fetching organization data:", error);
-    } finally {
-      setOrganiationLoading(false);
     }
   };
 
@@ -370,6 +363,7 @@ function ManageAsset() {
       [e.target.name]: e.target.value,
     });
   };
+
   // Handle Save
   const handleSave = async () => {
     try {
@@ -390,6 +384,7 @@ function ManageAsset() {
       setLoading(false); // End loading state
     }
   };
+
   // Handle Cancel Clear form fields
   const handleCancel = () => {
     setFormData({
@@ -435,6 +430,10 @@ function ManageAsset() {
     }
   }, [organizationName]);
 
+  // useEffect(() => {
+  //   fetchOrganization();
+  // });
+
   return (
     <div>
       <Paper>
@@ -444,7 +443,7 @@ function ManageAsset() {
             <AssetsIcon sx={{ fontSize: 30, color: "green" }} />
           </IconButton>
           <Typography variant="h4" mt={1}>
-            Organization = [ {organizationName ? organizationName : "N/A"} ]
+            Organization : [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
           {/* Form Fields */}
           <Grid container spacing={3}>
@@ -523,7 +522,6 @@ function ManageAsset() {
           </Grid>
         </Grid>
       </Paper>
-
       {/* ------------Input textfield for table------------------- */}
       <Card sx={{ my: 2 }}>
         <CardContent>
@@ -546,12 +544,12 @@ function ManageAsset() {
                   size="small"
                   label="Department"
                   value={newDepartmentName} // Bind value to newDepartmentName state
-                  onChange={(e) => setNewDepartmentName(e.target.value)} // Update state on change
+                  onChange={(e) => setNewDepartmentName(e.target.value)}
                   fullWidth
                 />
                 <Button
                   variant="contained"
-                  onClick={handleAddOrUpdateDepartment} // Use combined function for both adding and updating
+                  onClick={handleAddOrUpdateDepartment}
                   size="small"
                   sx={{
                     backgroundColor: "green",
@@ -561,10 +559,8 @@ function ManageAsset() {
                   }}
                 >
                   {isEditing ? "UPDATE" : "ADD"}{" "}
-                  {/* Change button label based on mode */}
                 </Button>
               </Box>
-
               <Grid container>
                 <TableContainer
                   component={Paper}
@@ -590,26 +586,25 @@ function ManageAsset() {
                       ) : departments && departments.length > 0 ? (
                         departments.map((departmentName, index) => (
                           <TableRow key={index}>
-                            {/* Numbering and Department Name */}
                             <StyledTableCell>
                               <Box
                                 display="flex"
                                 alignItems="center"
                                 justifyContent="space-between"
                               >
-                                {/* Department Name with Numbering */}
                                 <span>
                                   {index + 1}. {departmentName}
                                 </span>
-
-                                {/* Icon Buttons */}
                                 <Box display="flex">
                                   <IconButton
                                     sx={{
                                       color: "red",
                                       "&:hover": { color: "darkred" },
-                                      marginRight: "8px", // Add some spacing between buttons
+                                      marginRight: "8px",
                                     }}
+                                    onClick={() =>
+                                      handleDeleteClick(departmentName)
+                                    }
                                   >
                                     <DeleteForeverIcon fontSize="medium" />
                                   </IconButton>
@@ -617,20 +612,8 @@ function ManageAsset() {
                                     onClick={() => handleEditClick(index)}
                                   >
                                     {" "}
-                                    {/* Update edit button */}
                                     <EditIcon fontSize="medium" />
-                                  </IconButton>
-                                  {/* <IconButton
-                                    sx={{
-                                      color: "darkblue",
-                                      "&:hover": { color: "black" },
-                                    }}
-                                    onClick={() =>
-                                      handleUpdateDepartment(index)
-                                    } // Trigger PUT API on Edit click
-                                  >
-                                    <EditIcon fontSize="medium" />
-                                  </IconButton> */}
+                                  </IconButton>{" "}
                                 </Box>
                               </Box>
                             </StyledTableCell>
@@ -648,7 +631,6 @@ function ManageAsset() {
                 </TableContainer>
               </Grid>
             </Grid>
-
             {/* ------------------------ADD POSITION------------------------------ */}
             <Grid
               item
@@ -912,24 +894,51 @@ function ManageAsset() {
                         </TableRow>
                       ) : approvalChainRows && approvalChainRows.length > 0 ? (
                         approvalChainRows.map((row, index) => (
-                          <StyledTableRow key={index}>
-                            {/* Department column */}
-                            <StyledTableCell component="th" scope="row">
-                              {index + 1}. {row.departmentName}
-                            </StyledTableCell>
-                            {/* Action column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.action || "N/A"}
-                            </StyledTableCell>
-                            {/* Level-1 column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.level1 || "N/A"}
-                            </StyledTableCell>
-                            {/* Level-2 column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.level2 || "N/A"}
-                            </StyledTableCell>
-                          </StyledTableRow>
+                          <React.Fragment key={index}>
+                            <StyledTableRow>
+                              {/* Ensure row.approvalChains exists and has items */}
+                              <StyledTableCell
+                                component="th"
+                                rowSpan={row.approvalChains?.length || 1}
+                              >
+                                {index + 1}. {row.departmentName}
+                              </StyledTableCell>
+                              {/* Check if first approvalChain exists */}
+                              {row.approvalChains?.[0] ? (
+                                <>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].action || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].level1 || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].level2 || "N/A"}
+                                  </StyledTableCell>
+                                </>
+                              ) : (
+                                <StyledTableCell colSpan={3}>
+                                  No Approval Chain Available
+                                </StyledTableCell>
+                              )}
+                            </StyledTableRow>
+                            {/* Remaining approvalChains */}
+                            {row.approvalChains
+                              ?.slice(1)
+                              .map((chain, chainIndex) => (
+                                <StyledTableRow key={`${index}-${chainIndex}`}>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.action || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.level1 || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.level2 || "N/A"}
+                                  </StyledTableCell>
+                                </StyledTableRow>
+                              ))}
+                          </React.Fragment>
                         ))
                       ) : (
                         <TableRow>

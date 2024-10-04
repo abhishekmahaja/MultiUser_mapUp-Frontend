@@ -258,6 +258,19 @@ export const UpdateDepartment = async (formData) => {
   }
 };
 
+//delete department
+export const DeleteDepartment = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/delete-department`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
 //Add Position on the basic of department
 export const addPosition = async (formData) => {
   try {
@@ -276,6 +289,19 @@ export const getPosition = async (organizationName, departmentName) => {
   try {
     const response = await axios.get(
       `${ORGANIZATION_API}/get-positions?organizationName=${organizationName}&departmentName=${departmentName}`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//update department
+export const updatPosition = async (formData) => {
+  try {
+    const response = await axios.put(
+      `${ORGANIZATION_API}/update-position`,
+      formData
     );
     return response.data;
   } catch (error) {
@@ -321,14 +347,14 @@ export const organizationAddData = async (formData) => {
   }
 };
 
-// https://rtms-backend.onrender.com/api/v1/organization/organization-get-data?organizationName=Foxboro.in.co
-export const getOrganizationData = async (organizationName) => {
-  try {
-    const response = await axios.get(
-      `${ORGANIZATION_API}/organization-get-data?organizationName=${organizationName}`
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
+//http://localhost:5000/api/v1/organization/get-data-based-on-organization?username=abhi_123
+// export const getOrganizationData = async (uername) => {
+//   try {
+//     const response = await axios.get(
+//       `${ORGANIZATION_API}/get-data-based-on-organization?username=${uername}`
+//     );
+//     return response.data;
+//   } catch (error) {
+//     return catchError(error);
+//   }
+// };
