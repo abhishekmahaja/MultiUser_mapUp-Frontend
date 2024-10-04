@@ -274,7 +274,7 @@ function ManageAsset() {
     } finally {
       setDepartmentLoading(false);
     }
-    // Fetch all departments and their respective positions
+    // Fetch all Positions and their respective department
     setPositionLoading(true);
     try {
       const formData = { organizationName };
@@ -307,40 +307,6 @@ function ManageAsset() {
       setPositionLoading(false);
     }
     // Fetch all Approval chain and their respective department
-    // setApprovalChainLoading(true);
-    // try {
-    //   const formData = { organizationName };
-    //   const departmentResponse = await departmentDropdown(formData);
-    //   if (departmentResponse.data && departmentResponse.data.length > 0) {
-    //     const departmentList = departmentResponse.data[0].departments.map(
-    //       (dept) => dept.departmentName
-    //     );
-    //     const allApprovalChain = await Promise.all(
-    //       departmentList.map(async (department) => {
-    //         const approvalChainResponse = await getApprovalChain(
-    //           organizationName,
-    //           department
-    //         );
-    //         return {
-    //           departmentName: department,
-    //           approvalChains: approvalChainResponse.data || [],
-    //         };
-    //       })
-    //     );
-    //     console.log(
-    //       "Approval Chain Data:",
-    //       JSON.stringify(allApprovalChain, null, 2)
-    //     );
-    //     setApprovalChainRows(allApprovalChain);
-    //   } else {
-    //     console.warn("No Departments Found");
-    //     setApprovalChainRows([]);
-    //   }
-    // } catch (error) {
-    //   console.error("Error fetching departments and Approval Chain:", error);
-    // } finally {
-    //   setApprovalChainLoading(false);
-    // }
     setApprovalChainLoading(true);
     try {
       const formData = { organizationName };
@@ -375,6 +341,7 @@ function ManageAsset() {
     } finally {
       setApprovalChainLoading(false);
     }
+    // Fetch all Organization and their respective Organization
     setOrganiationLoading(true);
     try {
       const response = await getOrganizationData(organizationName);
