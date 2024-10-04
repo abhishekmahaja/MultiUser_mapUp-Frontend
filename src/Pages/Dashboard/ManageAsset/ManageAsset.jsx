@@ -75,41 +75,41 @@ function ManageAsset() {
   const [organiatioLoading, setOrganiationLoading] = useState(false);
 
   //integration for add department
-  const handleAddDepartment = async () => {
-    const inputValue = inputRefDepartment.current
-      ? inputRefDepartment.current.value
-      : "";
-    const value = inputValue.trim();
+  // const handleAddDepartment = async () => {
+  //   const inputValue = inputRefDepartment.current
+  //     ? inputRefDepartment.current.value
+  //     : "";
+  //   const value = inputValue.trim();
 
-    if (!organizationName) {
-      toast.error("Organization name is missing");
-      return;
-    }
-    if (value) {
-      try {
-        const formData = {
-          organizationName: organizationName, // Use dynamic organization name
-          departmentName: value,
-        };
-        const result = await addDepartment(formData);
-        if (result && result.success) {
-          setDepartments((prevDepartments) => [...prevDepartments, value]);
-          inputRefDepartment.current.value = ""; // Clear input
-          toast.success(result.message || "Department added successfully");
-        } else {
-          toast.error(result.message || "Failed to add department");
-        }
-      } catch (error) {
-        console.error("API call error: ", error.response || error.message);
-        toast.error(
-          "Error adding department: " +
-            (error.response?.data?.message || error.message)
-        );
-      }
-    } else {
-      toast.error("Department name cannot be empty");
-    }
-  };
+  //   if (!organizationName) {
+  //     toast.error("Organization name is missing");
+  //     return;
+  //   }
+  //   if (value) {
+  //     try {
+  //       const formData = {
+  //         organizationName: organizationName, // Use dynamic organization name
+  //         departmentName: value,
+  //       };
+  //       const result = await addDepartment(formData);
+  //       if (result && result.success) {
+  //         setDepartments((prevDepartments) => [...prevDepartments, value]);
+  //         inputRefDepartment.current.value = ""; // Clear input
+  //         toast.success(result.message || "Department added successfully");
+  //       } else {
+  //         toast.error(result.message || "Failed to add department");
+  //       }
+  //     } catch (error) {
+  //       console.error("API call error: ", error.response || error.message);
+  //       toast.error(
+  //         "Error adding department: " +
+  //           (error.response?.data?.message || error.message)
+  //       );
+  //     }
+  //   } else {
+  //     toast.error("Department name cannot be empty");
+  //   }
+  // };
 
   // Function to initiate editing
   const handleEditClick = (index) => {
@@ -306,7 +306,41 @@ function ManageAsset() {
     } finally {
       setPositionLoading(false);
     }
-    // Fetch all departments and their respective Approval Chain
+    // Fetch all Approval chain and their respective department
+    // setApprovalChainLoading(true);
+    // try {
+    //   const formData = { organizationName };
+    //   const departmentResponse = await departmentDropdown(formData);
+    //   if (departmentResponse.data && departmentResponse.data.length > 0) {
+    //     const departmentList = departmentResponse.data[0].departments.map(
+    //       (dept) => dept.departmentName
+    //     );
+    //     const allApprovalChain = await Promise.all(
+    //       departmentList.map(async (department) => {
+    //         const approvalChainResponse = await getApprovalChain(
+    //           organizationName,
+    //           department
+    //         );
+    //         return {
+    //           departmentName: department,
+    //           approvalChains: approvalChainResponse.data || [],
+    //         };
+    //       })
+    //     );
+    //     console.log(
+    //       "Approval Chain Data:",
+    //       JSON.stringify(allApprovalChain, null, 2)
+    //     );
+    //     setApprovalChainRows(allApprovalChain);
+    //   } else {
+    //     console.warn("No Departments Found");
+    //     setApprovalChainRows([]);
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching departments and Approval Chain:", error);
+    // } finally {
+    //   setApprovalChainLoading(false);
+    // }
     setApprovalChainLoading(true);
     try {
       const formData = { organizationName };
@@ -337,11 +371,10 @@ function ManageAsset() {
         setApprovalChainRows([]);
       }
     } catch (error) {
-      console.error("Error fetching departments and Approval Chain:", error);
+      console.error("An error occurred while fetching data.");
     } finally {
       setApprovalChainLoading(false);
     }
-    // Fetch organization data using the organization name
     setOrganiationLoading(true);
     try {
       const response = await getOrganizationData(organizationName);
@@ -444,7 +477,7 @@ function ManageAsset() {
             <AssetsIcon sx={{ fontSize: 30, color: "green" }} />
           </IconButton>
           <Typography variant="h4" mt={1}>
-            Organization = [ {organizationName ? organizationName : "N/A"} ]
+            Organization : [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
           {/* Form Fields */}
           <Grid container spacing={3}>
@@ -648,7 +681,6 @@ function ManageAsset() {
                 </TableContainer>
               </Grid>
             </Grid>
-
             {/* ------------------------ADD POSITION------------------------------ */}
             <Grid
               item
@@ -904,37 +936,58 @@ function ManageAsset() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {approvalChainLoading ? (
-                        <TableRow>
-                          <StyledTableCell colSpan={4}>
-                            Loading...
-                          </StyledTableCell>
-                        </TableRow>
-                      ) : approvalChainRows && approvalChainRows.length > 0 ? (
+                      {approvalChainRows && approvalChainRows.length > 0 ? (
                         approvalChainRows.map((row, index) => (
-                          <StyledTableRow key={index}>
-                            {/* Department column */}
-                            <StyledTableCell component="th" scope="row">
-                              {index + 1}. {row.departmentName}
-                            </StyledTableCell>
-                            {/* Action column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.action || "N/A"}
-                            </StyledTableCell>
-                            {/* Level-1 column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.level1 || "N/A"}
-                            </StyledTableCell>
-                            {/* Level-2 column */}
-                            <StyledTableCell align="left" scope="row">
-                              {index + 1}. {row.approvalChains.level2 || "N/A"}
-                            </StyledTableCell>
-                          </StyledTableRow>
+                          <>
+                            <StyledTableRow key={index}>
+                              {/* Ensure row.approvalChains exists and has items */}
+                              <StyledTableCell
+                                component="th"
+                                rowSpan={row.approvalChains?.length || 1}
+                              >
+                                {index + 1}. {row.departmentName}
+                              </StyledTableCell>
+                              {/* Check if first approvalChain exists */}
+                              {row.approvalChains?.[0] ? (
+                                <>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].action || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].level1 || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {1}. {row.approvalChains[0].level2 || "N/A"}
+                                  </StyledTableCell>
+                                </>
+                              ) : (
+                                <StyledTableCell colSpan={3}>
+                                  No Approval Chain Available
+                                </StyledTableCell>
+                              )}
+                            </StyledTableRow>
+                            {/* Remaining approvalChains */}
+                            {row.approvalChains
+                              ?.slice(1)
+                              .map((chain, chainIndex) => (
+                                <StyledTableRow key={`${index}-${chainIndex}`}>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.action || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.level1 || "N/A"}
+                                  </StyledTableCell>
+                                  <StyledTableCell>
+                                    {chainIndex + 2}. {chain?.level2 || "N/A"}
+                                  </StyledTableCell>
+                                </StyledTableRow>
+                              ))}
+                          </>
                         ))
                       ) : (
                         <TableRow>
                           <StyledTableCell colSpan={4}>
-                            No Approval Chain Available
+                            Loading...
                           </StyledTableCell>
                         </TableRow>
                       )}
