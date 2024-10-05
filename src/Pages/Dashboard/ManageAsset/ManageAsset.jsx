@@ -105,13 +105,13 @@ function ManageAsset() {
           organizationName: organizationName,
         };
         if (isEditing) {
-          const oldDepartmentName = departments[editingIndex]; 
+          const oldDepartmentName = departments[editingIndex];
           formData.oldDepartmentName = oldDepartmentName;
-          formData.newDepartmentName = value; 
-          const result = await UpdateDepartment(formData); 
+          formData.newDepartmentName = value;
+          const result = await UpdateDepartment(formData);
           if (result && result.success) {
             const updatedDepartments = [...departments];
-            updatedDepartments[editingIndex] = value; 
+            updatedDepartments[editingIndex] = value;
             setDepartments(updatedDepartments);
             toast.success(result.message || "Department updated successfully");
           } else {
@@ -312,7 +312,16 @@ function ManageAsset() {
   //Delete Approval chain
   const handleDeleteApprovalChain = async (index) => {
     const approvalChainToDelete = approvalChainRows[index];
-
+    // Check if approval chain exists
+    if (
+      !approvalChainToDelete ||
+      !approvalChainToDelete.approvalChains.length
+    ) {
+      console.error("No approval chain found at the specified index.");
+      toast.error("No approval chain found at the specified index.");
+      return;
+    }
+    // Create the form data for deletion
     const formData = {
       organizationName,
       departmentName: approvalChainToDelete.departmentName,
@@ -320,7 +329,7 @@ function ManageAsset() {
       level1: approvalChainToDelete.approvalChains[0]?.level1 || "",
       level2: approvalChainToDelete.approvalChains[0]?.level2 || "",
     };
-    // console.log("FormData to delete:", formData);
+    // Validate required fields
     if (!formData.organizationName || !formData.departmentName) {
       console.error("Organization name and department name are required.");
       toast.error("Organization name and department name are required.");
@@ -329,26 +338,29 @@ function ManageAsset() {
     try {
       const response = await deleteApprovalChain(formData);
       if (response.success) {
-        setApprovalChainRows((prev) => prev.filter((_, i) => i !== index));
+        setApprovalChainRows((prev) =>
+          prev.map((row, rowIndex) => {
+            if (rowIndex === index) {
+              return {
+                ...row,
+                approvalChains: row.approvalChains.filter(
+                  (_, chainIndex) => chainIndex !== 0
+                ), 
+              };
+            }
+            return row;
+          })
+        );
         toast.success(
           response.message || "Approval chain deleted successfully!"
         );
       } else {
-        console.error(
-          response.message || "Error deleting approval chain:",
-          response.message
-        );
+        console.error("Error deleting approval chain:", response.message);
         toast.error(`Error: ${response.message}`);
       }
     } catch (error) {
-      console.error(
-        response.message || "Error occurred while deleting approval chain:",
-        error
-      );
-      toast.error(
-        response.message ||
-          "An error occurred while deleting the approval chain."
-      );
+      console.error("Error occurred while deleting approval chain:", error);
+      toast.error("An error occurred while deleting the approval chain.");
     }
   };
 
@@ -597,7 +609,7 @@ function ManageAsset() {
                       name={field}
                       value={formData[field]}
                       onChange={handleInputChange}
-                      disabled={isEditOrganization} 
+                      disabled={isEditOrganization}
                     />
                   </Grid>
                 ))}
@@ -624,7 +636,7 @@ function ManageAsset() {
                     fontSize: "16px",
                     width: "150px",
                   }}
-                  onClick={() => setIsEditOrganization(false)} 
+                  onClick={() => setIsEditOrganization(false)}
                   disabled={loading}
                 >
                   {loading ? "UPDATING..." : "UPDATE"}
@@ -1091,70 +1103,61 @@ function ManageAsset() {
                       ) : approvalChainRows && approvalChainRows.length > 0 ? (
                         approvalChainRows.map((row, index) => (
                           <React.Fragment key={index}>
-                            <StyledTableRow>
-                              {/* Ensure row.approvalChains exists and has items */}
-                              <StyledTableCell
-                                component="th"
-                                rowSpan={row.approvalChains?.length || 1}
-                              >
-                                {index + 1}. {row.departmentName}
-                              </StyledTableCell>
-                              {/* Check if first approvalChain exists */}
-                              {row.approvalChains?.[0] ? (
-                                <>
-                                  <StyledTableCell>
-                                    {1}. {row.approvalChains[0].action || "N/A"}
+                            {row.approvalChains?.map((chain, chainIndex) => (
+                              <StyledTableRow key={`${index}-${chainIndex}`}>
+                                {/* Render departmentName only for the first row of each department */}
+                                {chainIndex === 0 && (
+                                  <StyledTableCell
+                                    component="th"
+                                    rowSpan={row.approvalChains.length}
+                                  >
+                                    {index + 1}. {row.departmentName}
                                   </StyledTableCell>
-                                  <StyledTableCell>
-                                    {1}. {row.approvalChains[0].level1 || "N/A"}
-                                  </StyledTableCell>
-                                  <StyledTableCell>
-                                    {1}. {row.approvalChains[0].level2 || "N/A"}
-                                    <Box display="flex">
-                                      <IconButton
-                                        onClick={() =>
-                                          handleApprovalChainEdit(index)
-                                        }
-                                      >
-                                        <EditIcon fontSize="medium" />
-                                      </IconButton>
-                                      <IconButton
-                                        sx={{
-                                          color: "red",
-                                          "&:hover": { color: "darkred" },
-                                          marginRight: "8px",
-                                        }}
-                                        onClick={() =>
-                                          handleDeleteApprovalChain(index)
-                                        }
-                                      >
-                                        <DeleteForeverIcon fontSize="medium" />
-                                      </IconButton>
-                                    </Box>
-                                  </StyledTableCell>
-                                </>
-                              ) : (
-                                <StyledTableCell colSpan={3}>
-                                  No Approval Chain Available
+                                )}
+                                <StyledTableCell>
+                                  {chainIndex + 1}. {chain.action || "N/A"}
                                 </StyledTableCell>
-                              )}
-                            </StyledTableRow>
-                            {/* Remaining approvalChains */}
-                            {row.approvalChains
-                              ?.slice(1)
-                              .map((chain, chainIndex) => (
-                                <StyledTableRow key={`${index}-${chainIndex}`}>
-                                  <StyledTableCell>
-                                    {chainIndex + 2}. {chain?.action || "N/A"}
-                                  </StyledTableCell>
-                                  <StyledTableCell>
-                                    {chainIndex + 2}. {chain?.level1 || "N/A"}
-                                  </StyledTableCell>
-                                  <StyledTableCell>
-                                    {chainIndex + 2}. {chain?.level2 || "N/A"}
-                                  </StyledTableCell>
-                                </StyledTableRow>
-                              ))}
+                                <StyledTableCell>
+                                  {chainIndex + 1}. {chain.level1 || "N/A"}
+                                </StyledTableCell>
+                                <StyledTableCell
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  {chainIndex + 1}. {chain.level2 || "N/A"}
+                                  <Box display="flex" ml={2}>
+                                    {/* Use a single space for the edit and delete buttons */}
+                                    <IconButton
+                                      onClick={() =>
+                                        handleApprovalChainEdit(
+                                          index,
+                                          chainIndex
+                                        )
+                                      }
+                                    >
+                                      <EditIcon fontSize="medium" />
+                                    </IconButton>
+                                    <IconButton
+                                      onClick={() =>
+                                        handleDeleteApprovalChain(
+                                          index,
+                                          chainIndex
+                                        )
+                                      }
+                                      sx={{
+                                        color: "red",
+                                        "&:hover": { color: "darkred" },
+                                        marginRight: "8px",
+                                      }}
+                                    >
+                                      <DeleteForeverIcon fontSize="medium" />
+                                    </IconButton>
+                                  </Box>
+                                </StyledTableCell>
+                              </StyledTableRow>
+                            ))}
                           </React.Fragment>
                         ))
                       ) : (
