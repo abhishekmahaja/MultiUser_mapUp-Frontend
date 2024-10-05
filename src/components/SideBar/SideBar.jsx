@@ -18,7 +18,7 @@ import ComplaintIcon from "@mui/icons-material/AccessAlarm";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import NotificationsIcon from "@mui/icons-material/NotificationsActive";
 import Networkicon from "@mui/icons-material/CellTower";
-import { patch, useMediaQuery } from "@mui/material";
+import { patch,Box, useMediaQuery } from "@mui/material";
 import WellmasterIcon from "@mui/icons-material/Settings";
 import WellmonitorIcon from "@mui/icons-material/Search";
 import GeoIcon from "@mui/icons-material/Place";
@@ -158,12 +158,12 @@ export default function Sidebar({
       path: "/dashboard/message",
       roles: ["owner", "manager"],
     },
-    {
-      name: "Technical Support",
-      icon: <SupportAgentIcon sx={{ color: "black" }} />,
-      path: "/dashboard/technicalSupport",
-      roles: ["owner", "manager", "employee"],
-    },
+    // {
+    //   name: "Technical Support",
+    //   icon: <SupportAgentIcon sx={{ color: "black" }} />,
+    //   path: "/dashboard/technicalSupport",
+    //   roles: ["owner", "manager", "employee"],
+    // },
   ];
 
   // Filter menu items based on the user's role
@@ -226,6 +226,38 @@ export default function Sidebar({
           ))
         )}
       </List>
+      {/* Box to push the Technical Support to the bottom */}
+      <Box sx={{ flexGrow: 1 }} />
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+        <Divider />
+        <List>
+          <Link
+            to="/dashboard/technicalSupport"
+            style={{ textDecoration: "none", color: "black" }}
+            onClick={handleListItemClick}
+          >
+            <ListItem disablePadding>
+              <ListItemButton
+                sx={{ justifyContent: open ? "initial" : "center" }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SupportAgentIcon sx={{ color: "black" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Technical Support"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        </List>
+      </Box>
     </Drawer>
   );
 }

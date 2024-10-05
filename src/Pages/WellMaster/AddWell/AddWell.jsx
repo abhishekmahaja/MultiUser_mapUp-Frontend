@@ -30,9 +30,8 @@ const data = [
     CriticalAlert: "",
     Condition: "",
     Description: "",
-    Parameter: "GIP(kg)",
+    Parameter: "GIP (kg/Cm²)",
     Condition1: "",
-    Description1: "",
   },
   {
     employeeId: "02",
@@ -40,9 +39,8 @@ const data = [
     CriticalAlert: "",
     Condition: "",
     Description: "",
-    Parameter: "CHP(kg)",
+    Parameter: "CHP(kg/Cm²)",
     Condition1: "",
-    Description1: "",
   },
   {
     employeeId: "03",
@@ -50,9 +48,8 @@ const data = [
     CriticalAlert: "",
     Condition: "",
     Description: "",
-    Parameter: "THP(kg)",
+    Parameter: "THP(kg/Cm²)",
     Condition1: "",
-    Description1: "",
   },
   {
     employeeId: "04",
@@ -60,9 +57,8 @@ const data = [
     CriticalAlert: "",
     Condition: "",
     Description: "",
-    Parameter: "Battery %",
+    Parameter: "Low Battery",
     Condition1: "",
-    Description1: "",
   },
   {
     employeeId: "05",
@@ -70,29 +66,8 @@ const data = [
     CriticalAlert: "",
     Condition: "",
     Description: "",
-    Parameter: "Solar Power(V)",
+    Parameter: "Solar Voltage",
     Condition1: "",
-    Description1: "",
-  },
-  {
-    employeeId: "06",
-    NormalAlert: "",
-    CriticalAlert: "",
-    Condition: "",
-    Description: "",
-    Parameter: "Communication",
-    Condition1: "",
-    Description1: "",
-  },
-  {
-    employeeId: "07",
-    NormalAlert: "",
-    CriticalAlert: "",
-    Condition: "",
-    Description: "",
-    Parameter: "CPU Temperature",
-    Condition1: "",
-    Description1: "",
   },
 ];
 
@@ -119,65 +94,26 @@ function AddWell() {
       <Paper>
         <Grid container>
           <IconButton>
-            <Brightness5Icon sx={{ fontSize: "40px", color: "red" }} />
+            <Brightness5Icon sx={{ fontSize: "40px", color: 'red' }} />
           </IconButton>
-          <Typography variant="h4" mt={1}>
-            Add New Well
-          </Typography>
+          <Typography variant='h4' mt={1}>Add New Well</Typography>
         </Grid>
-        <Grid
-          container
-          p={1.7}
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Well Number"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Well Installation"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Well Location"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Latitude"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Longitude"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item sm={6} md={3} xs={12} lg={1.8}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Land Mark"
-              variant="outlined"
-            />
-          </Grid>
+        <Grid container p={1.7} spacing={2} sx={{ display: 'flex', justifyContent: 'space-between' }} >
+          <Grid item sm={6} md={3} xs={12} lg={3}><TextField fullWidth size='small' label="Location" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3}><TextField fullWidth size='small' label="Installation" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3}><TextField fullWidth size='small' label="Well Type" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3}><TextField fullWidth size='small' label="Well Number" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3} mt={1}><TextField fullWidth size='small' label="Landmark" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3} mt={1}><TextField fullWidth size='small' label="Latitude" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3} mt={1}><TextField fullWidth size='small' label="Longitude" variant="outlined" /></Grid>
+          <Grid item sm={6} md={3} xs={12} lg={3} mt={1}> <Button variant='contained' fullWidth size='small'
+            sx={{
+              backgroundColor: 'green',   // Change button color to green
+              '&:hover': {
+                backgroundColor: 'darkgreen', // Optional: Change color on hover
+              },
+              fontSize: '16px',
+            }}>Submit</Button></Grid>
         </Grid>
       </Paper>
 

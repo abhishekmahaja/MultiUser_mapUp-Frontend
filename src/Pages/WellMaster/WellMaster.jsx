@@ -12,7 +12,7 @@ import master from '/assets/wellMaster.png'
 import { Link } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-// import Othertable from '../Dashboard/OtherTable.jsx';
+import Othertable from '../Dashboard/OtherTable.jsx';
 
 // -------------------------------Table for  Moblie --------------------------
 const StyledGridItem = styled(Grid)(({ theme }) => ({
@@ -128,9 +128,9 @@ function WellMaster() {
                 </Grid>
             </Grid>
 
-            {/* <Grid container >
+            <Grid container >
                 <Othertable />
-            </Grid> */}
+            </Grid>
             {/* ------------------Table for Desktop--------------------------------- */}
             <Grid container md={12}
                 lg={12}
@@ -161,15 +161,18 @@ function WellMaster() {
                                     <StyledTableCell align="center"></StyledTableCell>
                                     <StyledTableCell align="center"></StyledTableCell>
                                     <StyledTableCell align="right">
-                                        <IconButton sx={{ color: 'grey', '&:hover': { color: 'darkred' }, marginRight: '5px' }}>
-                                            <LocationOnIcon fontSize='large' />
-                                        </IconButton></StyledTableCell>
+                                        <Link to="/dashboard/virtual">
+                                            <IconButton sx={{ color: 'grey', '&:hover': { color: 'darkred' }, marginRight: '5px' }}>
+                                                <LocationOnIcon fontSize='large' />
+                                            </IconButton>
+                                        </Link>
+                                    </StyledTableCell>
                                     <StyledTableCell align='center'>
-                                            <Link to="/dashboard/addwell">
-                                                <IconButton sx={{ color: 'darkblue', '&:hover': { color: 'black' } }}>
-                                                    <SettingsIcon fontSize='large' />
-                                                </IconButton>
-                                            </Link>
+                                        <Link to="/dashboard/addwell">
+                                            <IconButton sx={{ color: 'darkblue', '&:hover': { color: 'black' } }}>
+                                                <SettingsIcon fontSize='large' />
+                                            </IconButton>
+                                        </Link>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}
