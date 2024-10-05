@@ -297,10 +297,23 @@ export const getPosition = async (organizationName, departmentName) => {
 };
 
 //update department
-export const updatPosition = async (formData) => {
+export const updatePosition = async (formData) => {
   try {
     const response = await axios.put(
       `${ORGANIZATION_API}/update-position`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//Delete Position
+export const deletePosition = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/delete-position`,
       formData
     );
     return response.data;
@@ -334,6 +347,32 @@ export const getApprovalChain = async (organizationName, departmentName) => {
   }
 };
 
+//update approval Chain
+export const updateApprovalChain = async (formData) => {
+  try {
+    const response = await axios.put(
+      `${ORGANIZATION_API}/update-approval-chain`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//delete Approval chain
+export const deleteApprovalChain = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${ORGANIZATION_API}/delete-approval-chain`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
 //organization-add-data
 export const organizationAddData = async (formData) => {
   try {
@@ -347,14 +386,27 @@ export const organizationAddData = async (formData) => {
   }
 };
 
-//http://localhost:5000/api/v1/organization/get-data-based-on-organization?username=abhi_123
-// export const getOrganizationData = async (uername) => {
-//   try {
-//     const response = await axios.get(
-//       `${ORGANIZATION_API}/get-data-based-on-organization?username=${uername}`
-//     );
-//     return response.data;
-//   } catch (error) {
-//     return catchError(error);
-//   }
-// };
+//http://localhost:5000/api/v1/organization/organization-get-data?organizationName=india.in.co
+export const getOrganizationData = async (organizationName) => {
+  try {
+    const response = await axios.get(
+      `${ORGANIZATION_API}/organization-get-data?organizationName=${organizationName}`
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+//Update Organization
+export const UpdateOrganizationData = async (formData) => {
+  try {
+    const response = await axios.put(
+      `${ORGANIZATION_API}/organization-update-data`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
