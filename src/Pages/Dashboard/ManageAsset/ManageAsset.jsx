@@ -43,7 +43,7 @@ import {
   deletePosition,
   updateApprovalChain,
   deleteApprovalChain,
-  UpdateOrganizationData,
+  updateOrganizationData,
 } from "../../../apis/Service";
 
 function ManageAsset() {
@@ -105,14 +105,13 @@ function ManageAsset() {
           organizationName: organizationName,
         };
         if (isEditing) {
-          // Handle updating the department
-          const oldDepartmentName = departments[editingIndex]; // Current department name
-          formData.oldDepartmentName = oldDepartmentName; // Set the old department name
-          formData.newDepartmentName = value; // Set the new department name
-          const result = await UpdateDepartment(formData); // Call the update API
+          const oldDepartmentName = departments[editingIndex]; 
+          formData.oldDepartmentName = oldDepartmentName;
+          formData.newDepartmentName = value; 
+          const result = await UpdateDepartment(formData); 
           if (result && result.success) {
             const updatedDepartments = [...departments];
-            updatedDepartments[editingIndex] = value; // Update the department name
+            updatedDepartments[editingIndex] = value; 
             setDepartments(updatedDepartments);
             toast.success(result.message || "Department updated successfully");
           } else {
@@ -120,7 +119,7 @@ function ManageAsset() {
           }
         } else {
           // Handle adding the department
-          formData.departmentName = value; // Set the new department name for adding
+          formData.departmentName = value;
           const result = await addDepartment(formData);
           if (result && result.success) {
             setDepartments((prevDepartments) => [...prevDepartments, value]);
@@ -291,6 +290,7 @@ function ManageAsset() {
       );
     }
   };
+  //update approvalchain
   const handleApprovalChainEdit = (index) => {
     try {
       const approvalChainToEdit = approvalChainRows[index];
@@ -494,7 +494,7 @@ function ManageAsset() {
       organizationName: organizationName,
     };
     try {
-      await UpdateOrganizationData(updatedFormData);
+      await updateOrganizationData(updatedFormData);
       toast.success("Organization updated successfully");
       setIsEditOrganization(false);
     } catch (error) {
@@ -519,7 +519,7 @@ function ManageAsset() {
         fax: response.data.fax || "",
         email: response.data.email || "",
       });
-      console.log("organization", response.data);
+      // console.log("organization", response.data);
     } catch (error) {
       console.error("Error fetching organization data:", error);
     } finally {

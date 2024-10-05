@@ -399,7 +399,7 @@ export const getOrganizationData = async (organizationName) => {
 };
 
 //Update Organization
-export const UpdateOrganizationData = async (formData) => {
+export const updateOrganizationData = async (formData) => {
   try {
     const response = await axios.put(
       `${ORGANIZATION_API}/organization-update-data`,
