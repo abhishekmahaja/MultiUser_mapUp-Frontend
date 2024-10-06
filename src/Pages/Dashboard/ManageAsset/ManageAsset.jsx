@@ -62,9 +62,9 @@ function ManageAsset() {
   const [isEditingPosition, setIsEditingPosition] = useState(false);
   const [oldPosition, setOldPosition] = useState(null);
   const [approvalChainLoading, setApprovalChainLoading] = useState(true);
-  const [approvalChains, setApprovalChains] = useState(""); // For Action
-  const [level1, setLevel1] = useState(""); // For Level-1
-  const [level2, setLevel2] = useState(""); // For Level-2
+  const [approvalChains, setApprovalChains] = useState(""); 
+  const [level1, setLevel1] = useState(""); 
+  const [level2, setLevel2] = useState(""); 
   const [approvalChainRows, setApprovalChainRows] = useState([]);
   const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
     useState("");
@@ -87,9 +87,9 @@ function ManageAsset() {
 
   // Function to initiate Updating department
   const handleEditClick = (index) => {
-    setNewDepartmentName(departments[index]); // Set current department name to input
-    setIsEditing(true); // Set editing mode
-    setEditingIndex(index); // Set index of the department being edited
+    setNewDepartmentName(departments[index]); 
+    setIsEditing(true); 
+    setEditingIndex(index);
   };
 
   //integration for add department and Update department
@@ -129,9 +129,9 @@ function ManageAsset() {
           }
         }
         // Reset state after operation
-        setNewDepartmentName(""); // Clear input
-        setIsEditing(false); // Reset editing mode
-        setEditingIndex(null); // Reset editing index
+        setNewDepartmentName(""); 
+        setIsEditing(false); 
+        setEditingIndex(null); 
       } catch (error) {
         console.error("API call error: ", error.response || error.message);
         toast.error(
@@ -217,8 +217,8 @@ function ManageAsset() {
   const handleEditPosition = (departmentName, positionName) => {
     setSelectedPositionDepartment(departmentName);
     setPosition(positionName);
-    setOldPosition(positionName); // Store old position for update
-    setIsEditingPosition(true); // Set edit mode
+    setOldPosition(positionName); 
+    setIsEditingPosition(true); 
   };
 
   //Delete Position
@@ -282,7 +282,7 @@ function ManageAsset() {
       setApprovalChains("");
       setLevel1("");
       setLevel2("");
-      setIsEditMode(false); // Switch back to add mode after update
+      setIsEditMode(false); 
     } catch (error) {
       console.error("Error:", error);
       toast.error(
@@ -375,10 +375,10 @@ function ManageAsset() {
           (department) => department.departmentName
         );
         // console.log("Fetched Departments:", departmentList);
-        setDepartments(departmentList); // Store department names in state
+        setDepartments(departmentList); 
       } else {
         console.warn("No department data found in response.");
-        setDepartments([]); // Set to an empty array if no departments found
+        setDepartments([]); 
       }
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -389,7 +389,7 @@ function ManageAsset() {
     setPositionLoading(true);
     try {
       const formData = { organizationName };
-      const departmentResponse = await departmentDropdown(formData); // Fetch departments
+      const departmentResponse = await departmentDropdown(formData); 
       if (departmentResponse.data && departmentResponse.data.length > 0) {
         const departmentList = departmentResponse.data[0].departments.map(
           (dept) => dept.departmentName
@@ -403,14 +403,14 @@ function ManageAsset() {
             );
             return {
               departmentName: department,
-              positions: positionResponse.data || [], // Store positions if found
+              positions: positionResponse.data || [], 
             };
           })
         );
         setPositionRows(allPositions);
       } else {
         console.warn("No departments found");
-        setPositionRows([]); // Clear if no departments are available
+        setPositionRows([]); 
       }
     } catch (error) {
       console.error("Error fetching departments and positions:", error);
@@ -473,17 +473,16 @@ function ManageAsset() {
       const response = await organizationAddData(updatedFormData);
       setIsEditOrganization(true);
       if (response.status === 200) {
-        toast.success("Data saved successfully:", response.message);
+        toast.error("Data Not saved ", response.message);
       } else {
         toast.success("Data saved successfully", response.message);
       }
     } catch (error) {
       console.error("Error saving data:", error);
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false); 
     }
   };
-
   // Handle Cancel Clear form fields
   const handleCancel = () => {
     setFormData({
@@ -497,7 +496,6 @@ function ManageAsset() {
       email: "",
     });
   };
-
   //HAndle Update Organization
   const handleUpdate = async () => {
     setLoading(true);
@@ -544,10 +542,10 @@ function ManageAsset() {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
       color: theme.palette.common.white,
-      padding: "10px", // Increase padding
-      height: "20px", // Set a specific height
-      fontSize: "16px", // Optionally adjust font size for header
-      lineHeight: "1.5", // Adjust line height if needed
+      padding: "10px", 
+      height: "20px", 
+      fontSize: "16px", 
+      lineHeight: "1.5", 
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
@@ -558,7 +556,6 @@ function ManageAsset() {
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
     },
@@ -699,7 +696,7 @@ function ManageAsset() {
                   variant="outlined"
                   size="small"
                   label="Department"
-                  value={newDepartmentName} // Bind value to newDepartmentName state
+                  value={newDepartmentName} 
                   onChange={(e) => setNewDepartmentName(e.target.value)}
                   fullWidth
                 />

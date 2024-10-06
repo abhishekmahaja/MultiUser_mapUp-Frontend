@@ -58,7 +58,6 @@ const TechnicalSupport = lazy(() =>
 );
 
 function App() {
-  // Fetch the role from Redux
   const role = useSelector((state) => state.auth.role);
 
   // Define common routes (visible to everyone)
@@ -84,21 +83,18 @@ function App() {
 
   // Add role-specific routes
   if (role === "owner") {
-    // Owner sees all routes including ManageAsset and message
     commonRoutes.push(
       { path: "ManageAsset", element: <ManageAsset /> },
       { path: "message", element: <Approval /> }
     );
   } else if (role === "manager") {
-    // Manager sees all routes except "ManageAsset"
     commonRoutes.push({ path: "message", element: <Approval /> });
     // } else if (role === "admin") {
     //   // Admin sees only the admin route
     //   // commonRoutes.length = 0; // Clear the commonRoutes
     //   // commonRoutes.push({ path: "", element: <SuperAdmin /> }); // Only admin route
   } else if (role === "employee") {
-    // Employee does not see "ManageAsset" and "message"
-    // All other routes are already visible
+    // Employee does not see "ManageAsset" and "message" amd "Super Admin"
   }
 
   // Configure the routes with children under "/dashboard"
@@ -114,7 +110,7 @@ function App() {
     { path: "/CheckStatus", element: <CheckStatus /> },
     {
       path: "/dashboard",
-      element: <PrivateRoute />, // Protect the dashboard route
+      element: <PrivateRoute />,
       children: [
         {
           path: "",
