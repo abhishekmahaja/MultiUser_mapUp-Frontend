@@ -62,9 +62,9 @@ function ManageAsset() {
   const [isEditingPosition, setIsEditingPosition] = useState(false);
   const [oldPosition, setOldPosition] = useState(null);
   const [approvalChainLoading, setApprovalChainLoading] = useState(true);
-  const [approvalChains, setApprovalChains] = useState(""); 
-  const [level1, setLevel1] = useState(""); 
-  const [level2, setLevel2] = useState(""); 
+  const [approvalChains, setApprovalChains] = useState("");
+  const [level1, setLevel1] = useState("");
+  const [level2, setLevel2] = useState("");
   const [approvalChainRows, setApprovalChainRows] = useState([]);
   const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
     useState("");
@@ -87,8 +87,8 @@ function ManageAsset() {
 
   // Function to initiate Updating department
   const handleEditClick = (index) => {
-    setNewDepartmentName(departments[index]); 
-    setIsEditing(true); 
+    setNewDepartmentName(departments[index]);
+    setIsEditing(true);
     setEditingIndex(index);
   };
 
@@ -129,9 +129,9 @@ function ManageAsset() {
           }
         }
         // Reset state after operation
-        setNewDepartmentName(""); 
-        setIsEditing(false); 
-        setEditingIndex(null); 
+        setNewDepartmentName("");
+        setIsEditing(false);
+        setEditingIndex(null);
       } catch (error) {
         console.error("API call error: ", error.response || error.message);
         toast.error(
@@ -217,8 +217,8 @@ function ManageAsset() {
   const handleEditPosition = (departmentName, positionName) => {
     setSelectedPositionDepartment(departmentName);
     setPosition(positionName);
-    setOldPosition(positionName); 
-    setIsEditingPosition(true); 
+    setOldPosition(positionName);
+    setIsEditingPosition(true);
   };
 
   //Delete Position
@@ -282,7 +282,7 @@ function ManageAsset() {
       setApprovalChains("");
       setLevel1("");
       setLevel2("");
-      setIsEditMode(false); 
+      setIsEditMode(false);
     } catch (error) {
       console.error("Error:", error);
       toast.error(
@@ -345,7 +345,7 @@ function ManageAsset() {
                 ...row,
                 approvalChains: row.approvalChains.filter(
                   (_, chainIndex) => chainIndex !== 0
-                ), 
+                ),
               };
             }
             return row;
@@ -375,10 +375,10 @@ function ManageAsset() {
           (department) => department.departmentName
         );
         // console.log("Fetched Departments:", departmentList);
-        setDepartments(departmentList); 
+        setDepartments(departmentList);
       } else {
         console.warn("No department data found in response.");
-        setDepartments([]); 
+        setDepartments([]);
       }
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -389,7 +389,7 @@ function ManageAsset() {
     setPositionLoading(true);
     try {
       const formData = { organizationName };
-      const departmentResponse = await departmentDropdown(formData); 
+      const departmentResponse = await departmentDropdown(formData);
       if (departmentResponse.data && departmentResponse.data.length > 0) {
         const departmentList = departmentResponse.data[0].departments.map(
           (dept) => dept.departmentName
@@ -403,14 +403,14 @@ function ManageAsset() {
             );
             return {
               departmentName: department,
-              positions: positionResponse.data || [], 
+              positions: positionResponse.data || [],
             };
           })
         );
         setPositionRows(allPositions);
       } else {
         console.warn("No departments found");
-        setPositionRows([]); 
+        setPositionRows([]);
       }
     } catch (error) {
       console.error("Error fetching departments and positions:", error);
@@ -480,7 +480,7 @@ function ManageAsset() {
     } catch (error) {
       console.error("Error saving data:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
   // Handle Cancel Clear form fields
@@ -542,10 +542,10 @@ function ManageAsset() {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
       color: theme.palette.common.white,
-      padding: "10px", 
-      height: "20px", 
-      fontSize: "16px", 
-      lineHeight: "1.5", 
+      padding: "10px",
+      height: "20px",
+      fontSize: "16px",
+      lineHeight: "1.5",
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
@@ -581,10 +581,32 @@ function ManageAsset() {
           <Typography variant="h4" mt={1}>
             Organization : [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
+          <Grid container spacing={2} padding={4} paddingLeft={0}>
+            <Grid item xs={12} sm={6} md={4} lg={4} display={"flex"} gap={1}>
+              <Typography
+                variant="h6"
+                sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+              >
+                Upload Logo
+              </Typography>
+              <Grid item xs={12} sm={6} md={4} lg={7} display={"flex"} gap={2}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  component="label"
+                  fullWidth
+                >
+                  Upload Logo
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
           <Grid container spacing={3}>
             <Grid item md={10} sm={10} xs={12} lg={12}>
               <Grid container spacing={1}>
                 {[
+                  "Display Organization Name",
+                  "Display Subtitle Name",
                   "address",
                   "city",
                   "state",
@@ -696,7 +718,7 @@ function ManageAsset() {
                   variant="outlined"
                   size="small"
                   label="Department"
-                  value={newDepartmentName} 
+                  value={newDepartmentName}
                   onChange={(e) => setNewDepartmentName(e.target.value)}
                   fullWidth
                 />
