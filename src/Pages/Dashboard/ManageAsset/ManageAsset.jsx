@@ -72,6 +72,7 @@ function ManageAsset() {
   const [editIndex, setEditIndex] = useState(null);
   //organization Data Add
   const [formData, setFormData] = useState({
+    OrganizationName: "",
     address: "",
     city: "",
     state: "",
@@ -486,6 +487,7 @@ function ManageAsset() {
   // Handle Cancel Clear form fields
   const handleCancel = () => {
     setFormData({
+      organizationName: "",
       address: "",
       city: "",
       state: "",
@@ -520,6 +522,7 @@ function ManageAsset() {
     try {
       const response = await getOrganizationData(organizationName);
       setFormData({
+        organizationName: response.data.organizationName || "",
         address: response.data.address || "",
         city: response.data.city || "",
         state: response.data.state || "",
@@ -605,7 +608,7 @@ function ManageAsset() {
             <Grid item md={10} sm={10} xs={12} lg={12}>
               <Grid container spacing={1}>
                 {[
-                  "Display Organization Name",
+                  "organizationName",
                   "Display Subtitle Name",
                   "address",
                   "city",
