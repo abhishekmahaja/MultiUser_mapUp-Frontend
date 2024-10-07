@@ -73,6 +73,8 @@ function ManageAsset() {
   //organization Data Add
   const [formData, setFormData] = useState({
     OrganizationName: "",
+    organizationlogo: "",
+    subtitlename: "",
     address: "",
     city: "",
     state: "",
@@ -488,6 +490,8 @@ function ManageAsset() {
   const handleCancel = () => {
     setFormData({
       organizationName: "",
+      organizationlogo: "",
+      subtitlename: "",
       address: "",
       city: "",
       state: "",
@@ -523,6 +527,9 @@ function ManageAsset() {
       const response = await getOrganizationData(organizationName);
       setFormData({
         organizationName: response.data.organizationName || "",
+        // if (organizationlogo instanceof File)
+        //   formData.append("organizationlogo", organizationlogo);
+        subtitlename: response.data.subtitlename || "",
         address: response.data.address || "",
         city: response.data.city || "",
         state: response.data.state || "",
@@ -609,7 +616,7 @@ function ManageAsset() {
               <Grid container spacing={1}>
                 {[
                   "organizationName",
-                  "Display Subtitle Name",
+                  "subtitlename",
                   "address",
                   "city",
                   "state",
