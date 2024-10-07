@@ -378,7 +378,12 @@ export const organizationAddData = async (formData) => {
   try {
     const response = await axios.post(
       `${ORGANIZATION_API}/organization-add-data`,
-      formData
+      formData,
+      {
+        headers: {
+          "content-Type": "multipart/form-data",
+        },
+      }
     );
     return response.data;
   } catch (error) {

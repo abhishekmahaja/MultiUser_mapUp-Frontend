@@ -87,6 +87,8 @@ function ManageAsset() {
   const [loading, setLoading] = useState(false);
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [organiatioLoading, setOrganiationLoading] = useState(false);
+  // const [image, setImage] = useState(null); // State for image
+  // const [imagePreview, setImagePreview] = useState(null); // State for image preview
 
   // Function to initiate Updating department
   const handleEditClick = (index) => {
@@ -457,28 +459,48 @@ function ManageAsset() {
     }
   };
 
-  //Organization ADD Data
+  // Automatically add "+91" to phone number
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    if (name === "phone") {
+      setFormData({
+        ...formData,
+        [name]: value.startsWith("+91") ? value : `+91 ${value}`,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
-  //add organization data to save
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    setFormData({
+      ...formData,
+      organizationlogo: file,
+    });
+  };
+  // const handleImageUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   setImage(file);
+  //   setImagePreview(URL.createObjectURL(file));
+  // };
+
+  // Save organization data
   const handleSave = async () => {
     try {
       setLoading(true);
-      const updatedFormData = {
-        ...formData,
-        organizationName: organizationName,
-      };
+      const updatedFormData = { ...formData };
       const response = await organizationAddData(updatedFormData);
-      setIsEditOrganization(true);
-      if (response.status === 200) {
-        toast.error("Data Not saved ", response.message);
+      if (response.status === 201) {
+        toast.success(response.message || "Data saved successfully");
+        setIsEditOrganization(true); // Switch to Update mode after saving
+        localStorage.setItem("organizationSaved", true); // Persist state in localStorage
       } else {
-        toast.success("Data saved successfully", response.message);
+        toast.error(response.message || "Data not saved");
       }
     } catch (error) {
       console.error("Error saving data:", error);
@@ -486,33 +508,39 @@ function ManageAsset() {
       setLoading(false);
     }
   };
-  // Handle Cancel Clear form fields
+
+  // Cancel update
   const handleCancel = () => {
-    setFormData({
-      organizationName: "",
-      organizationlogo: "",
-      subtitlename: "",
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      pinCode: "",
-      phone: "",
-      fax: "",
-      email: "",
+    setIsEditOrganization(true);
+  };
+
+  // Pass data to another page (like subtitle and logo)
+  const passDataToOtherPage = () => {
+    const subtitle = formData.subtitlename;
+    const organizationlogo = formData.organizationlogo;
+
+    navigate("/otherPage", {
+      state: { subtitle, organizationlogo },
     });
   };
-  //HAndle Update Organization
+
+  // Check if data is saved in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("organizationSaved");
+    if (saved) {
+      setIsEditOrganization(true);
+    }
+  }, []);
+
+  // Update organization data
   const handleUpdate = async () => {
     setLoading(true);
-    const updatedFormData = {
-      ...formData,
-      organizationName: organizationName,
-    };
+    const updatedFormData = { ...formData };
     try {
       await updateOrganizationData(updatedFormData);
       toast.success("Organization updated successfully");
-      setIsEditOrganization(false);
+      setIsEditOrganization(true);
+      localStorage.setItem("organizationSaved", true);
     } catch (error) {
       toast.error("Error updating organization:", error);
     } finally {
@@ -527,8 +555,7 @@ function ManageAsset() {
       const response = await getOrganizationData(organizationName);
       setFormData({
         organizationName: response.data.organizationName || "",
-        // if (organizationlogo instanceof File)
-        //   formData.append("organizationlogo", organizationlogo);
+        organizationlogo: response.data.organizationlogo || "",
         subtitlename: response.data.subtitlename || "",
         address: response.data.address || "",
         city: response.data.city || "",
@@ -539,6 +566,11 @@ function ManageAsset() {
         fax: response.data.fax || "",
         email: response.data.email || "",
       });
+      if (organizationlogo instanceof File) {
+        formDataToUpdate.organizationlogo = organizationlogo;
+      }
+      setFormData(formDataToUpdate);
+      console.log("hgdvdhc", data.organizationlogo);
       // console.log("organization", response.data);
     } catch (error) {
       console.error("Error fetching organization data:", error);
@@ -589,16 +621,11 @@ function ManageAsset() {
             <AssetsIcon sx={{ fontSize: 30, color: "green" }} />
           </IconButton>
           <Typography variant="h4" mt={1}>
-            Organization : [ {organizationName ? organizationName : "N/A"} ]
+            Organization: [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
           <Grid container spacing={2} padding={4} paddingLeft={0}>
             <Grid item xs={12} sm={6} md={4} lg={4} display={"flex"} gap={1}>
-              <Typography
-                variant="h6"
-                sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
-              >
-                Upload Logo
-              </Typography>
+              <Typography variant="h6">Upload Logo</Typography>
               <Grid item xs={12} sm={6} md={4} lg={7} display={"flex"} gap={2}>
                 <Button
                   variant="outlined"
@@ -607,45 +634,70 @@ function ManageAsset() {
                   fullWidth
                 >
                   Upload Logo
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleImageUpload}
+                    disabled={isEditOrganization} // Disable while in Update mode
+                  />
                 </Button>
+                {formData.logoFileName && (
+                  <Typography variant="subtitle1" mt={1}>
+                    Uploaded: {formData.logoFileName} ({formData.logoFileType})
+                  </Typography>
+                )}
               </Grid>
+              {/* Display the logo preview if the organizationlogo URL exists */}
+              {formData.organizationlogo && (
+                <Grid item xs={12} mt={2}>
+                  <Typography variant="subtitle1" mb={1}>
+                    Logo Preview:
+                  </Typography>
+                  <img
+                    src={formData.organizationlogo} // URL of the uploaded logo
+                    alt="Organization Logo"
+                    style={{
+                      maxWidth: "150px",
+                      maxHeight: "150px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Grid>
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={3}>
             <Grid item md={10} sm={10} xs={12} lg={12}>
               <Grid container spacing={1}>
                 {[
-                  "organizationName",
-                  "subtitlename",
-                  "address",
-                  "city",
-                  "state",
-                  "country",
-                  "pinCode",
-                  "phone",
-                  "fax",
-                  "email",
+                  { name: "organizationName", label: "Organization Name" },
+                  { name: "subtitlename", label: "Sub Organization Name" },
+                  { name: "address", label: "Address" },
+                  { name: "city", label: "City" },
+                  { name: "state", label: "State" },
+                  { name: "country", label: "Country" },
+                  { name: "pinCode", label: "Pin Code" },
+                  { name: "phone", label: "Phone" },
+                  { name: "fax", label: "Fax" },
+                  { name: "email", label: "Email" },
                 ].map((field) => (
-                  <Grid item xs={12} sm={3} md={3} lg={3} key={field}>
-                    <Typography variant="h6">
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </Typography>
+                  <Grid item xs={12} sm={3} md={3} lg={3} key={field.name}>
+                    <Typography variant="h6">{field.label}</Typography>
                     <TextField
                       type="text"
                       variant="outlined"
                       size="small"
                       fullWidth
-                      name={field}
-                      value={formData[field]}
+                      name={field.name}
+                      value={formData[field.name]}
                       onChange={handleInputChange}
-                      disabled={isEditOrganization}
+                      disabled={isEditOrganization} // Disable fields when editing
                     />
                   </Grid>
                 ))}
               </Grid>
             </Grid>
           </Grid>
-          {/* Button Section */}
           <Grid
             container
             mt={2}
@@ -659,9 +711,7 @@ function ManageAsset() {
                   variant="contained"
                   sx={{
                     backgroundColor: "blue",
-                    "&:hover": {
-                      backgroundColor: "darkblue",
-                    },
+                    "&:hover": { backgroundColor: "darkblue" },
                     fontSize: "16px",
                     width: "150px",
                   }}
@@ -676,9 +726,7 @@ function ManageAsset() {
                     variant="contained"
                     sx={{
                       backgroundColor: "green",
-                      "&:hover": {
-                        backgroundColor: "darkgreen",
-                      },
+                      "&:hover": { backgroundColor: "darkgreen" },
                       fontSize: "16px",
                       width: "150px",
                     }}
@@ -691,9 +739,7 @@ function ManageAsset() {
                     variant="contained"
                     sx={{
                       backgroundColor: "gray",
-                      "&:hover": {
-                        backgroundColor: "darkgray",
-                      },
+                      "&:hover": { backgroundColor: "darkgray" },
                       fontSize: "16px",
                       width: "150px",
                     }}
@@ -707,6 +753,7 @@ function ManageAsset() {
           </Grid>
         </Grid>
       </Paper>
+
       {/* ------------Input textfield for table------------------- */}
       <Card sx={{ my: 2 }}>
         <CardContent>
