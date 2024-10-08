@@ -404,14 +404,14 @@ export const getOrganizationData = async (organizationName) => {
 };
 
 //Update Organization
-export const updateOrganizationData = async (formData) => {
-  try {
-    const response = await axios.put(
-      `${ORGANIZATION_API}/organization-update-data`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
+// export const updateOrganizationData = async (formData) => {
+//   try {
+//     const response = await axios.put(
+//       `${ORGANIZATION_API}/organization-update-data`,
+//       formData
+//     );
+//     return response.data;
+//   } catch (error) {
+//     return catchError(error);
+//   }
+// };

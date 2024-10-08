@@ -91,7 +91,6 @@ function ManageAsset() {
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [organiatioLoading, setOrganiationLoading] = useState(false);
   const [file, setFile] = useState(null);
-  const [imageURL, setImageURL] = useState("");
 
   // Function to initiate Updating department
   const handleEditClick = (index) => {
@@ -478,24 +477,7 @@ function ManageAsset() {
     }
   };
 
-  // const handleLogoUpload = (e) => {
-  //   const { name, value, files, type } = e.target;
-  //   if (type === "file") {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       [name]: files[0], // Store the actual file object
-  //     }));
-  //     // Update file name for preview
-  //     if (name === "organizationlogo") {
-  //       setFile(files[0].name);
-  //     }
-  //   } else {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       [name]: value,
-  //     }));
-  //   }
-  // };
+  //upload logo of organization
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     setFormData({
@@ -504,23 +486,19 @@ function ManageAsset() {
     });
   };
 
-  // console.log("..ssssssssssssssss", formData);
-
   // Save organization data
   const handleSave = async () => {
     try {
       setLoading(true);
       const updatedFormData = { ...formData };
-
-      // console.log(updatedFormData, "Ssssssssssssssssssssss");
       const response = await organizationAddData(updatedFormData);
-      console.log("jhdvchjdfjc", response);
+      // console.log("jhdvchjdfjc", response);
       if (response.success) {
         toast.success(response.message || "Data saved successfully");
         setIsEditOrganization(true); // Switch to Update mode after saving
-        localStorage.setItem("organizationSaved", true); // Persist state in localStorage
+        localStorage.setItem("organizationSaved", true); 
       } else {
-        console.log("sssss", "Essslse ");
+        // console.log("sssss", "Essslse ");
         toast.error(response.message || "Data not saved");
       }
     } catch (error) {
@@ -535,15 +513,6 @@ function ManageAsset() {
     setIsEditOrganization(true);
   };
 
-  // Pass data to another page (like subtitle and logo)
-  const passDataToOtherPage = () => {
-    const subtitle = formData.subtitlename;
-    const organizationlogo = formData.organizationlogo;
-    navigate("/otherPage", {
-      state: { subtitle, organizationlogo },
-    });
-  };
-
   // Check if data is saved in localStorage
   useEffect(() => {
     const saved = localStorage.getItem("organizationSaved");
@@ -556,21 +525,21 @@ function ManageAsset() {
     }
   }, []);
 
-  // Update organization data
-  const handleUpdate = async () => {
-    setLoading(true);
-    const updatedFormData = { ...formData };
-    try {
-      await updateOrganizationData(updatedFormData);
-      toast.success("Organization updated successfully");
-      setIsEditOrganization(true);
-      localStorage.setItem("organizationSaved", true);
-    } catch (error) {
-      toast.error("Error updating organization:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // // Update organization data
+  // const handleUpdate = async () => {
+  //   setLoading(true);
+  //   const updatedFormData = { ...formData };
+  //   try {
+  //     await updateOrganizationData(updatedFormData);
+  //     toast.success("Organization updated successfully");
+  //     setIsEditOrganization(true);
+  //     localStorage.setItem("organizationSaved", true);
+  //   } catch (error) {
+  //     toast.error("Error updating organization:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   //fetch organization data based on Organization Name\
   const fetchOrganization = async () => {
