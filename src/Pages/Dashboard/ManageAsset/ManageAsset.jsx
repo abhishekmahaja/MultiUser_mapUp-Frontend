@@ -84,11 +84,14 @@ function ManageAsset() {
     fax: "",
     email: "",
   });
+  //storeg in local storage to use
+  localStorage.setItem("organizationLogo", formData.organizationlogo); // Save the logo
+  localStorage.setItem("subtitlename", formData.subtitlename); // Save the subtitle
   const [loading, setLoading] = useState(false);
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [organiatioLoading, setOrganiationLoading] = useState(false);
-  // const [image, setImage] = useState(null); // State for image
-  // const [imagePreview, setImagePreview] = useState(null); // State for image preview
+  const [file, setFile] = useState(null);
+  const [imageURL, setImageURL] = useState("");
 
   // Function to initiate Updating department
   const handleEditClick = (index) => {
@@ -475,31 +478,49 @@ function ManageAsset() {
     }
   };
 
-  // Handle image upload
-  const handleImageUpload = (e) => {
+  // const handleLogoUpload = (e) => {
+  //   const { name, value, files, type } = e.target;
+  //   if (type === "file") {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: files[0], // Store the actual file object
+  //     }));
+  //     // Update file name for preview
+  //     if (name === "organizationlogo") {
+  //       setFile(files[0].name);
+  //     }
+  //   } else {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
+  const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     setFormData({
       ...formData,
       organizationlogo: file,
     });
   };
-  // const handleImageUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   setImage(file);
-  //   setImagePreview(URL.createObjectURL(file));
-  // };
+
+  // console.log("..ssssssssssssssss", formData);
 
   // Save organization data
   const handleSave = async () => {
     try {
       setLoading(true);
       const updatedFormData = { ...formData };
+
+      // console.log(updatedFormData, "Ssssssssssssssssssssss");
       const response = await organizationAddData(updatedFormData);
-      if (response.status === 201) {
+      console.log("jhdvchjdfjc", response);
+      if (response.success) {
         toast.success(response.message || "Data saved successfully");
         setIsEditOrganization(true); // Switch to Update mode after saving
         localStorage.setItem("organizationSaved", true); // Persist state in localStorage
       } else {
+        console.log("sssss", "Essslse ");
         toast.error(response.message || "Data not saved");
       }
     } catch (error) {
@@ -518,7 +539,6 @@ function ManageAsset() {
   const passDataToOtherPage = () => {
     const subtitle = formData.subtitlename;
     const organizationlogo = formData.organizationlogo;
-
     navigate("/otherPage", {
       state: { subtitle, organizationlogo },
     });
@@ -529,6 +549,10 @@ function ManageAsset() {
     const saved = localStorage.getItem("organizationSaved");
     if (saved) {
       setIsEditOrganization(true);
+      const savedLogo = localStorage.getItem("organizationLogo");
+      if (savedLogo) {
+        setFormData((prev) => ({ ...prev, organizationlogo: savedLogo }));
+      }
     }
   }, []);
 
@@ -570,7 +594,7 @@ function ManageAsset() {
         formDataToUpdate.organizationlogo = organizationlogo;
       }
       setFormData(formDataToUpdate);
-      console.log("hgdvdhc", data.organizationlogo);
+      // console.log("hgdvdhc", data.organizationlogo);
       // console.log("organization", response.data);
     } catch (error) {
       console.error("Error fetching organization data:", error);
@@ -623,52 +647,70 @@ function ManageAsset() {
           <Typography variant="h4" mt={1}>
             Organization: [ {organizationName ? organizationName : "N/A"} ]
           </Typography>
-          <Grid container spacing={2} padding={4} paddingLeft={0}>
-            <Grid item xs={12} sm={6} md={4} lg={4} display={"flex"} gap={1}>
-              <Typography variant="h6">Upload Logo</Typography>
-              <Grid item xs={12} sm={6} md={4} lg={7} display={"flex"} gap={2}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  component="label"
-                  fullWidth
-                >
-                  Upload Logo
-                  <input
-                    type="file"
-                    hidden
-                    onChange={handleImageUpload}
-                    disabled={isEditOrganization} // Disable while in Update mode
-                  />
-                </Button>
-                {formData.logoFileName && (
-                  <Typography variant="subtitle1" mt={1}>
-                    Uploaded: {formData.logoFileName} ({formData.logoFileType})
-                  </Typography>
-                )}
-              </Grid>
-              {/* Display the logo preview if the organizationlogo URL exists */}
-              {formData.organizationlogo && (
-                <Grid item xs={12} mt={2}>
-                  <Typography variant="subtitle1" mb={1}>
-                    Logo Preview:
-                  </Typography>
-                  <img
-                    src={formData.organizationlogo} // URL of the uploaded logo
-                    alt="Organization Logo"
-                    style={{
-                      maxWidth: "150px",
-                      maxHeight: "150px",
-                      objectFit: "contain",
-                    }}
-                  />
-                </Grid>
-              )}
+          {/* Organization Logo (Top of Organization Name) */}
+          {isEditOrganization && formData.organizationlogo && (
+            <Grid
+              container
+              justifyContent="flex-start"
+              alignItems="center"
+              marginTop={4}
+            >
+              <span
+                style={{
+                  marginRight: "50px",
+                  fontSize: "1.5rem",
+                }}
+              >
+                Organization Logo:
+              </span>
+              <img
+                src={formData.organizationlogo}
+                alt="Organization Logo"
+                style={{
+                  width: "250px",
+                  height: "100px",
+                  objectFit: "contain", // Use 'contain' to preserve the aspect ratio
+                  borderRadius: "5px", // Optional: added to make the image look better
+                }}
+              />
             </Grid>
-          </Grid>
+          )}
           <Grid container spacing={3}>
-            <Grid item md={10} sm={10} xs={12} lg={12}>
+            <Grid item md={10} sm={10} xs={12} lg={12} marginTop={4}>
               <Grid container spacing={1}>
+                {/* Organization Logo Upload (Show only in Save mode) */}
+                {!isEditOrganization && (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    lg={6}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <span>
+                      <Typography variant="h6">Organization Logo</Typography>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ cursor: "pointer", marginLeft: "1rem" }}
+                        onChange={handleLogoUpload}
+                      />
+                    </span>
+                    {file && (
+                      <img
+                        src={file}
+                        alt="Organization Logo Preview"
+                        style={{
+                          width: "250px",
+                          height: "100px",
+                          objectFit: "contain",
+                          marginLeft: "1.5rem",
+                        }}
+                      />
+                    )}
+                  </Grid>
+                )}
                 {[
                   { name: "organizationName", label: "Organization Name" },
                   { name: "subtitlename", label: "Sub Organization Name" },
@@ -683,16 +725,23 @@ function ManageAsset() {
                 ].map((field) => (
                   <Grid item xs={12} sm={3} md={3} lg={3} key={field.name}>
                     <Typography variant="h6">{field.label}</Typography>
-                    <TextField
-                      type="text"
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name={field.name}
-                      value={formData[field.name]}
-                      onChange={handleInputChange}
-                      disabled={isEditOrganization} // Disable fields when editing
-                    />
+                    {field.name === "organizationName" ? (
+                      // Display organizationName as text instead of an input
+                      <Typography variant="body1">
+                        {formData[field.name]}
+                      </Typography>
+                    ) : (
+                      <TextField
+                        type="text"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        name={field.name}
+                        value={formData[field.name]}
+                        onChange={handleInputChange}
+                        disabled={isEditOrganization} // Disable fields when editing
+                      />
+                    )}
                   </Grid>
                 ))}
               </Grid>
@@ -721,7 +770,7 @@ function ManageAsset() {
                   {loading ? "UPDATING..." : "UPDATE"}
                 </Button>
               ) : (
-                <>
+                <div style={{ display: "flex", gap: "2rem" }}>
                   <Button
                     variant="contained"
                     sx={{
@@ -738,8 +787,8 @@ function ManageAsset() {
                   <Button
                     variant="contained"
                     sx={{
-                      backgroundColor: "gray",
-                      "&:hover": { backgroundColor: "darkgray" },
+                      backgroundColor: "red",
+                      "&:hover": { backgroundColor: "darkred" },
                       fontSize: "16px",
                       width: "150px",
                     }}
@@ -747,13 +796,12 @@ function ManageAsset() {
                   >
                     CANCEL
                   </Button>
-                </>
+                </div>
               )}
             </Box>
           </Grid>
         </Grid>
       </Paper>
-
       {/* ------------Input textfield for table------------------- */}
       <Card sx={{ my: 2 }}>
         <CardContent>

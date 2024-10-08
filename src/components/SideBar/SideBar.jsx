@@ -18,7 +18,7 @@ import ComplaintIcon from "@mui/icons-material/AccessAlarm";
 import AssetsIcon from "@mui/icons-material/AccountBalance";
 import NotificationsIcon from "@mui/icons-material/NotificationsActive";
 import Networkicon from "@mui/icons-material/CellTower";
-import { patch,Box, useMediaQuery } from "@mui/material";
+import { patch, Box, useMediaQuery } from "@mui/material";
 import WellmasterIcon from "@mui/icons-material/Settings";
 import WellmonitorIcon from "@mui/icons-material/Search";
 import GeoIcon from "@mui/icons-material/Place";
@@ -83,6 +83,7 @@ export default function Sidebar({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const role = useSelector((state) => state.auth.role);
+  const organizationLogo = localStorage.getItem("organizationLogo");
 
   // Define your menu items here
   const menuItems = [
@@ -180,7 +181,15 @@ export default function Sidebar({
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader>
-        <img src={ongc_logo} alt="logo" width="83%" />
+        {/* Display the organization logo if available */}
+        {organizationLogo && (
+          <img
+            src={organizationLogo}
+            alt="Organization Logo"
+            style={{ width: "100%", height: 40, marginLeft: 8 }}
+          />
+        )}
+        {/* <img src={ongc_logo} alt="logo" width="83%" /> */}
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === "rtl" ? (
             <ChevronLeftIcon />
@@ -228,7 +237,7 @@ export default function Sidebar({
       </List>
       {/* Box to push the Technical Support to the bottom */}
       <Box sx={{ flexGrow: 1 }} />
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+      <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>
         <Divider />
         <List>
           <Link

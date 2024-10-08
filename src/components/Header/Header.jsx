@@ -4,8 +4,11 @@ import MQTT1 from "/assets/MQTT1.png";
 import { Grid, Typography, Box } from "@mui/material";
 import Technical from "/assets/Technical.png";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Header() {
+  const organizationName = useSelector((state) => state.auth.organization);
+
   return (
     <>
       <Grid container bgcolor="black" color="#fff" p={1}>
@@ -30,6 +33,7 @@ function Header() {
               lg: 'x-large', // extra-large screens
             }
           }}>
+            {/* {organizationName || "OIL & NATURAL GAS CORPORATION"} */}
             OIL & NATURAL GAS CORPORATION
             <Typography sx={{
               fontSize: {
