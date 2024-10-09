@@ -43,7 +43,7 @@ import {
   deletePosition,
   updateApprovalChain,
   deleteApprovalChain,
-  updateOrganizationData,
+  // updateOrganizationData,
 } from "../../../apis/Service";
 
 function ManageAsset() {
@@ -65,6 +65,9 @@ function ManageAsset() {
   const [approvalChains, setApprovalChains] = useState("");
   const [level1, setLevel1] = useState("");
   const [level2, setLevel2] = useState("");
+  const [oldAction, setOldAction] = useState("");
+  const [oldLevel1, setOldLevel1] = useState("");
+  const [oldLevel2, setOldLevel2] = useState("");
   const [approvalChainRows, setApprovalChainRows] = useState([]);
   const [selectedApprovalDepartment, setSelectedApprovalDepartment] =
     useState("");
@@ -227,7 +230,6 @@ function ManageAsset() {
     setOldPosition(positionName);
     setIsEditingPosition(true);
   };
-
   //Delete Position
   const handleDeletePosition = async (departmentName, positionName) => {
     if (!organizationName || !departmentName || !positionName) {
@@ -266,13 +268,27 @@ function ManageAsset() {
 
   //ADD and Update approval chain on the base of department
   const handleApprovalChainSubmit = async () => {
+    // Validate required fields
+    if (!selectedApprovalDepartment || !approvalChains || !level1 || !level2) {
+      toast.error("All fields are required.");
+      return;
+    }
     const formData = {
       organizationName,
       departmentName: selectedApprovalDepartment,
-      action: approvalChains,
-      level1,
-      level2,
     };
+    if (isEditMode) {
+      formData.oldAction = oldAction;
+      formData.oldLevel1 = oldLevel1;
+      formData.oldLevel2 = oldLevel2;
+      formData.newAction = approvalChains;
+      formData.newLevel1 = level1;
+      formData.newLevel2 = level2;
+    } else {
+      formData.action = approvalChains;
+      formData.level1 = level1;
+      formData.level2 = level2;
+    }
     try {
       let result;
       if (isEditMode) {
@@ -284,12 +300,14 @@ function ManageAsset() {
         console.log("Add Approval Chain Result:", result);
         toast.success("Approval chain added successfully!");
       }
-      // Reset the form after submission
       setSelectedApprovalDepartment("");
       setApprovalChains("");
       setLevel1("");
       setLevel2("");
       setIsEditMode(false);
+      setOldAction("");
+      setOldLevel1("");
+      setOldLevel2("");
     } catch (error) {
       console.error("Error:", error);
       toast.error(
@@ -297,14 +315,21 @@ function ManageAsset() {
       );
     }
   };
+
   //update approvalchain
-  const handleApprovalChainEdit = (index) => {
+  const handleApprovalChainEdit = (index, chainIndex) => {
     try {
       const approvalChainToEdit = approvalChainRows[index];
+      const chain = approvalChainToEdit.approvalChains[chainIndex];
+      // Set new values in the form fields
       setSelectedApprovalDepartment(approvalChainToEdit.departmentName);
-      setApprovalChains(approvalChainToEdit.approvalChains.action);
-      setLevel1(approvalChainToEdit.approvalChains.level1);
-      setLevel2(approvalChainToEdit.approvalChains.level2);
+      setApprovalChains(chain.action || "");
+      setLevel1(chain.level1 || "");
+      setLevel2(chain.level2 || "");
+      // Set old values for the API
+      setOldAction(chain.action || "");
+      setOldLevel1(chain.level1 || "");
+      setOldLevel2(chain.level2 || "");
       setIsEditMode(true);
       setEditIndex(index);
       toast.info("Editing approval chain entry.");
@@ -319,16 +344,6 @@ function ManageAsset() {
   //Delete Approval chain
   const handleDeleteApprovalChain = async (index) => {
     const approvalChainToDelete = approvalChainRows[index];
-    // Check if approval chain exists
-    if (
-      !approvalChainToDelete ||
-      !approvalChainToDelete.approvalChains.length
-    ) {
-      console.error("No approval chain found at the specified index.");
-      toast.error("No approval chain found at the specified index.");
-      return;
-    }
-    // Create the form data for deletion
     const formData = {
       organizationName,
       departmentName: approvalChainToDelete.departmentName,
@@ -336,7 +351,6 @@ function ManageAsset() {
       level1: approvalChainToDelete.approvalChains[0]?.level1 || "",
       level2: approvalChainToDelete.approvalChains[0]?.level2 || "",
     };
-    // Validate required fields
     if (!formData.organizationName || !formData.departmentName) {
       console.error("Organization name and department name are required.");
       toast.error("Organization name and department name are required.");
@@ -1069,26 +1083,26 @@ function ManageAsset() {
             <Grid
               item
               xs={12}
-              sm={5}
-              md={5}
+              sm={3.5}
+              md={3.5}
               lg={6}
               gap={1}
               display="flex"
-              flexDirection={"column"}
+              flexDirection="column"
             >
-              <Typography variant="h5"> Approval Chain</Typography>
+              <Typography variant="h5">Approval Chain</Typography>
               <Box display="flex" gap={1}>
                 <Grid item lg={12} md={12} sm={12} xs={12}>
                   {DepartmentLoading ? (
                     <div>Loading...</div>
                   ) : (
                     <FormControl fullWidth size="small">
-                      <InputLabel id="demo-select-large-label">
+                      <InputLabel id="department-select-label">
                         Department
                       </InputLabel>
                       <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-large"
+                        labelId="department-select-label"
+                        id="department-select"
                         label="Department"
                         value={selectedApprovalDepartment}
                         onChange={(e) =>
@@ -1116,14 +1130,36 @@ function ManageAsset() {
                     </FormControl>
                   )}
                 </Grid>
-                <TextField
-                  variant="outlined"
-                  label="Action"
-                  size="small"
-                  value={approvalChains}
-                  onChange={(e) => setApprovalChains(e.target.value)}
-                  fullWidth
-                />
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-select-large-label">Action</InputLabel>
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-large"
+                    label="Action"
+                    value={approvalChains}
+                    onChange={(e) => setApprovalChains(e.target.value)}
+                  >
+                    <MenuItem value="" disabled>
+                      Select an action
+                    </MenuItem>
+                    {/* Assign value props to the MenuItems */}
+                    <MenuItem value="User Registration">
+                      User Registration
+                    </MenuItem>
+                    <MenuItem value="Well Setting">Well Setting</MenuItem>
+                    <MenuItem value="Node Configuration">
+                      Node Configuration
+                    </MenuItem>
+                    <MenuItem value="Device Registration">
+                      Device Registration
+                    </MenuItem>
+                    <MenuItem value="Close Complain">Close Complain</MenuItem>
+                    <MenuItem value="Close Notification">
+                      Close Notification
+                    </MenuItem>
+                    <MenuItem value="Delete User">Delete User</MenuItem>
+                  </Select>
+                </FormControl>
                 <TextField
                   variant="outlined"
                   label="Level-1"
@@ -1152,10 +1188,9 @@ function ManageAsset() {
                   }}
                 >
                   {isEditMode ? "Update" : "Add"}
-                         
                 </Button>
               </Box>
-              {/* --------------------------Table----------------------------- */}
+              {/* Approval Chain Table */}
               <Grid container>
                 <TableContainer
                   component={Paper}
@@ -1184,12 +1219,18 @@ function ManageAsset() {
                         >
                           Level-2
                         </StyledTableCell>
+                        <StyledTableCell
+                          align="center"
+                          sx={{ fontSize: "18px", width: "10%" }}
+                        >
+                          Actions
+                        </StyledTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {approvalChainLoading ? (
                         <TableRow>
-                          <StyledTableCell colSpan={4}>
+                          <StyledTableCell colSpan={5}>
                             Loading...
                           </StyledTableCell>
                         </TableRow>
@@ -1198,10 +1239,8 @@ function ManageAsset() {
                           <React.Fragment key={index}>
                             {row.approvalChains?.map((chain, chainIndex) => (
                               <StyledTableRow key={`${index}-${chainIndex}`}>
-                                {/* Render departmentName only for the first row of each department */}
                                 {chainIndex === 0 && (
                                   <StyledTableCell
-                                    component="th"
                                     rowSpan={row.approvalChains.length}
                                   >
                                     {index + 1}. {row.departmentName}
@@ -1213,15 +1252,11 @@ function ManageAsset() {
                                 <StyledTableCell>
                                   {chainIndex + 1}. {chain.level1 || "N/A"}
                                 </StyledTableCell>
-                                <StyledTableCell
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
+                                <StyledTableCell>
                                   {chainIndex + 1}. {chain.level2 || "N/A"}
-                                  <Box display="flex" ml={2}>
-                                    {/* Use a single space for the edit and delete buttons */}
+                                </StyledTableCell>
+                                <StyledTableCell align="center">
+                                  <Box display="flex" justifyContent="center">
                                     <IconButton
                                       onClick={() =>
                                         handleApprovalChainEdit(
@@ -1242,7 +1277,7 @@ function ManageAsset() {
                                       sx={{
                                         color: "red",
                                         "&:hover": { color: "darkred" },
-                                        marginRight: "8px",
+                                        marginLeft: "8px",
                                       }}
                                     >
                                       <DeleteForeverIcon fontSize="medium" />
@@ -1255,7 +1290,7 @@ function ManageAsset() {
                         ))
                       ) : (
                         <TableRow>
-                          <StyledTableCell colSpan={4}>
+                          <StyledTableCell colSpan={5}>
                             No Approval Chain Available
                           </StyledTableCell>
                         </TableRow>
