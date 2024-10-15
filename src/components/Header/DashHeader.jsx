@@ -40,6 +40,8 @@ export default function Header({ open, handleDrawerOpen }) {
   const organizationLogo = localStorage.getItem("organizationLogo");
   const subtitlename = localStorage.getItem("subtitlename");
 
+// console.log(subtitlename,"jhghj");
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
