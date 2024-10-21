@@ -88,10 +88,11 @@ export const resetPassword = async (formData) => {
 };
 
 // GET all Users Not approved By Manager
-export const getNotApprovedManagerUser = async () => {
+// https://rtms-backend.onrender.com/api/v1/users/get-not-approved-manager-user?organizationName=Abhi Company
+export const getNotApprovedManagerUser = async (organizationName) => {
   try {
     const response = await axios.get(
-      `${USER_API}/get-not-approved-manager-user`
+      `${USER_API}/get-not-approved-manager-user?organizationName=${organizationName}`
     );
     return response.data;
   } catch (error) {
@@ -100,9 +101,12 @@ export const getNotApprovedManagerUser = async () => {
 };
 
 // GET All Users Not Approved By Owner
-export const getNotApprovalOwnerUser = async () => {
+// https://rtms-backend.onrender.com/api/v1/users/get-not-approval-owner-user?organizationName=Abhi Company
+export const getNotApprovalOwnerUser = async (organizationName) => {
   try {
-    const response = await axios.get(`${USER_API}/get-not-approval-owner-user`);
+    const response = await axios.get(
+      `${USER_API}/get-not-approval-owner-user?organizationName=${organizationName}`
+    );
     return response.data;
   } catch (error) {
     return catchError(error);

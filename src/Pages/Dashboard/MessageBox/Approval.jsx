@@ -10,7 +10,6 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { Card } from "@mui/joy";
 // -------------import for table--------------------------------//
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -34,15 +33,16 @@ import {
   rejectByManager,
   rejectByOwner,
 } from "../../../apis/Service";
+
 // ---------FUNCTIONS OF TABLE--------------------------------
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: "10px", // Increase padding
-    height: "20px", // Set a specific height
-    fontSize: "16px", // Optionally adjust font size for header
-    lineHeight: "1.5", // Adjust line height if needed
+    padding: "10px", 
+    height: "20px",
+    fontSize: "16px", 
+    lineHeight: "1.5",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -57,13 +57,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-const CardWrapper = styled(Card)(() => ({
-  boxShadow:
-    "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
-  ".card-Content-text": {
-    padding: "0 !important",
-  },
-}));
 // -----------------------------Table for Mobile-------------------------------------
 const StyledGridItem = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -75,22 +68,22 @@ const StyledContent = styled(Grid)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
   backgroundColor: "white",
 }));
+
 export default function BasicCard() {
-  const [open, setOpen] = useState(false); // State to control modal visibility
-  const [users, setUsers] = useState([]); // State to store fetched users
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const [selectedUser, setSelectedUser] = useState(null); // Selected user for modal
-  const role = useSelector((state) => state.auth.role); // Get user role from Redux
-  const authToken = useSelector((state) => state.auth.authToken); // Get auth token from Redux
+  const organizationName = useSelector((state) => state.auth.organization);
+  const [open, setOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const role = useSelector((state) => state.auth.role);
+  const authToken = useSelector((state) => state.auth.authToken);
 
   // Function to fetch users based on role
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
-
     let fetchFunction;
-
     if (role === "manager") {
       fetchFunction = getNotApprovedManagerUser;
     } else if (role === "owner") {
@@ -100,10 +93,9 @@ export default function BasicCard() {
       setLoading(false);
       return;
     }
-
     try {
-      const response = await fetchFunction();
-      // console.log("API Response:", response);
+      const response = await fetchFunction(organizationName); 
+      // console.log("API Response:", response, organizationName);
       if (response.success) {
         // Adjust this line according to the response structure
         setUsers(
@@ -119,12 +111,12 @@ export default function BasicCard() {
       setLoading(false);
     }
   };
+  
 
   // Function to approve users
   const handleApprove = async (user) => {
     let response;
-    const formData = { employeeID: user.employeeID }; // Prepare the request body
-
+    const formData = { employeeID: user.employeeID }; 
     try {
       if (role === "manager") {
         // Call ApproveByManager API with Bearer token in the header
@@ -133,7 +125,6 @@ export default function BasicCard() {
         // Call approveByOwner API with Bearer token in the header
         response = await approveByOwner(formData, authToken);
       }
-
       if (response && response.success) {
         // Update the user list after approval
         alert("User approved successfully");
@@ -151,14 +142,12 @@ export default function BasicCard() {
   const handleReject = async (user) => {
     let response;
     const formData = { employeeID: user.employeeID };
-
     try {
       if (role === "manager") {
         response = await rejectByManager(formData, authToken);
       } else if (role === "owner") {
         response = await rejectByOwner(formData, authToken);
       }
-
       if (response && response.success) {
         alert("User rejected successfully");
         fetchUsers();
@@ -489,4 +478,3 @@ export default function BasicCard() {
     </Grid>
   );
 }
-
