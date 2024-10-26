@@ -15,11 +15,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import Input from "@mui/joy/Input";
 import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import { Link } from "react-router-dom";
-import { Box } from "@mui/system";
 import NotificationsIcon from "@mui/icons-material/NotificationsActive";
 import Brightness5Icon from "@mui/icons-material/Brightness5";
 
@@ -49,6 +46,15 @@ const data = [
     Condition: "",
     Description: "",
     Parameter: "THP(kg/Cm²)",
+    Condition1: "",
+  },
+  {
+    employeeId: "05",
+    NormalAlert: "",
+    CriticalAlert: "",
+    Condition: "",
+    Description: "",
+    Parameter: "Battery Percentage",
     Condition1: "",
   },
   {
@@ -87,6 +93,7 @@ function AddWell() {
     parameter4: "",
     parameter5: "",
     parameter6: "",
+    parameter7: "",
   });
 
   const handleChangeParameter = (event) => {
@@ -174,7 +181,7 @@ function AddWell() {
             <TextField
               fullWidth
               size="small"
-              label="Description"
+              label="Node ID"
               variant="outlined"
             />
           </Grid>
@@ -236,7 +243,6 @@ function AddWell() {
                     <TableCell>
                       <Typography>{Parameter}</Typography>
                     </TableCell>
-
                     <TableCell>
                       <TextField
                         name="NormalAlert"

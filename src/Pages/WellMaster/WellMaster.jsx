@@ -7,7 +7,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, color } from "@mui/system";
+import { Box } from "@mui/system";
 import master from "/assets/wellMaster.png";
 import { Link } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -101,14 +101,6 @@ const rows = [
   createData("3"),
 ];
 
-const BodyTableCellWraper = styled(TableCell)(() => ({
-  textAlign: "center",
-  fontWeight: 500,
-  fontSize: "15.65px",
-  lineHeight: " 20px",
-  color: "#000000",
-}));
-
 function WellMaster() {
   return (
     <div>
@@ -160,6 +152,9 @@ function WellMaster() {
                   Well Number
                 </StyledTableCell>
                 <StyledTableCell sx={{ fontSize: "18px" }} align="center">
+                  Node ID
+                </StyledTableCell>
+                <StyledTableCell sx={{ fontSize: "18px" }} align="center">
                   Landmark
                 </StyledTableCell>
                 <StyledTableCell sx={{ fontSize: "18px" }} align="right">
@@ -176,6 +171,7 @@ function WellMaster() {
                   <StyledTableCell align="center" component="th" scope="row">
                     {row.name}
                   </StyledTableCell>
+                  <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center"></StyledTableCell>
