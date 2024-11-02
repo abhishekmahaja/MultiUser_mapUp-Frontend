@@ -28,9 +28,6 @@ const CheckStatus = lazy(() => import("./CheckStatus/CheckStatus.jsx"));
 const Otp = lazy(() => import("./Pages/Login/Otp.jsx"));
 const WellMaster = lazy(() => import("./Pages/WellMaster/WellMaster.jsx"));
 const AddWell = lazy(() => import("./Pages/WellMaster/AddWell/AddWell.jsx"));
-const ManageAsset = lazy(() =>
-  import("./Pages/Dashboard/ManageAsset/ManageAsset.jsx")
-);
 const DeviceManage = lazy(() =>
   import("./Pages/Dashboard/DeviceManage/DeviceManage.jsx")
 );
@@ -40,9 +37,6 @@ const AddDevice = lazy(() =>
 const Network = lazy(() => import("./Pages/Dashboard/Network/Network.jsx"));
 const Approval = lazy(() =>
   import("./Pages/Dashboard/MessageBox/Approval.jsx")
-);
-const SuperAdmin = lazy(() =>
-  import("./Pages/Dashboard/SuperAdmin/SuperAdmin.jsx")
 );
 const TechnicalSupport = lazy(() =>
   import("./Pages/Dashboard/TechnicalSupport/TechnicalSupport.jsx")
@@ -66,14 +60,12 @@ function App() {
     { path: "AddDevice", element: <AddDevice /> },
     { path: "Network", element: <Network /> },
     { path: "AddDevices", element: <AddDevice /> },
-    { path: "Admin", element: <SuperAdmin /> },
     { path: "technicalSupport", element: <TechnicalSupport /> },
   ];
 
   // Add role-specific routes
   if (role === "owner") {
     commonRoutes.push(
-      { path: "ManageAsset", element: <ManageAsset /> },
       { path: "message", element: <Approval /> }
     );
   } else if (role === "manager") {
@@ -88,7 +80,6 @@ function App() {
 
   // Configure the routes with children under "/dashboard"
   const route = useRoutes([
-    { path: "admin", element: <SuperAdmin /> },
     { path: "/", element: <Login /> },
     { path: "/otp", element: <Otp /> },
     { path: "/signup", element: <Signup /> },
