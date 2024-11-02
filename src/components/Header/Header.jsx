@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../../public/assets/mapUP-logo.jpg";
+// import logo from "../../../public/assets/mapUP-logo.jpg";
 import MQTT1 from "/assets/MQTT1.png";
 import { Grid, Typography, Box } from "@mui/material";
 import Technical from "/assets/Technical.png";
@@ -21,10 +21,10 @@ function Header() {
           gap="2"
           alignItems="center"
         >
-          <Box>
+          {/* <Box>
             <img src={logo} style={{ width: "5rem", height: "4rem", marginRight: "1rem"
              }} />
-          </Box>
+          </Box> */}
 
           <Typography
             sx={{
