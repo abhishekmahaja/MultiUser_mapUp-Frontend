@@ -11,10 +11,10 @@ import {
   CardContent,
 } from "@mui/material";
 import PageContainer from "../../components/HOC/PageContainer";
-import { useDispatch } from "react-redux"; 
+import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { setLoginDetails } from "../../apis/authSlice"; 
-import { sendOtpLogin } from "../../apis/Service"; 
+import { setLoginDetails } from "../../apis/authSlice";
+import { sendOtpLogin } from "../../apis/Service";
 import HttpsIcon from "@mui/icons-material/Https";
 import { toast } from "react-toastify";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";

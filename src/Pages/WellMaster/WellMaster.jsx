@@ -12,7 +12,7 @@ import master from "/assets/wellMaster.png";
 import { Link } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Othertable from "../Dashboard/OtherTable.jsx";
+import Othertable from "../../components/OtherTable";
 
 // -------------------------------Table for  Moblie --------------------------
 const StyledGridItem = styled(Grid)(({ theme }) => ({

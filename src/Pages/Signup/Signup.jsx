@@ -31,7 +31,7 @@ function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedPhotoName, setSelectedPhotoName] = useState(null);
-  const [idCardName, setIdCardName] = useState(null); // To store the ID card photo name
+  const [idCardName, setIdCardName] = useState(null);
   const [organizations, setOrganizations] = useState([]);
   const [departments, setDepartments] = useState("");
   const [formValues, setFormValues] = useState({
@@ -173,7 +173,7 @@ function Signup() {
               <Grid item pt={1} sx={{ textAlign: "center" }}>
                 <Typography variant="h4">Registration</Typography>
                 <Typography variant="h6" color="#800000">
-                  Create a New RTMS Account
+                  Create a New Account
                 </Typography>
               </Grid>
               <Grid item px={4} alignItems={"center"}>

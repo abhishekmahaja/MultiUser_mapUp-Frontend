@@ -1,5 +1,6 @@
 import React from "react";
-import { Button,
+import {
+  Button,
   FormControlLabel,
   Grid,
   Paper,
@@ -18,10 +19,10 @@ function AddDevice() {
       <Grid container spacing={5} direction="column">
         {/* ---------------MAC Address----------------- */}
         <Grid item lg={12} md={12} sm={12} xs={12} gap={1}>
-          <Typography sx={{textWrap: 'nowrap'}}>MAC Address :</Typography>
+          <Typography sx={{ textWrap: "nowrap" }}>MAC Address :</Typography>
           <Box display="flex" flexDirection="column" gap={3} alignItems="end">
-              <TextField size="small" fullWidth/>
-              <Button variant="contained">Read MAC</Button>
+            <TextField size="small" fullWidth />
+            <Button variant="contained">Read MAC</Button>
           </Box>
         </Grid>
         {/* -----------------------Select Well----------------- */}
@@ -56,10 +57,10 @@ function AddDevice() {
 
         {/* -----------------------Parameters----------------- */}
 
-        <Grid item gap={5} >
+        <Grid item gap={5}>
           <Typography variant="h6">Parameter</Typography>
 
-          <Box display='flex' justifyContent='space-between' flexWrap="wrap">
+          <Box display="flex" justifyContent="space-between" flexWrap="wrap">
             <FormControlLabel
               control={<Checkbox defaultChecked size="large" />}
               label="GIP"
@@ -86,10 +87,11 @@ function AddDevice() {
             />
           </Box>
 
-          <Box display={"flex"} justifyContent={'end'}>
-            <Button color="success" variant="contained">Submit</Button>
+          <Box display={"flex"} justifyContent={"end"}>
+            <Button color="success" variant="contained">
+              Submit
+            </Button>
           </Box>
-
         </Grid>
       </Grid>
     </Paper>

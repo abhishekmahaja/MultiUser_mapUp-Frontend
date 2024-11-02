@@ -11,20 +11,17 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
-import { Link, useLocation } from "react-router-dom";
-import PrintReportIcon from "@mui/icons-material/Print";
+import { Link } from "react-router-dom";
 import DeviceManagerIcon from "@mui/icons-material/Memory";
 import ComplaintIcon from "@mui/icons-material/AccessAlarm";
-import AssetsIcon from "@mui/icons-material/AccountBalance";
 import NotificationsIcon from "@mui/icons-material/NotificationsActive";
 import Networkicon from "@mui/icons-material/CellTower";
-import { patch, Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import WellmasterIcon from "@mui/icons-material/Settings";
 import WellmonitorIcon from "@mui/icons-material/Search";
 import GeoIcon from "@mui/icons-material/Place";
-import ongc_logo from "/assets/ongc2.png";
+import RttIcon from "@mui/icons-material/Rtt";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import { useSelector } from "react-redux";
 
@@ -75,24 +72,15 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Sidebar({
   open,
-  mobileOpen,
   handleDrawerClose,
-  handleDrawerTransitionEnd,
-  handleDrawerToggle,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const role = useSelector((state) => state.auth.role);
   const organizationLogo = localStorage.getItem("organizationLogo");
 
-  // Define your menu items here
+  //Define your menu items here
   const menuItems = [
-    {
-      name: "Admin",
-      icon: <AdminPanelSettingsIcon sx={{ color: "black" }} />,
-      path: "/dashboard",
-      roles: ["admin"],
-    },
     {
       name: "Dashboard",
       icon: <HomeIcon sx={{ color: "black" }} />,
@@ -100,28 +88,22 @@ export default function Sidebar({
       roles: ["owner", "manager", "employee"],
     },
     {
-      name: "Organization",
-      icon: <AssetsIcon sx={{ color: "black" }} />,
-      path: "/dashboard/ManageAsset",
-      roles: ["owner"],
-    },
-    {
       name: "Well Master",
       icon: <WellmasterIcon sx={{ color: "black" }} />,
       path: "/dashboard/wellmaster",
-      roles: ["owner", "manager", "employee"],
+      roles: ["owner", "manager"],
     },
     {
       name: "Manage Node",
       icon: <DeviceManagerIcon sx={{ color: "black" }} />,
       path: "/dashboard/DeviceManage",
-      roles: ["owner", "manager", "employee"],
+      roles: ["owner", "manager"],
     },
     {
       name: "Manage Gateway",
       icon: <Networkicon sx={{ color: "black" }} />,
       path: "/dashboard/Network",
-      roles: ["owner", "manager", "employee"],
+      roles: ["owner", "manager"],
     },
     {
       name: "Well Monitor",
@@ -142,15 +124,15 @@ export default function Sidebar({
       roles: ["owner", "manager", "employee"],
     },
     {
-      name: "Print Report",
-      icon: <PrintReportIcon sx={{ color: "black" }} />,
-      path: "/dashboard/crystal",
-      roles: ["owner", "manager", "employee"],
-    },
-    {
       name: "Geo Location",
       icon: <GeoIcon sx={{ color: "black" }} />,
       path: "/dashboard/virtual",
+      roles: ["owner", "manager", "employee"],
+    },
+    {
+      name: "Real Time Data",
+      icon: <RttIcon sx={{ color: "black" }} />,
+      path: "/dashboard/real_time",
       roles: ["owner", "manager", "employee"],
     },
     {
@@ -159,12 +141,6 @@ export default function Sidebar({
       path: "/dashboard/message",
       roles: ["owner", "manager"],
     },
-    // {
-    //   name: "Technical Support",
-    //   icon: <SupportAgentIcon sx={{ color: "black" }} />,
-    //   path: "/dashboard/technicalSupport",
-    //   roles: ["owner", "manager", "employee"],
-    // },
   ];
 
   // Filter menu items based on the user's role

@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "/assets/logo.svg";
+import logo from "../../helper/assets/mapUP-logo.jpg";
 import MQTT1 from "/assets/MQTT1.png";
 import { Grid, Typography, Box } from "@mui/material";
 import Technical from "/assets/Technical.png";
@@ -22,32 +22,36 @@ function Header() {
           alignItems="center"
         >
           <Box>
-            <img src={logo} style={{ width: "5rem", height: "5rem" }} />
+            <img src={logo} style={{ width: "5rem", height: "4rem", marginRight: "1rem"
+             }} />
           </Box>
 
-          <Typography sx={{
-            fontSize: {
-              xs: '110%', // small screens
-              sm: 'x-large', // medium screens
-              md: 'x-large', // large screens
-              lg: 'x-large', // extra-large screens
-            }
-          }}>
-            {/* {organizationName || "OIL & NATURAL GAS CORPORATION"} */}
-            OIL & NATURAL GAS CORPORATION
-            <Typography sx={{
+          <Typography
+            sx={{
               fontSize: {
-                xs: 'small', // small screens
-                sm: 'large', // medium screens
-                md: 'large', // large screens
-                lg: 'large', // extra-large screens
+                xs: "110%", // small screens
+                sm: "x-large", // medium screens
+                md: "x-large", // large screens
+                lg: "x-large", // extra-large screens
               },
-            }}>
-              Real Time Well Monitoring System
+            }}
+          >
+            {/* {organizationName */}
+            MapUp Analytics
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: "small", // small screens
+                  sm: "large", // medium screens
+                  md: "large", // large screens
+                  lg: "large", // extra-large screens
+                },
+              }}
+            >
+              Real Time MapUp Monitoring System
             </Typography>
           </Typography>
         </Grid>
-
         <Grid
           item
           md={4}
@@ -56,11 +60,18 @@ function Header() {
           sx={{ display: { sm: "none", xs: "none", md: "block", lg: "block" } }}
         >
           <Box display="flex" alignItems="center" justifyContent="end" gap={1}>
-            <Link to=''><img src={Technical} style={{ objectFit: "cover", width: "70px", marginRight: "24px" }} /></Link>
+            <Link to="">
+              <img
+                src={Technical}
+                style={{
+                  objectFit: "cover",
+                  width: "70px",
+                  marginRight: "24px",
+                }}
+              />
+            </Link>
             <img src={MQTT1} style={{ objectFit: "cover", width: "151px" }} />
           </Box>
-
-          {/* <a href='' alt='contain' ><Typography style={{textDecoration:'none'}}>Technical Support</Typography></a> */}
         </Grid>
       </Grid>
     </>

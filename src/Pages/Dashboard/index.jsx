@@ -1,14 +1,14 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import Header from '../../components/Header/DashHeader.jsx';
-import Sidebar from '../../components/SideBar/SideBar.jsx';
-import { styled, useTheme } from '@mui/material/styles';
-import { Outlet } from 'react-router-dom';
+import React from "react";
+import Box from "@mui/material/Box";
+import Header from "../../components/Header/DashHeader.jsx";
+import Sidebar from "../../components/SideBar/SideBar.jsx";
+import { styled, useTheme } from "@mui/material/styles";
+import { Outlet } from "react-router-dom";
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
 }));
@@ -23,7 +23,7 @@ export default function Dashboard() {
     setOpen(true);
     setMobileOpen(false);
   };
-  
+
   const handleDrawerClose = () => {
     setOpen(false);
     setMobileOpen(false);
@@ -52,7 +52,11 @@ export default function Dashboard() {
         handleDrawerTransitionEnd={handleDrawerTransitionEnd}
         handleDrawerToggle={handleDrawerToggle}
       />
-      <Box component="main" sx={{ flexGrow: 1, p: 2, overflowY: 'auto' }} mt={2}>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 2, overflowY: "auto" }}
+        mt={2}
+      >
         <DrawerHeader />
         <Outlet />
       </Box>

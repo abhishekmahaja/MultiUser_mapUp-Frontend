@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ORGANIZATION_API, USER_API } from "../apis/Client";
+import { External_API, ORGANIZATION_API, USER_API } from "../apis/Client";
 import { catchError } from "../helper/helper";
 
 // Function to send OTP for login
@@ -183,32 +183,6 @@ export const rejectByOwner = async (formData, authToken) => {
   }
 };
 
-// generate otp for Organization api
-export const genrateOtpOrg = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/generate-otp-oragnization`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-// create Organization api
-export const createOrg = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}//create-organization`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
 //organization dropdown in signuppage
 export const organizationDropDown = async () => {
   try {
@@ -234,186 +208,13 @@ export const departmentDropdown = async (formData) => {
   }
 };
 
-//add department by owner
-export const addDepartment = async (formData) => {
+//live data show
+// http://localhost:5000/api/v1/externaldevice/live-data-show
+export const liveDataShow = async () => {
   try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/add-department`,
-      formData
-    );
+    const response = await axios.get(`${External_API}/live-data-show`);
     return response.data;
   } catch (error) {
     return catchError(error);
   }
 };
-
-//update department
-export const UpdateDepartment = async (formData) => {
-  try {
-    const response = await axios.put(
-      `${ORGANIZATION_API}/update-department`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//delete department
-export const DeleteDepartment = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/delete-department`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//Add Position on the basic of department
-export const addPosition = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/add-position`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-// https://rtms-backend.onrender.com/api/v1/organization/get-positions?organizationName=Foxboro.in.co&departmentName=Finance
-export const getPosition = async (organizationName, departmentName) => {
-  try {
-    const response = await axios.get(
-      `${ORGANIZATION_API}/get-positions?organizationName=${organizationName}&departmentName=${departmentName}`
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//update department
-export const updatePosition = async (formData) => {
-  try {
-    const response = await axios.put(
-      `${ORGANIZATION_API}/update-position`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//Delete Position
-export const deletePosition = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/delete-position`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//Add Approval Chain on the basic of department
-export const addApprovalChain = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/add-approval-chain`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-// https://rtms-backend.onrender.com/api/v1/organization/get-approval-chain?organizationName=AbhiCompany&departmentName=HOD dep
-export const getApprovalChain = async (organizationName, departmentName) => {
-  try {
-    const response = await axios.get(
-      `${ORGANIZATION_API}/get-approval-chain?organizationName=${organizationName}&departmentName=${departmentName}`
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//update approval Chain
-export const updateApprovalChain = async (formData) => {
-  try {
-    const response = await axios.put(
-      `${ORGANIZATION_API}/update-approval-chain`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//delete Approval chain
-export const deleteApprovalChain = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/delete-approval-chain`,
-      formData
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//organization-add-data
-export const organizationAddData = async (formData) => {
-  try {
-    const response = await axios.post(
-      `${ORGANIZATION_API}/organization-add-data`,
-      formData,
-      {
-        headers: {
-          "content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//http://localhost:5000/api/v1/organization/organization-get-data?organizationName=india.in.co
-export const getOrganizationData = async (organizationName) => {
-  try {
-    const response = await axios.get(
-      `${ORGANIZATION_API}/organization-get-data?organizationName=${organizationName}`
-    );
-    return response.data;
-  } catch (error) {
-    return catchError(error);
-  }
-};
-
-//Update Organization
-// export const updateOrganizationData = async (formData) => {
-//   try {
-//     const response = await axios.put(
-//       `${ORGANIZATION_API}/organization-update-data`,
-//       formData
-//     );
-//     return response.data;
-//   } catch (error) {
-//     return catchError(error);
-//   }
-// };

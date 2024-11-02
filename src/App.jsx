@@ -17,22 +17,16 @@ const Forgot = lazy(() => import("./Pages/Forgot/Forgot.jsx"));
 const Reset = lazy(() => import("./components/Reset/Reset.jsx"));
 const Virtual = lazy(() => import("./Pages/Dashboard/Virtual/Virtual.jsx"));
 const Monitor = lazy(() => import("./Pages/Dashboard/Monitor/Monitor.jsx"));
-const Crystal = lazy(() => import("./Pages/Dashboard/Crystal/Crystal.jsx"));
 const ComplaintHistory = lazy(() =>
   import("./Pages/Dashboard/ComplaintHistory/ComplaintHistory.jsx")
 );
 const NotificationHistory = lazy(() =>
   import("./Pages/Dashboard/NotificationHistory/NotificationHistory.jsx")
 );
-const Edit = lazy(() => import("./Pages/Dashboard/Edit/Edit.jsx"));
-const Logout = lazy(() => import("./Pages/Dashboard/Logout/Logout.jsx"));
 const PopUp = lazy(() => import("./CheckStatus/PopUp.jsx"));
 const CheckStatus = lazy(() => import("./CheckStatus/CheckStatus.jsx"));
 const Otp = lazy(() => import("./Pages/Login/Otp.jsx"));
 const WellMaster = lazy(() => import("./Pages/WellMaster/WellMaster.jsx"));
-const SingleWell = lazy(() =>
-  import("./Pages/Dashboard/SingleWell/SingleWell.jsx")
-);
 const AddWell = lazy(() => import("./Pages/WellMaster/AddWell/AddWell.jsx"));
 const ManageAsset = lazy(() =>
   import("./Pages/Dashboard/ManageAsset/ManageAsset.jsx")
@@ -44,9 +38,6 @@ const AddDevice = lazy(() =>
   import("./Pages/Dashboard/DeviceManage/AddDevice/AddDevice.jsx")
 );
 const Network = lazy(() => import("./Pages/Dashboard/Network/Network.jsx"));
-const AddDevices = lazy(() =>
-  import("./Pages/Dashboard/Network/AddNetwork/AddNetwork.jsx")
-);
 const Approval = lazy(() =>
   import("./Pages/Dashboard/MessageBox/Approval.jsx")
 );
@@ -56,6 +47,7 @@ const SuperAdmin = lazy(() =>
 const TechnicalSupport = lazy(() =>
   import("./Pages/Dashboard/TechnicalSupport/TechnicalSupport.jsx")
 );
+const Real_time = lazy(() => import("../src/components/real_time.jsx"));
 
 function App() {
   const role = useSelector((state) => state.auth.role);
@@ -65,18 +57,15 @@ function App() {
     { path: "", element: <Home /> },
     { path: "monitor", element: <Monitor /> },
     { path: "virtual", element: <Virtual /> },
-    { path: "crystal", element: <Crystal /> },
+    { path: "real_time", element: <Real_time /> },
     { path: "complaint", element: <ComplaintHistory /> },
     { path: "notification", element: <NotificationHistory /> },
-    { path: "edit", element: <Edit /> },
-    { path: "logout", element: <Logout /> },
     { path: "wellmaster", element: <WellMaster /> },
     { path: "addwell", element: <AddWell /> },
-    { path: "singlewell", element: <SingleWell /> },
     { path: "DeviceManage", element: <DeviceManage /> },
     { path: "AddDevice", element: <AddDevice /> },
     { path: "Network", element: <Network /> },
-    { path: "AddDevices", element: <AddDevices /> },
+    { path: "AddDevices", element: <AddDevice /> },
     { path: "Admin", element: <SuperAdmin /> },
     { path: "technicalSupport", element: <TechnicalSupport /> },
   ];
