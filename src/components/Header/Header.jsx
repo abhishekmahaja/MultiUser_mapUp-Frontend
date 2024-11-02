@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../helper/assets/mapUP-logo.jpg";
+import logo from "../../../public/assets/mapUP-logo.jpg";
 import MQTT1 from "/assets/MQTT1.png";
 import { Grid, Typography, Box } from "@mui/material";
 import Technical from "/assets/Technical.png";
