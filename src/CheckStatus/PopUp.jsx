@@ -31,7 +31,6 @@ function PopUp() {
         dispatch(setCheckAuthenticated(true));
         toast.success("Your Registration Details Fetch Successfull!");
 
-        // Navigate to the CheckStatus page
         navigate("/CheckStatus");
       } else {
         toast.error("EmployeeId does not match.");

@@ -32,7 +32,7 @@ function CheckStatus() {
     isApprovedByManager,
     isApprovedByOwner,
     status,
-  } = useSelector((state) => state?.checkStatusAuth?.checkAuth); // Adjust this according to your slice
+  } = useSelector((state) => state?.checkStatusAuth?.checkAuth); 
 
   // Define the steps and icons based on approval status
   const steps = [
